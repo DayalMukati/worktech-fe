@@ -1,7 +1,12 @@
-import Image from 'next/image';
+import Dashboard from '@/components/dashboard';
+import React from 'react';
 
-export default function Home() {
+const main = () => {
 	return (
-		<main className='flex flex-col justify-between items-center p-24 min-h-screen'></main>
+		<div>
+			<Dashboard />
+		</div>
 	);
-}
+};
+
+export default main;
