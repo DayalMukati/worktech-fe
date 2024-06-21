@@ -52,9 +52,9 @@ export function OrgListingCard({
 						</div>
 					</div>
 					<div>
-						<Badge className='text-center w-full'>
+						{/* <Badge className='text-center w-full'>
 							{org.location}
-						</Badge>
+						</Badge> */}
 					</div>
 				</div>
 			</CardHeader>
@@ -69,7 +69,7 @@ const OrgList = () => {
 				<h1 className='text-4xl text-primary'>Top Organizations</h1>
 				<p>Find top organizations</p>
 				<SearchBar />
-				<div className='w-full grid grid-cols-1 gap-4'>
+				<div className='w-full grid grid-cols-3 gap-4'>
 					{organizations.map(org => (
 						<OrgListingCard key={org.id} org={org} />
 					))}
