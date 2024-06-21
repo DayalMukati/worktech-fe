@@ -4,6 +4,12 @@ interface Organization {
 	description: string;
 	location: string;
 }
+type Task = {
+	id: number;
+	title: string;
+	description: string;
+	organizationId: number;
+};
 
 const organizations: Organization[] = [
 	{
@@ -91,5 +97,15 @@ const organizations: Organization[] = [
 		location: 'Location 14'
 	}
 ];
+
+export const tasks: Task[] = Array.from(
+	{ length: 10 },
+	(_, index) => ({
+		id: index + 1,
+		title: `Task ${index + 1}`,
+		description: `This is the description for Task ${index + 1}`,
+		organizationId: index + 1 // Assuming each task is associated with a corresponding organization by ID
+	})
+);
 
 export default organizations;

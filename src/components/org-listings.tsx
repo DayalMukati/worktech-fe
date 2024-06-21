@@ -18,10 +18,10 @@ import { Badge } from './ui/badge';
 
 export function SearchBar() {
 	return (
-		<div className='flex items-center space-x-2 px-4 border w-full max-w-xl bg-white rounded'>
+		<div className='flex items-center space-x-2 px-4 border w-full max-w-xl bg-secondary rounded'>
 			<Search className='' />
 			<Input
-				className='border-0 ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0'
+				className='border-0 ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0 bg-secondary'
 				type='text'
 				placeholder='Search Orgs...'
 			/>
@@ -35,9 +35,9 @@ export function OrgListingCard({
 	org: (typeof organizations)[0];
 }) {
 	return (
-		<Card className='hover:bg-secondary transition-colors duration-300'>
+		<Card className='hover:bg-secondary transition-colors duration-300 cursor-pointer'>
 			<CardHeader>
-				<div className='flex justify-between items-center '>
+				<div className='flex flex-col sm:flex-row justify-between items-end sm:items-center  '>
 					<div className='flex  items-center gap-4'>
 						<Image
 							className='w-16 h-16 object-cover rounded'
@@ -51,7 +51,11 @@ export function OrgListingCard({
 							<CardDescription>{org.description}</CardDescription>
 						</div>
 					</div>
-					<Badge>{org.location}</Badge>
+					<div>
+						<Badge className='text-center w-full'>
+							{org.location}
+						</Badge>
+					</div>
 				</div>
 			</CardHeader>
 		</Card>
@@ -62,7 +66,7 @@ const OrgList = () => {
 	return (
 		<div className='w-full flex  justify-center'>
 			<div className='md:w-2/3 flex flex-col items-center p-4 space-y-4'>
-				<h1 className='text-4xl'>Top Organizations</h1>
+				<h1 className='text-4xl text-primary'>Top Organizations</h1>
 				<p>Find top organizations</p>
 				<SearchBar />
 				<div className='w-full grid grid-cols-1 gap-4'>
