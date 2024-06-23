@@ -65,7 +65,7 @@ export function OrgListingCard({
 const OrgList = () => {
 	return (
 		<div className='w-full flex  justify-center'>
-			<div className='md:w-2/3 flex flex-col items-center p-4 space-y-4'>
+			<div className='flex flex-col items-center p-4 space-y-4'>
 				<h1 className='text-4xl text-primary'>Top Organizations</h1>
 				<p>Find top organizations</p>
 				<SearchBar />
