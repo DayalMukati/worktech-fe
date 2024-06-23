@@ -7,9 +7,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/hooks/toolKitTyped';
-import { handleLogin } from '@/store/authSlice';
 
 // Step 2: Define Zod schema for form validation
 const loginSchema = z.object({
@@ -19,28 +16,18 @@ const loginSchema = z.object({
 type Schema = z.infer<typeof loginSchema>;
 
 // Adjusting the component to use React Hook Form
-function LoginFullScreen() {
-	const dispatch = useAppDispatch();
+function SignupFullScreen() {
 	// Step 3: Integrate React Hook Form with Zod schema
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isLoading }
+		formState: { errors }
 	} = useForm<Schema>({
 		resolver: zodResolver(loginSchema)
 	});
-	const router = useRouter();
 
 	const onSubmit = (data: Schema) => {
 		console.log(data);
-		dispatch(
-			handleLogin({
-				user: {
-					email: data.email
-				}
-			})
-		);
-		router.push('/dashboard');
 	};
 
 	return (
@@ -50,9 +37,9 @@ function LoginFullScreen() {
 			<div className='flex justify-center items-center py-12'>
 				<div className='gap-6 grid mx-auto w-[350px]'>
 					<div className='gap-2 grid text-center'>
-						<h1 className='font-bold text-3xl'>Login</h1>
+						<h1 className='font-bold text-3xl'>Sign Up</h1>
 						<p className='text-balance text-muted-foreground'>
-							Enter your email below to login to your account
+							Enter your email below to create your account
 						</p>
 					</div>
 					<div className='gap-4 grid'>
@@ -88,20 +75,17 @@ function LoginFullScreen() {
 								</p>
 							)}
 						</div>
-						<Button
-							disabled={isLoading}
-							type='submit'
-							className='w-full'>
-							{isLoading ? 'Loading' : 'Login'}
+						<Button type='submit' className='w-full'>
+							Create Account
 						</Button>
 						{/* <Button variant='outline' className='w-full'>
 							Login with Google
 						</Button> */}
 					</div>
 					<div className='mt-4 text-center text-sm'>
-						Don&apos;t have an account?{' '}
-						<Link href='/auth/signup' className='underline'>
-							Sign up
+						Already have an account?{' '}
+						<Link href='/auth/login' className='underline'>
+							Log in
 						</Link>
 					</div>
 				</div>
@@ -119,4 +103,4 @@ function LoginFullScreen() {
 	);
 }
 
-export default LoginFullScreen;
+export default SignupFullScreen;
