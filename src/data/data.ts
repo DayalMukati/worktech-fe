@@ -150,3 +150,77 @@ export const DEFAULT_CARDS = [
 ];
 
 export default organizations;
+
+export const data1 = [
+	{
+	  rank: 1,
+	  name: 'John Doe',
+	  taskDone: 150,
+	  Points: 3000,
+	  Earned: '$1000',
+	},
+	{
+	  rank: 2,
+	  name: 'Jane Smith',
+	  taskDone: 140,
+	  Points: 2800,
+	  Earned: '$900',
+	},
+	{
+	  rank: 3,
+	  name: 'Alice Johnson',
+	  taskDone: 130,
+	  Points: 2600,
+	  Earned: '$850',
+	},
+	{
+	  rank: 4,
+	  name: 'Bob Brown',
+	  taskDone: 120,
+	  Points: 2400,
+	  Earned: '$800',
+	},
+	{
+	  rank: 5,
+	  name: 'Charlie Davis',
+	  taskDone: 110,
+	  Points: 2200,
+	  Earned: '$750',
+	},
+	{
+	  rank: 6,
+	  name: 'Dana Evans',
+	  taskDone: 100,
+	  Points: 2000,
+	  Earned: '$700',
+	},
+	{
+	  rank: 7,
+	  name: 'Ethan Foster',
+	  taskDone: 90,
+	  Points: 1800,
+	  Earned: '$650',
+	},
+	{
+	  rank: 8,
+	  name: 'Fiona Green',
+	  taskDone: 80,
+	  Points: 1600,
+	  Earned: '$600',
+	},
+	{
+	  rank: 9,
+	  name: 'George Harris',
+	  taskDone: 70,
+	  Points: 1400,
+	  Earned: '$550',
+	},
+	{
+	  rank: 10,
+	  name: 'Hannah White',
+	  taskDone: 60,
+	  Points: 1200,
+	  Earned: '$500',
+	},
+  ];
+  

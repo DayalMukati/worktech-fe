@@ -1,7 +1,9 @@
+'use client'
 import OpenTaskList from '@/components/open-task-list';
 import OrgList from '@/components/org-listings';
 import TaskCardItem from '@/components/task-card-item';
-
+import Contributors  from '@/components/contributors';
+import Leaderboard from '@/components/leaderboard'
 import {
 	Tabs,
 	TabsContent,
@@ -27,7 +29,7 @@ const page = () => {
 			<TabsContent value='tasks'>
 				<OpenTaskList />
 			</TabsContent>
-			<TabsContent value='contributors'>contributors</TabsContent>
+			<TabsContent value='contributors'><Leaderboard/></TabsContent>
 		</Tabs>
 	);
 };
