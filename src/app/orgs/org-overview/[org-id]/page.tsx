@@ -14,6 +14,7 @@ import {
   CircleCheck,
   Users,
 } from "lucide-react";
+import CreateTask from "@/components/ui/modals/CreateTask";
 
 const OrgOverview = () => {
   const spacesItems = [
@@ -131,7 +132,7 @@ const OrgOverview = () => {
                                 key={index}
                                 className="text-xs text-slate-400 cursor-pointer   "
                               >
-                                <Tag className="w-8 h-8 hover:w-10 " />
+                                <Tag className="w-8 h-8  " />
                               </div>
                             );
                           })}
