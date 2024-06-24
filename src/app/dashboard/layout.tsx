@@ -71,10 +71,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<div className='flex flex-col bg-muted/40 w-full h-screen'>
 			<Sidebar />
-
-			<main className='gap-4 md:gap-8 grid grid-cols-5 sm:py-0 sm:pl-20 h-full overflow-y-hidden'>
+			<main className='gap-0 grid grid-cols-7 bg-background sm:py-0 sm:pl-20 h-full overflow-y-hidden'>
 				<DashboardSidebar />
-				<div className='col-span-4 mt-2 h-full overflow-auto'>
+				<div className='col-span-6 h-full overflow-auto'>
 					<Header />
 					{children}
 				</div>

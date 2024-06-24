@@ -4,7 +4,7 @@ import React from 'react';
 
 const ProjectPage = () => {
 	return (
-		<div className='mx-auto pt-2 container'>
+		<div className='pt-2'>
 			<TaskBoard />
 		</div>
 	);

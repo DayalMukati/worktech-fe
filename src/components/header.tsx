@@ -33,7 +33,7 @@ import {
 
 const Header = () => {
 	return (
-		<header className='top-0 z-30 sm:static sticky flex items-center gap-4 sm:border-0 bg-background sm:bg-transparent px-4 sm:px-6 border-b h-14 sm:h-auto'>
+		<header className='top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14'>
 			<Sheet>
 				<SheetTrigger asChild>
 					<Button size='icon' variant='outline' className='sm:hidden'>

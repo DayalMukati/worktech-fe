@@ -110,42 +110,79 @@ export const tasks: Task[] = Array.from(
 export const DEFAULT_CARDS = [
 	// BACKLOG
 	{
-		title: 'Look into render bug in dashboard',
+		title: 'Debug Dashboard Rendering Issue Bounty',
 		id: '1',
-		column: 'backlog'
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Debugging', 'UI', 'Dashboard']
 	},
-	{ title: 'SOX compliance checklist', id: '2', column: 'backlog' },
-	{ title: '[SPIKE] Migrate to Azure', id: '3', column: 'backlog' },
 	{
-		title: 'Document Notifications service',
+		title: 'Complete SOX Compliance Checklist Bounty',
+		id: '2',
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Compliance', 'SOX', 'Checklist']
+	},
+	{
+		title: 'Azure Migration Feasibility Study Bounty',
+		id: '3',
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Azure', 'Migration', 'Feasibility Study']
+	},
+	{
+		title: 'Notifications Service Documentation Bounty',
 		id: '4',
-		column: 'backlog'
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Documentation', 'Notifications', 'Service']
 	},
 	// TODO
 	{
-		title: 'Research DB options for new microservice',
+		title: 'Database Options Research for Microservice Bounty',
 		id: '5',
-		column: 'todo'
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Database', 'Research', 'Microservice']
 	},
-	{ title: 'Postmortem for outage', id: '6', column: 'todo' },
 	{
-		title: 'Sync with product on Q3 roadmap',
+		title: 'Outage Postmortem Analysis Bounty',
+		id: '6',
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Outage', 'Postmortem', 'Analysis']
+	},
+	{
+		title: 'Q3 Roadmap Collaboration Bounty',
 		id: '7',
-		column: 'todo'
+		column: 'todo',
+		createdAt: '2days ago',
+		tags: ['Roadmap', 'Collaboration', 'Q3']
 	},
 
 	// DOING
 	{
-		title: 'Refactor context providers to use Zustand',
+		title:
+			'Zustand Integration for Context Management Refactoring Bounty',
 		id: '8',
-		column: 'doing'
+		column: 'in-progress',
+		createdAt: '2days ago',
+		tags: ['Zustand', 'Context Management', 'Refactoring']
 	},
-	{ title: 'Add logging to daily CRON', id: '9', column: 'doing' },
+	{
+		title: 'Daily CRON Logging Enhancement Bounty',
+		id: '9',
+		column: 'in-review',
+		createdAt: '2days ago',
+		tags: ['CRON', 'Logging', 'Enhancement']
+	},
 	// DONE
 	{
-		title: 'Set up DD dashboards for Lambda listener',
+		title: 'Lambda Listener DD Dashboards Setup Bounty',
 		id: '10',
-		column: 'done'
+		column: 'done',
+		createdAt: '2days ago',
+		tags: ['Lambda', 'Dashboards', 'Setup']
 	}
 ];
 
