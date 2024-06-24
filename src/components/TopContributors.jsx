@@ -104,8 +104,9 @@ const TopContributor = ({ data }) => {
           <SearchBar />
         </div>
         <Card x-chunk="dashboard-06-chunk-0" className="mt-4">
-          <Table className="border rounded-lg shadow-lg w-full overflow-hidden">
-            <TableHeader className="">
+        <div className="table-container" style={{ maxHeight: '600px', overflowY: 'auto' }}>
+          <Table className="border rounded-lg shadow-lg w-full bg-secondary overflow-hidden">
+            <TableHeader className="bg-secondary">
               <TableRow>
                 <TableHead className="hidden  sm:table-cell">
                   Rank
@@ -124,12 +125,12 @@ const TopContributor = ({ data }) => {
               {data.map((product, index) => (
                 <TableRow
                   key={product.rank}
-                  className={index % 2 === 0 ? "bg-slate-200" : "bg-white"}
+                  className={index % 2 === 0 ? "bg-white" : "bg-white"}
                 >
                   <TableCell className="hidden sm:table-cell">
                     {product.rank}
                   </TableCell>
-                  <TableCell className="font-medium flex gap-2">
+                  <TableCell className="font-medium flex gap-2  items-center">
                     {" "}
                     <Image
                       alt="Product image"
@@ -154,10 +155,10 @@ const TopContributor = ({ data }) => {
               ))}
             </TableBody>
           </Table>
-
+          </div>
           <CardFooter>
             <div className="text-muted-foreground text-xs">
-              Showing <strong>1-10</strong> of <strong>32</strong> products
+              Showing <strong>1-10</strong> of <strong>32</strong> Contributors
             </div>
           </CardFooter>
         </Card>
