@@ -25,39 +25,44 @@ const Sidebar = () => {
 		}
 	];
 	return (
-		<aside className='left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20'>
-			<nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
-				{menuItems.map(({ href, icon, label }) => (
-					<Tooltip key={href}>
-						<TooltipTrigger asChild>
-							<Link
-								href={href}
-								className={cn(
-									'flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors',
-									'text-accent-foreground bg-accent',
-									checkPathMatch(currentURI, href)
-										? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
-										: 'text-muted-foreground rounded-full'
-								)}>
-								{Icons[icon]}
-								<span className='sr-only'>{label}</span>
-							</Link>
-						</TooltipTrigger>
-						<TooltipContent side='right'>{label}</TooltipContent>
-					</Tooltip>
-				))}
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Button variant='outline' size={'icon'}>
-							<Plus className='w-5 h-5' />
-							<span className='sr-only'>{'Create Org'}</span>
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent side='right'>{'Create Org'}</TooltipContent>
-				</Tooltip>
-			</nav>
-		</aside>
-	);
+    <aside className="left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20">
+      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+        {menuItems.map(({ href, icon, label }) => (
+          <Tooltip key={href}>
+            <TooltipTrigger asChild>
+              <Link
+                href={href}
+                className={cn(
+                  "flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors",
+                  "text-accent-foreground bg-accent",
+                  checkPathMatch(currentURI, href)
+                    ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                    : "text-muted-foreground rounded-full"
+                )}
+              >
+                {Icons[icon]}
+                <span className="sr-only">{label}</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">{label}</TooltipContent>
+          </Tooltip>
+        ))}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size={"icon"}
+              className="rounded-full bg-primary hover:bg-primary-background hover:text-primary-foreground"
+            >
+              <Plus className="w-8 h-8 text-black hover:text-white" />
+              <span className="sr-only ">{"Create Org"}</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">{"Create Org"}</TooltipContent>
+        </Tooltip>
+      </nav>
+    </aside>
+  );
 };
 
 export default Sidebar;
