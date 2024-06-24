@@ -13,6 +13,8 @@ import {
   BookOpen,
   CircleCheck,
   Users,
+  UserPlus,
+  LogIn,
 } from "lucide-react";
 import CreateTask from "@/components/ui/modals/CreateTask";
 
@@ -103,8 +105,13 @@ const OrgOverview = () => {
             </div>
           </div>
           <div className="flex flex-col p-4 gap-6 ">
-            <Button className="px-10 bg-[#7D6CE2FF]">Login</Button>
-            <Button className="px-10 bg-[#7D6CE2FF]">Follow</Button>
+            <Button className="w-24 bg-[#7D6CE2FF] flex justify-between">
+              <LogIn className="w-[20px] h-[20px]" />
+              Login
+            </Button>
+            <Button className="w-24 bg-[#7D6CE2FF] flex justify-between">
+              <UserPlus className="w-[20px] h-[20px]" /> Follow
+            </Button>
           </div>
         </div>
       </div>
@@ -226,6 +233,7 @@ const OrgOverview = () => {
           </div>
         </div>
       </div>
+      <CreateTask />
     </div>
   );
 };

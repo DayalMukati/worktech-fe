@@ -115,18 +115,10 @@ const customPrioritySingleValue = (props: any) => {
   );
 };
 
-const Price = [
-  { value: 0, label: "$0" },
-  { value: 1, label: "$1" },
-  { value: 2, label: "$2" },
-  { value: 3, label: "$3" },
-  { value: 4, label: "$4" },
-  { value: 5, label: "$5" },
-  { value: 6, label: "$6" },
-  { value: 7, label: "$7" },
-  { value: 8, label: "$8" },
-  { value: 9, label: "$9" },
-  { value: 10, label: "$10" },
+const Reviewers = [
+  { value: "ak@gmail.com", label: "Ak-8968" },
+  { value: "dn@gmail.com", label: "DM-477" },
+  { value: "vineet@gmail.com", label: "Vk-123" },
 ];
 
 const CreateTask = () => {
@@ -154,8 +146,8 @@ const CreateTask = () => {
           <div className="col-span-2 ">
             <Input
               type="text"
-              placeholder="Task name"
-              className="w-[400px]  text-md font-semibold text-slate-600  "
+              placeholder="Task Name"
+              className="w-[400px] text-sm  text-slate-600  "
             />
             <div className="flex gap-4 mt-4 ">
               <Button className="bg-[#7D6CE2FF] text-center gap-3">
@@ -169,9 +161,9 @@ const CreateTask = () => {
                 Task Description
               </Label>
               <Textarea
-                placeholder="Task description "
+                placeholder="Task Description "
                 name="description"
-                className="w-full outline-none text-md font-sm text-slate-400  border-2"
+                className="w-full  h-[80px] outline-none text-sm font-sm text-slate-400  border-2"
               />
             </div>
             <div className="mt-4">
@@ -187,7 +179,7 @@ const CreateTask = () => {
 
             <Button
               type="submit"
-              className="block w-full bg-[#7D6CE2FF] text-center mt-10 "
+              className="block w-full bg-[#7D6CE2FF] text-center mt-4 "
             >
               Create
             </Button>
@@ -227,12 +219,12 @@ const CreateTask = () => {
                 />
               </div>
               <div className="text-sm text-slate-900 uppercase w-full">
-                <Label className="text-sm text-slate-800 "> Price</Label>
-                <Select options={Price} />
+                <Label className="uppercase">HBAR-Price</Label>
+                <Input type="text" placeholder="Price" />
               </div>
               <div className="text-sm text-slate-900 uppercase w-full">
-                <Label className="uppercase">Reviewers</Label>
-                <Input type="text" placeholder="Reviewers" />
+                <Label className="text-sm text-slate-800 "> Reviewers</Label>
+                <Select options={Reviewers} isMulti />
               </div>
             </div>
           </div>
