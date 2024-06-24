@@ -233,7 +233,6 @@ const OrgOverview = () => {
           </div>
         </div>
       </div>
-      <CreateTask />
     </div>
   );
 };
