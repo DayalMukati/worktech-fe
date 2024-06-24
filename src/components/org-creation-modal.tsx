@@ -18,6 +18,8 @@ import {
 	selectLayout,
 	setOrgCreationModal
 } from '@/store/layoutSlice';
+import { Building2 } from 'lucide-react';
+import { createOrg } from '@/store/orgSlice';
 
 // Define the schema using Zod
 const orgSchema = z.object({
@@ -39,7 +41,14 @@ function OrgCreationModal() {
 	});
 
 	const onSubmit = (data: Schema) => {
-		console.log(data);
+		dispatch(
+			createOrg({
+				org: {
+					name: data.name
+				}
+			})
+		);
+		dispatch(setOrgCreationModal(false));
 	};
 
 	return (
@@ -57,19 +66,20 @@ function OrgCreationModal() {
 						<DialogTitle className='text-3xl text-center'>
 							What's the name of your Organization?
 						</DialogTitle>
-						<DialogDescription>
-							Create your org here. Click save when you're done.
-						</DialogDescription>
 					</DialogHeader>
 					<div className='gap-4 grid py-4'>
-						<div className='items-center gap-4 grid grid-cols-4'>
-							<Label htmlFor='name' className='text-right'>
+						<div className='flex flex-col justify-center items-center gap-4 grid-cols-4'>
+							<Label htmlFor='name' className='sr-only'>
 								Name
 							</Label>
+							<div className='bg-primary p-3 rounded-full'>
+								<Building2 className='w-10 h-10 text-primary-foreground' />
+							</div>
 							<Input
 								id='name'
 								{...register('name')}
-								className='col-span-3'
+								placeholder='Enter your organization name...'
+								className='border-primary bg-primary/5 p-3 border rounded w-2/3 text-primary text-sm placeholder:text-center placeholder:text-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors'
 							/>
 							{errors.name && (
 								<p className='text-red-500'>{errors.name.message}</p>
@@ -77,7 +87,18 @@ function OrgCreationModal() {
 						</div>
 					</div>
 					<DialogFooter>
-						<Button type='submit'>Save changes</Button>
+						<div className='flex flex-col justify-center items-center space-y-2 w-full'>
+							<Button className='w-2/3' type='submit'>
+								Create Organization
+							</Button>
+							<Button
+								onClick={() => dispatch(setOrgCreationModal(false))}
+								className='w-2/3'
+								variant={'ghost'}
+								type='submit'>
+								Cancel
+							</Button>
+						</div>
 					</DialogFooter>
 				</form>
 			</DialogContent>
