@@ -1,4 +1,4 @@
-import { FolderKanban, Home, Package2 } from 'lucide-react';
+import { FolderKanban, Home, Package2, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import {
@@ -8,6 +8,7 @@ import {
 } from './ui/tooltip';
 import { usePathname } from 'next/navigation';
 import { checkPathMatch, cn } from '@/lib/utils';
+import { Button } from './ui/button';
 
 const Sidebar = () => {
 	const currentURI = usePathname();
@@ -45,6 +46,15 @@ const Sidebar = () => {
 						<TooltipContent side='right'>{label}</TooltipContent>
 					</Tooltip>
 				))}
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button variant='outline' size={'icon'}>
+							<Plus className='w-5 h-5' />
+							<span className='sr-only'>{'Create Org'}</span>
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent side='right'>{'Create Org'}</TooltipContent>
+				</Tooltip>
 			</nav>
 		</aside>
 	);

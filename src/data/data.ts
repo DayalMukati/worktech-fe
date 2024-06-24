@@ -15,7 +15,7 @@ const organizations: Organization[] = [
 	{
 		id: 1,
 		name: 'Organization 1',
-		description: 'This is the description for Organization 1',
+		description: 'Blockchain Network',
 		location: 'Location 1'
 	},
 	{

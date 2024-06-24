@@ -35,12 +35,12 @@ export function OrgListingCard({
 	org: (typeof organizations)[0];
 }) {
 	return (
-		<Card className='hover:bg-secondary transition-colors duration-300 cursor-pointer'>
+		<Card className='hover:bg-secondary transition-colors duration-300 cursor-pointer h-40'>
 			<CardHeader>
-				<div className='flex flex-col sm:flex-row justify-between items-end sm:items-center  '>
+				<div className='flex flex-col sm:flex-row justify-between items-end sm:items-center '>
 					<div className='flex  items-center gap-4'>
 						<Image
-							className='w-16 h-16 object-cover rounded'
+							className='w-24 h-24 object-cover rounded'
 							src='/placeholder.svg'
 							alt='Organization Logo'
 							width={64}
@@ -49,12 +49,10 @@ export function OrgListingCard({
 						<div>
 							<CardTitle>{org.name}</CardTitle>
 							<CardDescription>{org.description}</CardDescription>
+							<Badge className='text-center bg-primary/50 text-primary-foreground shrink-0'>
+								{org.location}
+							</Badge>
 						</div>
-					</div>
-					<div>
-						{/* <Badge className='text-center w-full'>
-							{org.location}
-						</Badge> */}
 					</div>
 				</div>
 			</CardHeader>
@@ -64,7 +62,7 @@ export function OrgListingCard({
 
 const OrgList = () => {
 	return (
-		<div className='w-full flex  justify-center'>
+		<div className='w-full flex  justify-center '>
 			<div className='flex flex-col items-center p-4 space-y-4'>
 				<h1 className='text-4xl text-primary'>Top Organizations</h1>
 				<p>Find top organizations</p>
