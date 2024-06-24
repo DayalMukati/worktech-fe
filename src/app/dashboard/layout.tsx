@@ -41,8 +41,7 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
-import DashboardSidebar from '@/components/dashboard-sidebar';
-import OrgSidebar from "@/components/org-sidebar";
+import DashboardSidebar from "@/components/dashboard-sidebar";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   const currentURI = usePathname();
@@ -71,8 +70,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <Sidebar />
 
       <main className="gap-4 md:gap-8 grid grid-cols-5 sm:py-0 sm:pl-20 h-full overflow-y-hidden">
-        {/* <DashboardSidebar Title="Ten (Formaly known as Org) Overview)" /> */}
-        <OrgSidebar Title="Ten (Formaly known as Org) Overview)" />
+        <DashboardSidebar />
         <div className="col-span-4 mt-2 h-full overflow-auto">
           <Header />
           {children}

@@ -2,88 +2,40 @@ import Link from 'next/link';
 import React from 'react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
-import { Icons } from "./icons";
-import { space } from "postcss/lib/list";
+import { usePathname } from "next/navigation";
 
-const DashboardSidebar = ({ Title }: { Title: string }) => {
+const DashboardSidebar = () => {
   const currentURI = usePathname();
   const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
     return currentPath === menuItemHref;
   };
   const menuItems = [
     {
-      href: "/dashboard/org-overview",
+      href: "/dashboard",
       icon: "Home",
-      label: "Overview",
-    },
-    // {
-    //   href: "/dashboard/tasks",
-    //   icon: "FolderKanban",
-    //   label: "Tasks",
-    // },
-  ];
-
-  const childItem = [
-    {
-      href: "/dashboard/leadership",
-      icon: "Package",
-      label: "Leadership Boards",
+      label: "Explore",
     },
     {
-      href: "/dashboard/users",
-      icon: "Users2",
-      label: "Combined Boards",
-    },
-  ];
-
-  const SpacesItem = [
-    {
-      href: "/dashboard/space-1",
-      icon: "Package",
-      label: "Community Contributions",
-    },
-    {
-      href: "/dashboard/space-2",
-      icon: "Users2",
-      label: "Developer challenges",
+      href: "/dashboard/tasks",
+      icon: "FolderKanban",
+      label: "Tasks",
     },
   ];
   return (
-    <aside className="border-1 h-full col-span-1 bg-secondary p-2 border ">
-      <div className="p-4 ">
-        <h2 className="text-ld overflow-hidden whitespace-nowrap text-ellipsis">
-          {Title}
-        </h2>
+    <aside className="border-1 col-span-1 bg-secondary p-2 border">
+      <div className="p-4 border-b-2">
+        <h2 className="text-xl">Dashboard</h2>
       </div>
-      <nav className="h-[30rem]">
-        <ul className="space-y-4">
+      <nav className="p-4">
+        <ul className="space-y-2">
           {menuItems.map(({ href, icon, label }) => (
             <li>
               <Button
                 className={cn(
-                  "flex justify-start  bg-transparent hover:bg-primary/10 w-full tracking-widest text-md  text-black"
-                  //   isPathMatch(currentURI, href)
-                  //     ? "text-primary-foreground bg-black hover:text-primary-foreground hover:bg-primary"
-                  //     : ""
-                )}
-                asChild
-              >
-                <Link href={href}>{label}</Link>
-              </Button>
-            </li>
-          ))}
-        </ul>
-
-        <ul className="mt-10">
-          {childItem.map(({ href, icon, label }) => (
-            <li>
-              <Button
-                className={cn(
-                  "flex justify-start bg-transparent hover:bg-primary/10 w-full tracking-widest text-xs p-0 py-1 h-full text-black"
-                  //   isPathMatch(currentURI, href)
-                  //     ? "text-primary-foreground bg-black hover:text-primary-foreground hover:bg-primary"
-                  //     : ""
+                  "flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors",
+                  isPathMatch(currentURI, href)
+                    ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                    : ""
                 )}
                 asChild
               >
@@ -93,40 +45,8 @@ const DashboardSidebar = ({ Title }: { Title: string }) => {
           ))}
         </ul>
       </nav>
-      <Spaces spacesItem={SpacesItem} />
     </aside>
   );
 };
 
 export default DashboardSidebar;
-
-export const Spaces = ({
-  spacesItem,
-}: {
-  spacesItem: {
-    href: string;
-    icon: string;
-    label: string;
-  }[];
-}) => {
-  return (
-    <div className="flex flex-col items-start mt-auto">
-      <h1 className="text-lg text-slate-500">SPACES</h1>
-      {spacesItem.map(({ href, icon, label }) => (
-        <Button
-          variant={"secondary"}
-          className={
-            cn("p-0  text-slate-400  ")
-            //   isPathMatch(currentURI, href)
-            //     ? "text-primary-foreground bg-black hover:text-primary-foreground hover:bg-primary"
-            //     : ""
-          }
-          asChild
-        >
-          <Link href={href}>{label}</Link>
-        </Button>
-      ))}
-    </div>
-  );
-};	
-
