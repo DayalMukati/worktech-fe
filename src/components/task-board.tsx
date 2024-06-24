@@ -5,6 +5,9 @@ import { Flame, Plus, Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 
+import { motion } from 'framer-motion';
+import { set } from 'react-hook-form';
+
 interface ColumnProps {
 	title: string;
 	headingColor: string;
@@ -16,6 +19,7 @@ interface CardProps {
 	title: string;
 	id: string;
 	column: string;
+	handleDragStart: Function;
 }
 
 interface DropIndicatorProps {
@@ -70,6 +74,94 @@ const Column = ({
 }: ColumnProps) => {
 	const [activeCard, setActiveCard] = useState(false);
 	const filteredCards = cards.filter(card => card.column === column);
+	const handleDragStart = (
+		e: React.DragEvent<HTMLDivElement>,
+		card: CardProps
+	) => {
+		e.dataTransfer.setData('cardId', card.id);
+		setActiveCard(true);
+	};
+	const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		highlightIndicator(e);
+		setActiveCard(true);
+	};
+	const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		clearHighlights();
+		setActiveCard(false);
+	};
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+		setActiveCard(false);
+		clearHighlights();
+
+		const cardId = e.dataTransfer.getData('cardId');
+		if (!cardId) return;
+		const { element } = getNearestIndicator(e, getIndicators());
+		const before = element.getAttribute('data-before') || '-1';
+		if (before !== cardId) {
+			let copy = [...cards];
+
+			let cardToTransfer = copy.find(card => card.id === cardId);
+
+			if (!cardToTransfer) return;
+
+			cardToTransfer = { ...cardToTransfer, column };
+
+			copy = copy.filter(card => card.id !== cardId);
+
+			const moveToBack = before === '-1';
+
+			if (moveToBack) {
+				copy.push(cardToTransfer);
+			} else {
+				const index = copy.findIndex(card => card.id === before);
+				if (index === undefined) return;
+				copy.splice(index, 0, cardToTransfer);
+			}
+			setCards(copy);
+		}
+	};
+
+	const highlightIndicator = (e: React.DragEvent<HTMLDivElement>) => {
+		const indicators = getIndicators();
+		clearHighlights(indicators);
+		const el = getNearestIndicator(e, indicators);
+		el.element.classList.add('opacity-100');
+	};
+	const getIndicators = () => {
+		return Array.from(
+			document.querySelectorAll(`[data-column=${column}]`)
+		);
+	};
+	const getNearestIndicator = (
+		e: React.DragEvent<HTMLDivElement>,
+		indicators: Element[]
+	) => {
+		const DISTANCE_OFFSET = 50;
+		const el = indicators.reduce(
+			(closest, child) => {
+				const box = child.getBoundingClientRect();
+				const offset = e.clientY - box.top - DISTANCE_OFFSET;
+
+				if (offset < 0 && offset > closest.offset) {
+					return { offset, element: child };
+				}
+				return closest; // Always return closest, even if the condition is not met
+			},
+			{
+				offset: Number.NEGATIVE_INFINITY,
+				element: indicators[indicators.length - 1]
+			}
+		);
+		return el;
+	};
+	const clearHighlights = (els?: Element[]) => {
+		const indicators = els || getIndicators();
+		indicators.forEach(el => {
+			el.classList.remove('opacity-100');
+		});
+	};
 	return (
 		<div className='w-56 shrink-0'>
 			<div className='flex justify-between items-center mb-3'>
@@ -79,11 +171,18 @@ const Column = ({
 				</span>
 			</div>
 			<div
+				onDragOver={handleDragOver}
+				onDragLeave={handleDragLeave}
+				onDrop={handleDrop}
 				className={`h-full w-full p-2 transition-colors ${
 					activeCard ? 'bg-primary/50' : 'bg-primary/20'
 				}`}>
 				{filteredCards.map(card => (
-					<Card key={card.id} {...card} />
+					<Card
+						key={card.id}
+						{...card}
+						handleDragStart={handleDragStart}
+					/>
 				))}
 				<DropIndicator before='-1' column={column} />
 				<AddCard column={column} setCards={setCards} />
@@ -92,15 +191,18 @@ const Column = ({
 	);
 };
 
-const Card = ({ title, id, column }: CardProps) => {
+const Card = ({ title, id, column, handleDragStart }: CardProps) => {
 	return (
 		<>
 			<DropIndicator before={id} column={column} />
-			<div
+			<motion.div
+				layout
+				layoutId={id}
 				draggable={true}
+				onDragStart={e => handleDragStart(e, { title, id, column })}
 				className='bg-muted p-3 border rounded cursor-grab active:cursor-grabbing'>
 				<p className='text-muted-foreground text-sm'>{title} </p>
-			</div>
+			</motion.div>
 		</>
 	);
 };
@@ -111,15 +213,37 @@ const DropIndicator = ({ before, column }: DropIndicatorProps) => {
 			data-before={before || '-1'}
 			data-column={column}
 			className={cn(
-				'bg-primary opacity-0 my-0.5 w-full h-0.5'
+				'bg-primary-foreground opacity-0 my-0.5 w-full h-0.5'
 			)}></div>
 	);
 };
 
 const DropZone = ({ setCards }: { setCards: Function }) => {
 	const [active, setActive] = useState(false);
+	const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setActive(true);
+	};
+	const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setActive(false);
+	};
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+		console.log('drag end');
+		const cardId = e.dataTransfer.getData('cardId');
+		if (!cardId) return;
+
+		setCards((prev: CardProps[]) =>
+			prev.filter(card => card.id !== cardId)
+		);
+		setActive(false);
+	};
+
 	return (
 		<div
+			onDragOver={handleDragOver}
+			onDragLeave={handleDragLeave}
+			onDrop={handleDrop}
 			className={cn(
 				'mt-10 grid h-56 w-56 shrink-0 place-content-center rounded border text-3xl border-muted-foreground bg-muted-foreground/50 text-muted-foreground transition-colors cursor-pointer',
 				active && 'border-red-800 bg-red-800/20 text-red-500'
@@ -159,7 +283,7 @@ const AddCard = ({
 	return (
 		<>
 			{adding ? (
-				<form onSubmit={handleSubmit}>
+				<motion.form layout onSubmit={handleSubmit}>
 					<textarea
 						placeholder='Enter card title'
 						className='border-primary bg-primary/20 p-3 border rounded w-full text-primary-foreground text-sm placeholder-primary-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors'
@@ -181,7 +305,7 @@ const AddCard = ({
 							<Plus className='w-4 h-4' />
 						</Button>
 					</div>
-				</form>
+				</motion.form>
 			) : (
 				<Button
 					variant={'ghost'}

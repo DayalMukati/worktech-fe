@@ -1,13 +1,17 @@
-import LoginFullScreen from '@/components/login-full-screen';
-import OpenTaskList from '@/components/open-task-list';
-import ProductListing from '@/components/product-listing';
+
+import Link from 'next/link';
 import React from 'react';
 
 const main = () => {
 	return (
 		<div>
 			{/* <LoginFullScreen /> */}
-			<OpenTaskList />
+			<Link href='/dashboard/tasks'>
+				<a>Tasks</a>
+			</Link>
+			<Link href='/dashboard'>
+				<a>Dashboard</a>
+			</Link>
 		</div>
 	);
 };
