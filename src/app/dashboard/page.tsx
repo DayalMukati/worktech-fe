@@ -1,6 +1,9 @@
+'use client'
 import OpenTaskList from '@/components/open-task-list';
 import OrgList from '@/components/org-listings';
 import TaskCardItem from '@/components/task-card-item';
+import Contributors  from '@/components/contributors';
+import Leaderboard from '@/components/leaderboard'
 
 import {
 	Tabs,
@@ -20,6 +23,7 @@ const page = () => {
 				<TabsTrigger value='orgs'>Orgs</TabsTrigger>
 				<TabsTrigger value='tasks'>Tasks</TabsTrigger>
 				<TabsTrigger value='contributors'>Contributors</TabsTrigger>
+				<TabsTrigger value='leaderboard'>Leaderboard</TabsTrigger>
 			</TabsList>
 			<TabsContent value='orgs'>
 				<OrgList />
@@ -27,7 +31,8 @@ const page = () => {
 			<TabsContent value='tasks'>
 				<OpenTaskList />
 			</TabsContent>
-			<TabsContent value='contributors'>contributors</TabsContent>
+			<TabsContent value='contributors'><Contributors /></TabsContent>
+			<TabsContent value='leaderboard'><Leaderboard /></TabsContent>
 		</Tabs>
 	);
 };
