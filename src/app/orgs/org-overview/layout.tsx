@@ -67,7 +67,6 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <Sidebar />
 
       <main className="grid grid-cols-4 lg:grid-cols-6 sm:py-0 sm:pl-20 h-full overflow-y-hidden">
-        {/* <DashboardSidebar Title="Ten (Formaly known as Org) Overview)" /> */}
         <OrgSidebar Title="Ten (Formaly known as Org) Overview)" />
         <div className=" col-span-3 lg:col-span-5  mt-2 h-full overflow-auto">
           <Header />
