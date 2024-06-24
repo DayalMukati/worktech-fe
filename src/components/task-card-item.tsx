@@ -5,7 +5,7 @@ import {
 	CardHeader,
 	CardTitle
 } from '@/components/ui/card';
-import { tasks } from '@/data/data';
+import { tasks } from '@/conf/data';
 import Image from 'next/image';
 import React from 'react';
 

@@ -13,7 +13,7 @@ import {
 	CardTitle
 } from '@/components/ui/card';
 import Image from 'next/image';
-import organizations from '@/data/data';
+import organizations from '@/conf/data';
 import { Badge } from './ui/badge';
 
 export function SearchBar() {
