@@ -18,12 +18,12 @@ const page = () => {
 	return (
 		<Tabs
 			defaultValue='orgs'
-			className='flex flex-col items-center w-full'>
+			className='flex flex-col items-center mt-6 w-full'>
 			<TabsList className=''>
 				<TabsTrigger value='orgs'>Orgs</TabsTrigger>
 				<TabsTrigger value='tasks'>Tasks</TabsTrigger>
 				<TabsTrigger value='contributors'>Contributors</TabsTrigger>
-				<TabsTrigger value='leaderboard'>Leaderboard</TabsTrigger>
+				{/* <TabsTrigger value='leaderboard'>Leaderboard</TabsTrigger> */}
 			</TabsList>
 			<TabsContent value='orgs'>
 				<OrgList />
@@ -32,7 +32,7 @@ const page = () => {
 				<OpenTaskList />
 			</TabsContent>
 			<TabsContent value='contributors'><Contributors /></TabsContent>
-			<TabsContent value='leaderboard'><Leaderboard /></TabsContent>
+			{/* <TabsContent value='leaderboard'><Leaderboard /></TabsContent> */}
 		</Tabs>
 	);
 };
