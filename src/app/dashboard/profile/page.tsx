@@ -54,7 +54,7 @@ const Profile = () => {
       </div>
       <div className="col-span-2 space-y-1 ">
         <div className="flex flex-col h-1/2 rounded-md border border-slate-200 p-2 ">
-          <h1 className="text-md text-slate-400">Featured work</h1>
+          <h1 className="text-lg text-slate-400">Featured work</h1>
 
           <div className="flex flex-col gap-2 p-2 justify-center items-center mt-10">
             <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer" />
@@ -64,7 +64,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="flex flex-col h-1/2  rounded-md border-2 border-slate-200  p-2">
-          <h1 className="text-md text-slate-400">Contribution</h1>
+          <h1 className="text-lg text-slate-400">Contribution</h1>
           <div className="flex flex-col gap-2 p-2 justify-center items-center mt-10">
             <Coffee className="w-12 h-12 text-slate-900 cursor-pointer" />
             <span className="text-md text-slate-400">
