@@ -49,7 +49,7 @@ export function OrgListingCard({
 						<div>
 							<CardTitle>{org.name}</CardTitle>
 							<CardDescription>{org.description}</CardDescription>
-							<Badge className='text-center bg-primary/50 text-primary-foreground shrink-0'>
+							<Badge className='text-center bg-primary/60 text-primary-foreground shrink-0 border '>
 								{org.location}
 							</Badge>
 						</div>
