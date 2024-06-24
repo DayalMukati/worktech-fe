@@ -22,6 +22,7 @@ import {
 import { Wallet } from 'lucide-react';
 import MetaMaskBtn from './metamask-btn';
 import { useState } from 'react';
+import useMetamask from '@/hooks/useMetamask';
 
 // Define the schema using Zod
 const loginSchema = z.object({
@@ -34,6 +35,7 @@ type Schema = z.infer<typeof loginSchema>;
 
 function LoginModal() {
 	// Existing code...
+	const { account, error, signMessage, chainId } = useMetamask();
 	const dispatch = useAppDispatch();
 	const { isLoginModalOpen } = useAppSelector(selectLayout);
 
@@ -51,9 +53,14 @@ function LoginModal() {
 		console.log(data);
 	};
 
-	const handleMetaMaskLogin = () => {
+	const handleMetaMaskLogin = async() => {
 		// Logic for MetaMask login
-		console.log('MetaMask login initiated');
+		console.log('MetaMask login initiated', account);
+		const messageToSign = "Worktech Sign In"
+
+		const signature = await signMessage(messageToSign);
+		console.log("signature+++++", signature, account);
+
 	};
 
 	return (
