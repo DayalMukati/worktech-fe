@@ -23,8 +23,8 @@ import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { AvatarImage } from './ui/avatar';
 
 const Sidebar = () => {
-	const dispatch = useAppDispatch();
-	const currentURI = usePathname();
+  const dispatch = useAppDispatch();
+  const currentURI = usePathname();
 
 	const { orgs } = useAppSelector(selectOrg);
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 
 const DashboardSidebar = () => {
 	const currentURI = usePathname();
