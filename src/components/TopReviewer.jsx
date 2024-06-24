@@ -4,7 +4,8 @@ import { useTable } from "react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
- import {
+import { File, ListFilter, MoreHorizontal, PlusCircle } from "lucide-react";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -12,17 +13,34 @@ import { Search } from "lucide-react";
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Image from "next/image";
 import organizations from "@/data/data";
 import { Badge } from "./ui/badge";
 export function SearchBar() {
   return (
-    <div className="flex items-center space-x-2 px-4 border w-full max-w-xl bg-secondary rounded">
-      <Search className="" />
+    <div className="flex items-center space-x-2 px-4  border border-primary rounded ">
+      <Search className="text-primary" />
       <Input
-        className="border-0 ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0 bg-secondary"
+        className="border-0 ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0 "
         type="text"
-        placeholder="Search Contributors..."
+        placeholder="Search Reviewers..."
       />
     </div>
   );
@@ -65,80 +83,7 @@ const COLUMNS = [
   },
 ];
 
-const data = [
-  {
-    rank: 1,
-    name: "John Doe",
-    taskDone: 150,
-    Points: 3000,
-    Earned: "$1000",
-  },
-  {
-    rank: 2,
-    name: "Jane Smith",
-    taskDone: 140,
-    Points: 2800,
-    Earned: "$900",
-  },
-  {
-    rank: 3,
-    name: "Alice Johnson",
-    taskDone: 130,
-    Points: 2600,
-    Earned: "$850",
-  },
-  {
-    rank: 4,
-    name: "Bob Brown",
-    taskDone: 120,
-    Points: 2400,
-    Earned: "$800",
-  },
-  {
-    rank: 5,
-    name: "Charlie Davis",
-    taskDone: 110,
-    Points: 2200,
-    Earned: "$750",
-  },
-  {
-    rank: 6,
-    name: "Dana Evans",
-    taskDone: 100,
-    Points: 2000,
-    Earned: "$700",
-  },
-  {
-    rank: 7,
-    name: "Ethan Foster",
-    taskDone: 90,
-    Points: 1800,
-    Earned: "$650",
-  },
-  {
-    rank: 8,
-    name: "Fiona Green",
-    taskDone: 80,
-    Points: 1600,
-    Earned: "$600",
-  },
-  {
-    rank: 9,
-    name: "George Harris",
-    taskDone: 70,
-    Points: 1400,
-    Earned: "$550",
-  },
-  {
-    rank: 10,
-    name: "Hannah White",
-    taskDone: 60,
-    Points: 1200,
-    Earned: "$500",
-  },
-];
-
-const TopReviewer = () => {
+const TopContributor = ({ data }) => {
   const columns = React.useMemo(() => COLUMNS, []);
   const dataMemo = React.useMemo(() => data, []);
 
@@ -150,59 +95,76 @@ const TopReviewer = () => {
 
   return (
     <>
-    <div className='w-full'>
-    <div className=' flex gap-6'>
-        <p>Top Reviewer</p>
-        <Badge className="text-center mx-4 bg-primary/60 text-primary-foreground shrink-0 border ">All time</Badge>
-        <SearchBar />
-      </div>
-      <div className='gap-y-2 w-full mt-4'>
-        <table
-          {...getTableProps()}
-          className=" bg-white rounded-lg shadow-lg overflow-hidden"
-          style={{ padding: "2rem" }}
-        >
-          <thead className="bg-gray-200">
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    className="px-6 py-3 border-b border-gray-300 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, index) => {
-              prepareRow(row);
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+      <div className="w-full p-6">
+        <div className=" flex gap-6 px-3 py-2  items-center justify-center">
+          <p>Top Reviewer</p>
+          <Badge className="text-center flex items-center justify-center bg-primary text-primary-foreground shrink-0 h-8 rounded-lg mt-3 w-24 border ">
+            All time
+          </Badge>
+
+          <SearchBar />
+        </div>
+        <Card x-chunk="dashboard-06-chunk-0" className="mt-4">
+          <Table className="bg-slate-500 border rounded-lg shadow-lg w-full overflow-hidden">
+            <TableHeader className="border">
+              <TableRow>
+                <TableHead className="hidden  sm:table-cell">
+                  Rank
+                </TableHead>
+                <TableHead>Username</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Task Reviewed
+                </TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Task Points
+                </TableHead>
+                <TableHead className="hidden md:table-cell">Earned</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((product, index) => (
+                <TableRow
+                  key={product.rank}
+                  className={index % 2 === 0 ? "bg-slate-200" : "bg-white"}
                 >
-                  {row.cells.map((cell) => {
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        </div>
-        </div>
+                  <TableCell className="hidden sm:table-cell">
+                    {product.rank}
+                  </TableCell>
+                  <TableCell className="font-medium flex gap-2">
+                    {" "}
+                    <Image
+                      alt="Product image"
+                      className="rounded-full border aspect-square object-cover"
+                      height="36"
+                      src="/av-7.png"
+                      width="36"
+                    />
+                    {product.name}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {product.taskDone}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {product.Points}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {product.Earned}
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <CardFooter>
+            <div className="text-muted-foreground text-xs">
+              Showing <strong>1-10</strong> of <strong>32</strong> products
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </>
   );
 };
 
-export default TopReviewer;
+export default TopContributor;

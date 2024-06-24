@@ -260,4 +260,75 @@ export const data1 = [
 	  Earned: '$500',
 	},
   ];
-  
+  export const data2 = [
+	{
+	  rank: 1,
+	  name: 'Liam Brown',
+	  taskDone: 160,
+	  Points: 3200,
+	  Earned: '$1100',
+	},
+	{
+	  rank: 2,
+	  name: 'Olivia Smith',
+	  taskDone: 150,
+	  Points: 3000,
+	  Earned: '$1050',
+	},
+	{
+	  rank: 3,
+	  name: 'Noah Johnson',
+	  taskDone: 140,
+	  Points: 2800,
+	  Earned: '$1000',
+	},
+	{
+	  rank: 4,
+	  name: 'Emma Davis',
+	  taskDone: 130,
+	  Points: 2600,
+	  Earned: '$950',
+	},
+	{
+	  rank: 5,
+	  name: 'William Garcia',
+	  taskDone: 120,
+	  Points: 2400,
+	  Earned: '$900',
+	},
+	{
+	  rank: 6,
+	  name: 'Sophia Martinez',
+	  taskDone: 110,
+	  Points: 2200,
+	  Earned: '$850',
+	},
+	{
+	  rank: 7,
+	  name: 'James Rodriguez',
+	  taskDone: 100,
+	  Points: 2000,
+	  Earned: '$800',
+	},
+	{
+	  rank: 8,
+	  name: 'Isabella Hernandez',
+	  taskDone: 90,
+	  Points: 1800,
+	  Earned: '$750',
+	},
+	{
+	  rank: 9,
+	  name: 'Benjamin Lee',
+	  taskDone: 80,
+	  Points: 1600,
+	  Earned: '$700',
+	},
+	{
+	  rank: 10,
+	  name: 'Mia Wilson',
+	  taskDone: 70,
+	  Points: 1400,
+	  Earned: '$650',
+	},
+];

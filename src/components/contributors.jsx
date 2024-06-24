@@ -98,8 +98,8 @@ const ContributorCard = ({ contributor }) => {
         <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center ">
           <div className="flex  items-center gap-4">
             <Image
-              className="w-14 h-14 object-cover rounded-lg"
-              src="/av-1.jpg"
+              className="w-14 h-14 border object-cover rounded-full p-1"
+              src="/av-7.png"
               alt="LOGO"
               width={64}
               height={64}
@@ -128,7 +128,7 @@ const ContributorList = () => {
   return (
     <div className="w-full flex  justify-center ">
       <div className="flex flex-col items-center p-6 space-y-4">
-        <h1 className="text-4xl text-primary justify-start"> Contributors</h1>
+        <h1 className="text-4xl text-primary justify-start">Top Contributors</h1>
 
         <SearchBar />
         <div className="w-full grid grid-cols-3 gap-4 ">
