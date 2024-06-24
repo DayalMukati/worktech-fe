@@ -1,72 +1,109 @@
-import { FolderKanban, Home, Package2, Plus } from "lucide-react";
-import Link from "next/link";
-import React from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { usePathname } from "next/navigation";
-import { checkPathMatch, cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { useAppDispatch } from "@/hooks/toolKitTyped";
-import { setOrgCreationModal } from "@/store/layoutSlice";
-import OrgCreationModal from "./org-creation-modal";
+import {
+	Building2,
+	FolderKanban,
+	Home,
+	Package2,
+	Plus
+} from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from './ui/tooltip';
+import { usePathname } from 'next/navigation';
+import { checkPathMatch, cn } from '@/lib/utils';
+import { Button } from './ui/button';
+import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
+import { setOrgCreationModal } from '@/store/layoutSlice';
+import OrgCreationModal from './org-creation-modal';
+import { selectOrg } from '@/store/orgSlice';
+import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
+import { AvatarImage } from './ui/avatar';
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
   const currentURI = usePathname();
 
-  const Icons: { [key: string]: JSX.Element } = {
-    Home: <Home className="w-5 h-5" />,
-    FolderKanban: <FolderKanban className="w-5 h-5" />,
-  };
-  const menuItems = [
-    {
-      href: "/dashboard",
-      icon: "Home",
-      label: "Orgs",
-    },
-  ];
+	const { orgs } = useAppSelector(selectOrg);
 
-  return (
-    <>
-      <aside className="left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20">
-        <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-          {menuItems.map(({ href, icon, label }) => (
-            <Tooltip key={href}>
-              <TooltipTrigger asChild>
-                <Link
-                  href={href}
-                  className={cn(
-                    "flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors",
-                    "text-accent-foreground bg-accent",
-                    checkPathMatch(currentURI, href)
-                      ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
-                      : "text-muted-foreground rounded-full"
-                  )}
-                >
-                  {Icons[icon]}
-                  <span className="sr-only">{label}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">{label}</TooltipContent>
-            </Tooltip>
-          ))}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => dispatch(setOrgCreationModal(true))}
-                variant="outline"
-                size={"icon"}
-              >
-                <Plus className="w-5 h-5" />
-                <span className="sr-only">{"Create Org"}</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">{"Create Org"}</TooltipContent>
-          </Tooltip>
-        </nav>
-      </aside>
-      <OrgCreationModal />
-    </>
-  );
+	const Icons: { [key: string]: JSX.Element } = {
+		Home: <Home className='w-5 h-5' />,
+		FolderKanban: <FolderKanban className='w-5 h-5' />
+	};
+	const menuItems = [
+		{
+			href: '/dashboard',
+			icon: 'Home',
+			label: 'Dashboard'
+		}
+	];
+
+	return (
+		<>
+			<aside className='left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20'>
+				<nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
+					{menuItems.map(({ href, icon, label }) => (
+						<Tooltip key={href}>
+							<TooltipTrigger asChild>
+								<Link
+									href={href}
+									className={cn(
+										'flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors',
+										'text-accent-foreground bg-accent',
+										checkPathMatch(currentURI, href)
+											? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
+											: 'text-muted-foreground rounded-full'
+									)}>
+									{Icons[icon]}
+									<span className='sr-only'>{label}</span>
+								</Link>
+							</TooltipTrigger>
+							<TooltipContent side='right'>{label}</TooltipContent>
+						</Tooltip>
+					))}
+					{orgs.map(({ name }) => (
+						<Tooltip key={name}>
+							<TooltipTrigger asChild>
+								<Avatar>
+									{/* <AvatarImage
+										className='rounded-full w-10 h-10'
+										src='https://github.com/shadcn.png'
+									/> */}
+									<Button
+										onClick={() =>
+											dispatch(setOrgCreationModal(true))
+										}
+										variant='outline'
+										size={'icon'}>
+										<Building2 />
+										<span className='sr-only'>{name}</span>
+									</Button>
+								</Avatar>
+							</TooltipTrigger>
+							<TooltipContent side='right'>{name}</TooltipContent>
+						</Tooltip>
+					))}
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								onClick={() => dispatch(setOrgCreationModal(true))}
+								variant='outline'
+								size={'icon'}>
+								<Plus className='w-5 h-5' />
+								<span className='sr-only'>{'Create Org'}</span>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent side='right'>
+							{'Create Org'}
+						</TooltipContent>
+					</Tooltip>
+				</nav>
+			</aside>
+			<OrgCreationModal />
+		</>
+	);
 };
 
 export default Sidebar;
