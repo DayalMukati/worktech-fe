@@ -1,7 +1,7 @@
 'use client';
 import { DEFAULT_CARDS } from '@/data/data';
 import { cn } from '@/lib/utils';
-import { Flame, Plus, Trash } from 'lucide-react';
+import { Circle, Clock, Flame, Plus, Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 
@@ -19,6 +19,8 @@ interface CardProps {
 	title: string;
 	id: string;
 	column: string;
+	createdAt: string;
+	tags: string[];
 	handleDragStart: Function;
 }
 
@@ -29,7 +31,7 @@ interface DropIndicatorProps {
 
 const TaskBoard = () => {
 	return (
-		<div className='bg-muted w-full h-[90vh] text-muted-foreground'>
+		<div className='w-full h-[90vh]'>
 			<Board />
 		</div>
 	);
@@ -41,26 +43,33 @@ const Board = () => {
 		<div className='flex gap-3 p-12 w-full h-full overflow-scroll'>
 			<Column
 				title='To Do'
-				headingColor='red-500'
+				headingColor='text-red-500'
 				column='todo'
 				cards={cards}
 				setCards={setCards}
 			/>
 			<Column
 				title='In Progress'
-				headingColor='yellow-500'
+				headingColor='text-yellow-500'
 				column='in-progress'
 				cards={cards}
 				setCards={setCards}
 			/>
 			<Column
+				title='In Review'
+				headingColor='text-orange-500'
+				column='in-review'
+				cards={cards}
+				setCards={setCards}
+			/>
+			<Column
 				title='Done'
-				headingColor='green-500'
+				headingColor='text-green-500'
 				column='done'
 				cards={cards}
 				setCards={setCards}
 			/>
-			<DropZone setCards={setCards} />
+			{/* <DropZone setCards={setCards} /> */}
 		</div>
 	);
 };
@@ -162,10 +171,14 @@ const Column = ({
 			el.classList.remove('opacity-100');
 		});
 	};
+
 	return (
-		<div className='w-56 shrink-0'>
-			<div className='flex justify-between items-center mb-3'>
-				<h3 className={`text-${headingColor}`}>{title}</h3>
+		<div className='w-64 shrink-0'>
+			<div className='flex justify-between items-center mb-3 p-2.5 border rounded'>
+				<div className='flex items-center gap-2'>
+					<Circle className={`${headingColor} w-4 h-4`} />
+					<h3 className={`${headingColor}`}>{title}</h3>
+				</div>
 				<span className='rounded text-secondary-foreground text-sm'>
 					{filteredCards.length}
 				</span>
@@ -174,8 +187,8 @@ const Column = ({
 				onDragOver={handleDragOver}
 				onDragLeave={handleDragLeave}
 				onDrop={handleDrop}
-				className={`h-full w-full p-2 transition-colors ${
-					activeCard ? 'bg-primary/50' : 'bg-primary/20'
+				className={`h-full w-full p-2 transition-colors border overflow-y-auto scroller ${
+					activeCard ? 'bg-primary/5' : 'bg-background'
 				}`}>
 				{filteredCards.map(card => (
 					<Card
@@ -191,7 +204,21 @@ const Column = ({
 	);
 };
 
-const Card = ({ title, id, column, handleDragStart }: CardProps) => {
+const Card = ({
+	title,
+	id,
+	column,
+	handleDragStart,
+	createdAt,
+	tags
+}: CardProps) => {
+	const colors = [
+		'bg-red-500',
+		'bg-blue-500',
+		'bg-green-500',
+		'bg-yellow-500',
+		'bg-purple-500'
+	];
 	return (
 		<>
 			<DropIndicator before={id} column={column} />
@@ -200,8 +227,25 @@ const Card = ({ title, id, column, handleDragStart }: CardProps) => {
 				layoutId={id}
 				draggable={true}
 				onDragStart={e => handleDragStart(e, { title, id, column })}
-				className='bg-muted p-3 border rounded cursor-grab active:cursor-grabbing'>
-				<p className='text-muted-foreground text-sm'>{title} </p>
+				className='space-y-2 bg-secondary/70 shadow-sm hover:shadow p-3 rounded transition-shadow cursor-grab active:cursor-grabbing'>
+				<p className='font-bold text-muted-foreground text-sm'>
+					{title}
+				</p>
+				<div className='flex justify-start items-center w-full text-muted-foreground'>
+					<Clock className='w-3 h-3' />
+					<span className='ml-1 text-xs'>{createdAt}</span>
+				</div>
+				<div className='flex flex-wrap gap-1'>
+					{tags?.map((tag, index) => (
+						<span
+							key={index}
+							className={`${
+								colors[index % colors.length]
+							} text-white text-xs py-1 px-2  rounded`}>
+							{tag}
+						</span>
+					))}
+				</div>
 			</motion.div>
 		</>
 	);
@@ -213,7 +257,7 @@ const DropIndicator = ({ before, column }: DropIndicatorProps) => {
 			data-before={before || '-1'}
 			data-column={column}
 			className={cn(
-				'bg-primary-foreground opacity-0 my-0.5 w-full h-0.5'
+				'bg-primary opacity-0 my-0.5 w-full h-0.5 rounded-full transition-colors'
 			)}></div>
 	);
 };

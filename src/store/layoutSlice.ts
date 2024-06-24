@@ -14,8 +14,8 @@ export const layoutSlice = createSlice({
 	name: 'layout',
 	initialState: initialState,
 	reducers: {
-		setOrgCreationModal: state => {
-			state.isOrgCreationModalOpen = !state.isOrgCreationModalOpen;
+		setOrgCreationModal: (state, action: PayloadAction<boolean>) => {
+			state.isOrgCreationModalOpen = action.payload;
 		},
 
 		setIsMobile: (state, action: PayloadAction<boolean>) => {
@@ -24,7 +24,8 @@ export const layoutSlice = createSlice({
 	}
 });
 
-export const { setIsMobile } = layoutSlice.actions;
+export const { setIsMobile, setOrgCreationModal } =
+	layoutSlice.actions;
 export const selectLayout = (state: { layoutSlice: Layout }) =>
 	state.layoutSlice;
 export default layoutSlice.reducer;

@@ -9,8 +9,12 @@ import {
 import { usePathname } from 'next/navigation';
 import { checkPathMatch, cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { useAppDispatch } from '@/hooks/toolKitTyped';
+import { setOrgCreationModal } from '@/store/layoutSlice';
+import OrgCreationModal from './org-creation-modal';
 
 const Sidebar = () => {
+	const dispatch = useAppDispatch();
 	const currentURI = usePathname();
 
 	const Icons: { [key: string]: JSX.Element } = {
@@ -24,39 +28,48 @@ const Sidebar = () => {
 			label: 'Orgs'
 		}
 	];
+
 	return (
-		<aside className='left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20'>
-			<nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
-				{menuItems.map(({ href, icon, label }) => (
-					<Tooltip key={href}>
+		<>
+			<aside className='left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20'>
+				<nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
+					{menuItems.map(({ href, icon, label }) => (
+						<Tooltip key={href}>
+							<TooltipTrigger asChild>
+								<Link
+									href={href}
+									className={cn(
+										'flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors',
+										'text-accent-foreground bg-accent',
+										checkPathMatch(currentURI, href)
+											? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
+											: 'text-muted-foreground rounded-full'
+									)}>
+									{Icons[icon]}
+									<span className='sr-only'>{label}</span>
+								</Link>
+							</TooltipTrigger>
+							<TooltipContent side='right'>{label}</TooltipContent>
+						</Tooltip>
+					))}
+					<Tooltip>
 						<TooltipTrigger asChild>
-							<Link
-								href={href}
-								className={cn(
-									'flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors',
-									'text-accent-foreground bg-accent',
-									checkPathMatch(currentURI, href)
-										? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
-										: 'text-muted-foreground rounded-full'
-								)}>
-								{Icons[icon]}
-								<span className='sr-only'>{label}</span>
-							</Link>
+							<Button
+								onClick={() => dispatch(setOrgCreationModal(true))}
+								variant='outline'
+								size={'icon'}>
+								<Plus className='w-5 h-5' />
+								<span className='sr-only'>{'Create Org'}</span>
+							</Button>
 						</TooltipTrigger>
-						<TooltipContent side='right'>{label}</TooltipContent>
+						<TooltipContent side='right'>
+							{'Create Org'}
+						</TooltipContent>
 					</Tooltip>
-				))}
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Button variant='outline' size={'icon'}>
-							<Plus className='w-5 h-5' />
-							<span className='sr-only'>{'Create Org'}</span>
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent side='right'>{'Create Org'}</TooltipContent>
-				</Tooltip>
-			</nav>
-		</aside>
+				</nav>
+			</aside>
+			<OrgCreationModal />
+		</>
 	);
 };
 
