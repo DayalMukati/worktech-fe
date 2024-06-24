@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Tooltip } from "@radix-ui/react-tooltip";
 import Image from "next/image";
 import React from "react";
 import {
@@ -104,11 +103,11 @@ const OrgOverview = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col p-4 gap-6 ">
-            <Button className="w-24 bg-[#7D6CE2FF] flex justify-between">
+          <div className="flex flex-col p-4 gap-6 justify-center">
+            {/* <Button className="w-24 bg-[#7D6CE2FF] flex justify-between">
               <LogIn className="w-[20px] h-[20px]" />
               Login
-            </Button>
+            </Button> */}
             <Button className="w-24 bg-[#7D6CE2FF] flex justify-between">
               <UserPlus className="w-[20px] h-[20px]" /> Follow
             </Button>
@@ -191,12 +190,12 @@ const OrgOverview = () => {
                 We're building the first general. purpose, EVM equivalent,
                 encrypted L2 for Ethereum
               </p>
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap overflow-hidden">
                 {AboutTags.map((tag, index) => {
                   return (
                     <div
                       key={index}
-                      className="bg-[#7D6CE2FF] px-2  rounded-md text-white"
+                      className="bg-[#7D6CE2FF] px-2  rounded-md text-white "
                     >
                       {tag}
                     </div>
