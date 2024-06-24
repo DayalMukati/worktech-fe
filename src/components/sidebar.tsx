@@ -1,4 +1,10 @@
-import { FolderKanban, Home, Package2, Plus } from 'lucide-react';
+import {
+	Building2,
+	FolderKanban,
+	Home,
+	Package2,
+	Plus
+} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import {
@@ -61,15 +67,19 @@ const Sidebar = () => {
 						<Tooltip key={name}>
 							<TooltipTrigger asChild>
 								<Avatar>
-									<AvatarImage
+									{/* <AvatarImage
 										className='rounded-full w-10 h-10'
 										src='https://github.com/shadcn.png'
-									/>
-									<AvatarFallback>
-										<div className='bg-secondary rounded-full'>
-											{name?.substring(0, 2)}
-										</div>
-									</AvatarFallback>
+									/> */}
+									<Button
+										onClick={() =>
+											dispatch(setOrgCreationModal(true))
+										}
+										variant='outline'
+										size={'icon'}>
+										<Building2 />
+										<span className='sr-only'>{name}</span>
+									</Button>
 								</Avatar>
 							</TooltipTrigger>
 							<TooltipContent side='right'>{name}</TooltipContent>
