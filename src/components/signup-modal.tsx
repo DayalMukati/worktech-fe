@@ -21,9 +21,7 @@ import {
 
 // Define the form schema
 const formSchema = z.object({
-	firstName: z.string().min(1, 'First name is required'),
-	lastName: z.string().min(1, 'Last name is required'),
-	email: z.string().email('Invalid email address'),
+	username: z.string().min(1, 'Username is required'),
 	skills: z
 		.array(
 			z.object({
@@ -47,7 +45,7 @@ function SignupModal() {
 	const dispatch = useAppDispatch();
 	const methods = useForm<FormData>({
 		resolver: zodResolver(formSchema),
-		mode: 'onBlur'
+		mode: 'all'
 	});
 
 	const onSubmit = methods.handleSubmit(
@@ -70,35 +68,15 @@ function SignupModal() {
 				</DialogTitle>
 				<form onSubmit={onSubmit}>
 					<div>
-						<Label htmlFor='firstName'>First Name</Label>
-						<Input
-							id='firstName'
-							{...methods.register('firstName')}
-						/>
-						{methods.formState.errors.firstName && (
+						<Label htmlFor='username'>User Name</Label>
+						<Input id='username' {...methods.register('username')} />
+						{methods.formState.errors.username && (
 							<p className='text-red-500 text-sm'>
-								*{methods.formState.errors.firstName.message}
+								*{methods.formState.errors.username.message}
 							</p>
 						)}
 					</div>
-					<div>
-						<Label htmlFor='lastName'>Last Name</Label>
-						<Input id='lastName' {...methods.register('lastName')} />
-						{methods.formState.errors.lastName && (
-							<p className='text-red-500 text-sm'>
-								*{methods.formState.errors.lastName.message}
-							</p>
-						)}
-					</div>
-					<div>
-						<Label htmlFor='email'>Email</Label>
-						<Input id='email' {...methods.register('email')} />
-						{methods.formState.errors.email && (
-							<p className='text-red-500 text-sm'>
-								*{methods.formState.errors.email.message}
-							</p>
-						)}
-					</div>
+
 					<div>
 						<Label htmlFor='skills'>Skills</Label>
 						<Controller
