@@ -332,3 +332,16 @@ export const data2 = [
 		Earned: '$650'
 	}
 ];
+
+
+export const spaces = [
+  {
+    name: "Community Contributions",
+    visibility: false,
+    // tasks: ["Task 1", "Task 2", "Task 3"],
+  },
+  {
+    name: "Developer challenges",
+    visibility: false,
+  },
+];

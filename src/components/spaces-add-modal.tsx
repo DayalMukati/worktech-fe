@@ -20,15 +20,15 @@ import {
   setOrgCreationModal,
 } from "@/store/layoutSlice";
 import { Aperture, Building2, SpaceIcon } from "lucide-react";
-import { createOrg } from "@/store/orgSlice";
-import { tasks } from "@/data/data";
 import { Switch } from "./ui/switch";
+import { spaces } from "@/conf/data";
+import { createSpace } from "@/store/spacesSlice";
 
 // Define the schema using Zod
 const spacesSchema = z.object({
   name: z.string().min(1, "Name is required"),
   visibility: z.boolean(),
-  tasks: z.array(z.string()).min(1, "At least one task is required"),
+  // tasks: z.array(z.string()).min(1, "At least one task is required"),
 });
 
 type Schema = z.infer<typeof spacesSchema>;
@@ -50,14 +50,17 @@ function SpacesAddModal() {
   });
 
   const onSubmit = (data: Schema) => {
-    dispatch(
-      createOrg({
-        org: {
-          name: data.name,
-        },
-      })
-    );
-    dispatch(setOrgCreationModal(false));
+    console.log(data);
+    const newSpace = {
+      name: data.name,
+      visibility: data.visibility,
+    };
+    dispatch(createSpace({ space: newSpace }));
+    dispatch(setIsCreateSpaceModalOpen(false));
+  };
+
+  const onError = (errors: any) => {
+    console.log(errors);
   };
 
   return (
@@ -69,7 +72,7 @@ function SpacesAddModal() {
         }}
         className="sm:max-w-[700px]"
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
           <DialogHeader className="flex flex-col justify-center items-center ">
             <DialogTitle className="text-md font-thin text-left w-full ">
               SPACE NAME
