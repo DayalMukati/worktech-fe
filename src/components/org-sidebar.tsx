@@ -84,7 +84,7 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
           ))}
         </ul>
       </nav>
-      <Spaces spacesItem={spaces} />
+      <Spaces spacesItem={spaces as any} />
       <SpacesAddModal />
     </aside>
   );
