@@ -11,6 +11,7 @@ import {
   CircleCheck,
   Users,
   LeafyGreen,
+  DraftingCompass,
 } from "lucide-react";
 import { Textarea } from "@headlessui/react";
 import { Label } from "@radix-ui/react-label";
@@ -160,11 +161,13 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
     <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
       <div className="grid grid-cols-3 gap-6 p-4">
         <div className="col-span-2 ">
+          <Label className="text-md text-slate-800">Task Name</Label>
+
           <Input
             type="text"
             {...register("taskName")}
             placeholder="Task Name"
-            className="w-[400px] text-sm  text-slate-600  "
+            className="w-[400px] text-sm  text-slate-600 border-slate-400 border-2 rounded-md "
           />
           {errors.taskName && (
             <span className="text-red-500 text-xs">
@@ -176,10 +179,13 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
               <ShieldCheck className="w-4 h-4 " />
               Permissions
             </Button>
-            <Button className="bg-[#7D6CE2FF] text-center">Add Skils</Button>
+            <Button className="bg-[#7D6CE2FF] text-center gap-3">
+              <DraftingCompass className="w-4 h-4 " />
+              Add Skils
+            </Button>
           </div>
           <div className="mt-4">
-            <Label className="text-sm text-slate-800">Task Description</Label>
+            <Label className="text-md text-slate-800">Task Description</Label>
             <Textarea
               placeholder="Task Description "
               {...register("description")}
@@ -187,7 +193,7 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
                 clearErrors(["description"]);
               }}
               name="description"
-              className="w-full  h-[80px] outline-none text-sm font-sm text-slate-400  border-2"
+              className="w-full  h-[80px] outline-none text-sm font-sm text-slate-600  border-2 rounded-md border-slate-400 indent-2"
             />
             {errors.description && (
               <span className="text-red-500 text-xs">
@@ -196,14 +202,13 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
             )}
           </div>
           <div className="mt-4">
-            <Label className="text-sm text-slate-800 mt-4">
+            <Label className="text-md text-slate-800 mt-4">
               Accepted Criteria
             </Label>
-            <Input
-              type="text"
+            <Textarea
               {...register("acceptanceCriteria")}
               placeholder="Acceptace criteria"
-              className="w-[400px] outline-none text-xs font-semibold text-slate-600 "
+              className="w-full   outline-none text-sm font-sm text-slate-600  border-2 border-slate-400  rounded-md indent-2"
             />
             {errors.acceptanceCriteria && (
               <span className="text-red-500 text-xs">
@@ -309,7 +314,7 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
             </div>
           </div>
 
-          <div className="text-sm text-slate-900 uppercase w-full">
+          <div className="text-sm mt-2 text-slate-900 uppercase w-full">
             <Label className="uppercase">HBAR-Price</Label>
             <Input
               type="number"
@@ -326,7 +331,7 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
             )}
           </div>
 
-          <div className="text-sm text-slate-900 uppercase w-full">
+          <div className="text-sm mt-2 text-slate-900 uppercase w-full">
             <Label className="text-sm text-slate-800 "> Reviewers</Label>
             <Controller
               name="reviewers"
