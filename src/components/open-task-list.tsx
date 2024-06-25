@@ -1,5 +1,5 @@
 import React from 'react';
-import { tasks } from '@/data/data';
+import { tasks } from '@/conf/data';
 import TaskCardItem from '@/components/task-card-item';
 
 const OpenTaskList = () => {

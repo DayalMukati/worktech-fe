@@ -1,5 +1,5 @@
 'use client';
-import { DEFAULT_CARDS } from '@/data/data';
+import { DEFAULT_CARDS } from '@/conf/data';
 import { cn } from '@/lib/utils';
 import { Circle, Clock, Flame, Plus, Trash } from 'lucide-react';
 import React, { useState } from 'react';
