@@ -88,18 +88,12 @@ function LoginModal() {
 				},
 				update: (cache, { data }) => {
 					console.log('data', data);
-					if (data?.loginUser?.token) {
-						localStorage.setItem('authToken', data.loginUser.token);
+					if (data?.loginUser) {
 						// window.location.reload();
-						if (data.loginUser.isProfileCreated) {
-							dispatch(
-								handleLogin({
-									token: data.loginUser.token,
-									user: {
-										walletAddress: account
-									}
-								})
-							);
+						if (!data.loginUser.isProfileCreated) {
+							localStorage.setItem('address', signature);
+							dispatch(loadUser({ walletAddress: signature }));
+							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));
 						}
 					}

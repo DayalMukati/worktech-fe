@@ -72,19 +72,6 @@ function SignupModal() {
 							status: 0,
 							walletAddress: user.walletAddress
 						}
-					},
-					onCompleted: data => {
-						if (!data.registerUser.isProfileCreated) {
-						}
-						dispatch(
-							handleLogin({
-								token: data.registerUser.token as string,
-								user: {
-									email: data.registerUser.user.email as string
-								}
-							})
-						);
-						dispatch(setIsSignupModalOpen(false));
 					}
 				});
 			}
