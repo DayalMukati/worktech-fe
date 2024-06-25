@@ -7,11 +7,11 @@ import { data2 } from '@/data/data';
 function Leaderboard() {
   return (
     <>
-   <div className="flex gap-4 justify-start mt-4 mb-10" >
-  <div className="flex w-full  items-center">
+   <div className="flex  justify-start mt-4 mb-10" >
+  <div className="flex w-full ">
     <TopContributor data={data1} />
   </div>
-  <div className="flex w-full items-center">
+  <div className="flex w-full ">
     <TopReviewer data={data2} />
   </div>
 </div>

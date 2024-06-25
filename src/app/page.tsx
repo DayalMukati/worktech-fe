@@ -1,13 +1,40 @@
+'use client'
+import OpenTaskList from '@/components/open-task-list';
 import OrgList from '@/components/org-listings';
-import Link from 'next/link';
+import TaskCardItem from '@/components/task-card-item';
+import Contributors  from '@/components/contributors';
+import Leaderboard from '@/components/leaderboard'
+
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger
+} from '@/components/ui/tabs';
+
 import React from 'react';
 
-const main = () => {
+const page = () => {
 	return (
-		<div>
-			<OrgList />
-		</div>
+		<Tabs
+			defaultValue='orgs'
+			className='flex flex-col items-center w-full mt-12'>
+			<TabsList className=''>
+				<TabsTrigger value='orgs'> Organizations</TabsTrigger>
+				<TabsTrigger value='tasks'>Tasks</TabsTrigger>
+				<TabsTrigger value='contributors'>Contributors</TabsTrigger>
+				{/* <TabsTrigger value='leaderboard'>Leaderboard</TabsTrigger> */}
+			</TabsList>
+			<TabsContent value='orgs'>
+				<OrgList />
+			</TabsContent>
+			<TabsContent value='tasks'>
+				<OpenTaskList />
+			</TabsContent>
+			<TabsContent value='contributors'><Contributors /></TabsContent>
+			{/* <TabsContent value='leaderboard'><Leaderboard /></TabsContent> */}
+		</Tabs>
 	);
 };
 
-export default main;
+export default page;

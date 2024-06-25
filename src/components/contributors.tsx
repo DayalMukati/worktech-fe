@@ -15,7 +15,16 @@ import {
 import Image from "next/image";
 import organizations from "@/data/data";
 import { Badge } from "./ui/badge";
-export function SearchBar() {
+
+// Define the type for a contributor
+interface Contributor {
+  name: string;
+  reputation: number;
+  description: string;
+  avatar: string;
+}
+
+export function SearchBar(): JSX.Element {
   return (
     <div className="flex items-center space-x-2 px-4 border w-full max-w-xl bg-secondary rounded">
       <Search className="" />
@@ -28,7 +37,7 @@ export function SearchBar() {
   );
 }
 
-const contributors = [
+const contributors: Contributor[] = [
   {
     name: "Sero | Hunters Workshop",
     reputation: 11340,
@@ -91,7 +100,11 @@ const contributors = [
   },
 ];
 
-const ContributorCard = ({ contributor }) => {
+interface ContributorCardProps {
+  contributor: Contributor;
+}
+
+const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
   return (
     <Card className="hover:bg-secondary transition-colors duration-300 cursor-pointer h-40">
       <CardHeader>
@@ -116,7 +129,7 @@ const ContributorCard = ({ contributor }) => {
           </div>
         </div>
         <div>
-          <CardDescription className="text-slate-200 mt-2">
+          <CardDescription className="text-slate-500 mt-2">
             {contributor.description}
           </CardDescription>
         </div>
@@ -124,16 +137,17 @@ const ContributorCard = ({ contributor }) => {
     </Card>
   );
 };
-const ContributorList = () => {
+
+const ContributorList: React.FC = () => {
   return (
-    <div className="w-full flex  justify-center ">
+    <div className="w-full flex  justify-center px-24 ">
       <div className="flex flex-col items-center p-6 space-y-4">
         <h1 className="text-4xl text-primary justify-start">Top Contributors</h1>
 
         <SearchBar />
         <div className="w-full grid grid-cols-3 gap-4 ">
           {contributors.map((contributor) => (
-            <ContributorCard contributor={contributor} />
+            <ContributorCard key={contributor.name} contributor={contributor} />
           ))}
         </div>
       </div>
@@ -142,4 +156,3 @@ const ContributorList = () => {
 };
 
 export default ContributorList;
- 
