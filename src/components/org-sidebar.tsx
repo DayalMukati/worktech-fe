@@ -1,11 +1,22 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { Icons } from "./icons";
 import { space } from "postcss/lib/list";
-import { LayoutDashboard, ChevronsLeft, Trophy, BarChart4 } from "lucide-react";
+import {
+  LayoutDashboard,
+  ChevronsLeft,
+  Trophy,
+  BarChart4,
+  PlusIcon,
+} from "lucide-react";
+import SpacesAddModal from "./spaces-add-modal";
+import { setIsCreateSpaceModalOpen } from "@/store/layoutSlice";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
+import { useSelector } from "react-redux";
+import { selectSpaces } from "@/store/spacesSlice";
 
 const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
   return currentPath === menuItemHref;
@@ -13,7 +24,10 @@ const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
 var currentURl = "";
 
 const OrgSidebar = ({ Title }: { Title: string }) => {
+  const { spaces } = useSelector(selectSpaces);
+
   const currentURI = usePathname();
+
   currentURl = currentURI;
   const menuItems = [
     {
@@ -46,19 +60,6 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
     },
   ];
 
-  const SpacesItem = [
-    {
-      href: "/dashboard/space-1",
-      icon: "Package",
-      label: "Community Contributions",
-    },
-    {
-      href: "/dashboard/space-2",
-      icon: "Users2",
-      label: "Developer challenges",
-    },
-  ];
-
   return (
     <aside className="col-span-1 bg-background border-r h-screen">
       <div className="p-3.5 border-b-2 ">
@@ -83,7 +84,8 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
           ))}
         </ul>
       </nav>
-      <Spaces spacesItem={SpacesItem} />
+      <Spaces spacesItem={spaces} />
+      <SpacesAddModal />
     </aside>
   );
 };
@@ -94,30 +96,34 @@ export const Spaces = ({
   spacesItem,
 }: {
   spacesItem: {
-    href: string;
-    icon: string;
-    label: string;
+    name: string;
+    visibility: boolean;
   }[];
 }) => {
+  const dispatch = useAppDispatch();
   return (
     <div className="flex flex-col items-start mt-auto p-2">
-      <div className="p-3.5  ">
+      <div className="p-3.5 w-full  flex justify-between items-center ">
         <h2 className="text-xl">Spaces</h2>
+        <PlusIcon
+          className="w-6 h-6 rounded-full  cursor-pointer hover:bg-slate-300"
+          onClick={() => dispatch(setIsCreateSpaceModalOpen(true))}
+        />
       </div>
-      <nav className="px-4">
+      <nav className="">
         <ul className="">
-          {spacesItem.map(({ href, icon, label }, index) => (
+          {spacesItem.map(({ name, visibility }, index) => (
             <li>
               <Button
                 className={cn(
-                  "flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors border-b-[2px]",
-                  isPathMatch(currentURl, href) || currentURl.startsWith(href)
+                  "flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors shadow-md",
+                  isPathMatch(currentURl, name) || currentURl.startsWith(name)
                     ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
                     : ""
                 )}
                 asChild
               >
-                <Link href={href}>{label}</Link>
+                <Link href={name}>{name}</Link>
               </Button>
             </li>
           ))}

@@ -33,9 +33,11 @@ import {
 import { useAppDispatch } from '@/hooks/toolKitTyped';
 import {
 	setIsLoginModalOpen,
+	setIsSignupModalOpen,
 	setOrgCreationModal
 } from '@/store/layoutSlice';
 import LoginModal from './login-modal';
+import SignupModal from './signup-modal';
 
 const Header = () => {
 	const dispatch = useAppDispatch();
@@ -129,12 +131,16 @@ const Header = () => {
 						</DropdownMenuContent>
 					</DropdownMenu>
 				) : (
-					<Button onClick={() => dispatch(setIsLoginModalOpen(true))}>
-						Login
-					</Button>
+					<>
+						<Button
+							onClick={() => dispatch(setIsLoginModalOpen(true))}>
+							Connect
+						</Button>
+					</>
 				)}
 			</header>
 			<LoginModal />
+			<SignupModal />
 		</>
 	);
 };
