@@ -1,17 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
-	email?: string;
+	username?: string;
+	walletAddress?: string;
 }
 
 interface AuthState {
-	user: User;
+	user?: User;
 	authToken?: string | null;
 }
 
 const initialState: AuthState = {
 	user: {
-		email: ''
+		walletAddress: ''
 	},
 	authToken: ''
 };
@@ -26,24 +27,24 @@ export const authSlice = createSlice({
 				...action.payload
 			};
 		},
-		handleLogin: (state, action: PayloadAction<{ user: User }>) => {
-			// console.log({ payload: action.payload });
-			state.user = {
-				...state.user,
-				...action.payload.user
-			};
-		},
-		// handleLogin: (
-		// 	state,
-		// 	action: PayloadAction<{ token: string; user: User }>
-		// ) => {
-		// 	console.log({ payload: action.payload });
-		// 	state.authToken = action.payload.token;
+		// handleLogin: (state, action: PayloadAction<{ user: User }>) => {
+		// 	// console.log({ payload: action.payload });
 		// 	state.user = {
 		// 		...state.user,
 		// 		...action.payload.user
 		// 	};
 		// },
+		handleLogin: (
+			state,
+			action: PayloadAction<{ token: string; user: User }>
+		) => {
+			console.log({ payload: action.payload });
+			state.authToken = action.payload.token;
+			state.user = {
+				...state.user,
+				...action.payload.user
+			};
+		},
 		handleLogout: (state, action: PayloadAction<void>) => {
 			state.authToken = initialState.authToken;
 			state.user = initialState.user;
