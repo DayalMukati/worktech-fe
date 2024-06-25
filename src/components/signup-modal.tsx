@@ -1,5 +1,5 @@
 // Import necessary libraries and components
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -18,12 +18,13 @@ import {
 	setIsSignupModalOpen,
 	selectLayout
 } from '@/store/layoutSlice';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
 	LOGIN_USER_WITH_WALLET,
 	REGISTER_USER
 } from '@/graphql/mutation';
 import { handleLogin, selectUserAuth } from '@/store/authSlice';
+import { LIST_ALL_SKILLS } from '@/graphql/queries';
 
 // Define the form schema
 const formSchema = z.object({
@@ -40,13 +41,23 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 // Skills options for the multi-select component
-const skillsOptions = [
-	{ value: 'react', label: 'React' },
-	{ value: 'vue', label: 'Vue' },
-	{ value: 'angular', label: 'Angular' }
-];
 
 function SignupModal() {
+	const [skillOptions, setSkillOptions] = useState<
+		{ value: string; label: string }[]
+	>([]);
+	const { data, loading } = useQuery(LIST_ALL_SKILLS, {
+		onCompleted: data => {
+			const options = data.listAllSkills.map(skill => ({
+				value: skill._id,
+				label: skill.title
+			}));
+			setSkillOptions(options);
+		}
+	});
+	const [updateUserProfile, { loading: updatedLoading }] =
+		useMutation(REGISTER_USER);
+
 	const { isSignupModalOpen } = useAppSelector(selectLayout);
 	const dispatch = useAppDispatch();
 	const methods = useForm<FormData>({
@@ -54,9 +65,6 @@ function SignupModal() {
 		mode: 'all'
 	});
 	const { user } = useAppSelector(selectUserAuth);
-
-	const [updateUserProfile, { loading: updatedLoading }] =
-		useMutation(REGISTER_USER);
 
 	const onSubmit = methods.handleSubmit(
 		async data => {
@@ -72,8 +80,17 @@ function SignupModal() {
 							status: 0,
 							walletAddress: user.walletAddress
 						}
+					},
+					onCompleted: data => {
+						localStorage.setItem(
+							'authToken',
+							data.registerUser.token as string
+						);
 					}
 				});
+
+				// Close the modal
+				dispatch(setIsSignupModalOpen(false));
 			}
 		},
 		e => {
@@ -110,7 +127,7 @@ function SignupModal() {
 									<MultiSelectComponent
 										createAble={true}
 										isMulti={true}
-										options={skillsOptions}
+										options={skillOptions}
 										{...field}
 										placeholder='Select Skills'
 									/>
@@ -124,7 +141,10 @@ function SignupModal() {
 						/>
 					</div>
 					<div className='flex justify-center mt-2.5 w-full'>
-						<Button className='w-2/3' type='submit'>
+						<Button
+							loading={updatedLoading}
+							className='w-2/3'
+							type='submit'>
 							Submit
 						</Button>
 					</div>
