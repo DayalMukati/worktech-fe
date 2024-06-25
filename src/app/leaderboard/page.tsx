@@ -1,6 +1,6 @@
 import React from 'react';
-import TopContributor from "@/components/TopContributors";
-import TopReviewer from "@/components/TopReviewer";
+import TopContributor from '@/components/TopContributors';
+import TopReviewer from '@/components/TopReviewer';
 import { MailWarningIcon } from 'lucide-react';
 import { data1 } from '@/conf/data';
 import { data2 } from '@/conf/data';
