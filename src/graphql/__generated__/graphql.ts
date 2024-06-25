@@ -39,7 +39,7 @@ export type CreateRoleInput = {
 
 export type CreateUserInput = {
   email: Scalars['String']['input'];
-  firstName: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
   gender?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   mobile?: InputMaybe<Scalars['String']['input']>;
@@ -89,9 +89,10 @@ export type InviteAdminUserOutput = {
 
 export type LoginResult = {
   __typename?: 'LoginResult';
+  isProfileCreated?: Maybe<Scalars['Boolean']['output']>;
   otp?: Maybe<Scalars['Int']['output']>;
   token?: Maybe<Scalars['String']['output']>;
-  user: UserDto;
+  user?: Maybe<UserDto>;
 };
 
 export type LoginUserInput = {
@@ -115,7 +116,6 @@ export type Mutation = {
   registerUser: LoginResult;
   removeAdminPermission: User;
   resetPassword: User;
-  signupEntity: SignUpEntityResponse;
   updateInterestedContributor: InterestedContributorsDto;
   updateOrg: Orgs;
   updateSkill: Skills;
@@ -194,11 +194,6 @@ export type MutationResetPasswordArgs = {
 };
 
 
-export type MutationSignupEntityArgs = {
-  input: SignUpEntityInput;
-};
-
-
 export type MutationUpdateInterestedContributorArgs = {
   _id: Scalars['String']['input'];
   input: UpdateInterestedContributorsInput;
@@ -248,6 +243,7 @@ export type Orgs = {
   __typename?: 'Orgs';
   _id: Scalars['ID']['output'];
   contributors?: Maybe<Array<UserDto>>;
+  createdBy?: Maybe<UserDto>;
   description?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   reviewers?: Maybe<Array<UserDto>>;
@@ -258,6 +254,7 @@ export type Orgs = {
 
 export type OrgsInput = {
   contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
+  createdBy?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   reviewers: Array<Scalars['ID']['input']>;
@@ -276,8 +273,10 @@ export type Query = {
   getSkill: Skills;
   getSpace: Spaces;
   getTask: Tasks;
+  getUserByToken: User;
   listAllInterestedContributors: Array<InterestedContributorsDto>;
   listAllOrgs: Array<Orgs>;
+  listAllOrgsByUser: Array<Orgs>;
   listAllRoles: Array<Roles>;
   listAllSkills: Array<Skills>;
   listAllSpaces: Array<Spaces>;
@@ -357,23 +356,6 @@ export type Roles = {
   status: Scalars['Float']['output'];
   title: Scalars['String']['output'];
   updatedBy?: Maybe<Scalars['String']['output']>;
-};
-
-export type SignUpEntityInput = {
-  address: Scalars['String']['input'];
-  email: Scalars['String']['input'];
-  entityName: Scalars['String']['input'];
-  firstName: Scalars['String']['input'];
-  lastName: Scalars['String']['input'];
-  mobile: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  token: Scalars['String']['input'];
-};
-
-export type SignUpEntityResponse = {
-  __typename?: 'SignUpEntityResponse';
-  signupToken: Scalars['String']['output'];
-  userDetails: UserDetails;
 };
 
 export type SkillDto = {
@@ -530,43 +512,33 @@ export type User = {
   _id: Scalars['ID']['output'];
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  gender: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
-  mobile: Scalars['String']['output'];
-  password: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  gender?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  mobile?: Maybe<Scalars['String']['output']>;
+  password?: Maybe<Scalars['String']['output']>;
   permissions: Array<Scalars['String']['output']>;
-  profilePic: Scalars['String']['output'];
-  signupMode: Scalars['String']['output'];
-  skills: Array<Scalars['String']['output']>;
+  profilePic?: Maybe<Scalars['String']['output']>;
+  signupMode?: Maybe<Scalars['String']['output']>;
+  skills?: Maybe<Array<SkillDto>>;
   status: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  userRoles: Array<Scalars['String']['output']>;
+  userRoles?: Maybe<Array<RoleDto>>;
   walletAddress: Scalars['String']['output'];
-};
-
-export type UserDetails = {
-  __typename?: 'UserDetails';
-  _id: Scalars['ID']['output'];
-  email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
-  mobile: Scalars['String']['output'];
-  status: Scalars['Float']['output'];
 };
 
 export type UserDto = {
   __typename?: 'UserDto';
   _id: Scalars['ID']['output'];
   createdAt: Scalars['DateTime']['output'];
-  email?: Maybe<Scalars['String']['output']>;
-  firstName: Scalars['String']['output'];
-  gender: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  gender?: Maybe<Scalars['String']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
-  mobile: Scalars['String']['output'];
+  mobile?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
-  profilePic: Scalars['String']['output'];
-  signupMode: Scalars['String']['output'];
+  profilePic?: Maybe<Scalars['String']['output']>;
+  signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
   status: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -589,14 +561,14 @@ export type LoginUserMutationVariables = Exact<{
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', loginUser: { __typename?: 'LoginResult', token?: string | null, user: { __typename?: 'UserDto', _id: string, firstName: string, lastName?: string | null, status: number, userRoles?: Array<{ __typename?: 'RoleDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string, title: string }> | null } } };
+export type LoginUserMutation = { __typename?: 'Mutation', loginUser: { __typename?: 'LoginResult', token?: string | null, user?: { __typename?: 'UserDto', _id: string, firstName?: string | null, lastName?: string | null, status: number, userRoles?: Array<{ __typename?: 'RoleDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string, title: string }> | null } | null } };
 
 export type RegisterUserMutationVariables = Exact<{
   input: CreateUserInput;
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', registerUser: { __typename?: 'LoginResult', token?: string | null, user: { __typename?: 'UserDto', _id: string, firstName: string, lastName?: string | null, status: number, userRoles?: Array<{ __typename?: 'RoleDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } } };
+export type RegisterUserMutation = { __typename?: 'Mutation', registerUser: { __typename?: 'LoginResult', token?: string | null, user?: { __typename?: 'UserDto', _id: string, firstName?: string | null, lastName?: string | null, status: number, userRoles?: Array<{ __typename?: 'RoleDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } | null } };
 
 
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"loginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"walletAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loginUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"walletAddress"},"value":{"kind":"Variable","name":{"kind":"Name","value":"walletAddress"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"userRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
