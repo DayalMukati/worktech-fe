@@ -5,7 +5,16 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { Icons } from "./icons";
 import { space } from "postcss/lib/list";
-import { LayoutDashboard, ChevronsLeft, Trophy, BarChart4 } from "lucide-react";
+import {
+  LayoutDashboard,
+  ChevronsLeft,
+  Trophy,
+  BarChart4,
+  PlusIcon,
+} from "lucide-react";
+import SpacesAddModal from "./spaces-add-modal";
+import { setIsCreateSpaceModalOpen } from "@/store/layoutSlice";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
 
 const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
   return currentPath === menuItemHref;
@@ -84,6 +93,7 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
         </ul>
       </nav>
       <Spaces spacesItem={SpacesItem} />
+      <SpacesAddModal />
     </aside>
   );
 };
@@ -99,10 +109,16 @@ export const Spaces = ({
     label: string;
   }[];
 }) => {
+  const dispatch = useAppDispatch();
   return (
     <div className="flex flex-col items-start mt-auto p-2">
-      <div className="p-3.5  ">
+      <div className="p-3.5 w-full  flex justify-between items-center ">
         <h2 className="text-xl">Spaces</h2>
+
+        <PlusIcon
+          className="w-6 h-6 rounded-full  cursor-pointer hover:bg-slate-300"
+          onClick={() => dispatch(setIsCreateSpaceModalOpen(true))}
+        />
       </div>
       <nav className="px-4">
         <ul className="">
