@@ -17,7 +17,7 @@ function TaskCardItem({ task }: { task: (typeof tasks)[0] }) {
 					<div className='flex items-center gap-4'>
 						<Image
 							className='rounded w-16 h-16 object-cover'
-							src='/placeholder.svg'
+							src='/logo-1.png'
 							alt='Organization Logo'
 							width={64}
 							height={64}

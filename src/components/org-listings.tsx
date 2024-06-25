@@ -41,7 +41,7 @@ export function OrgListingCard({
 					<div className='flex  items-center gap-4'>
 						<Image
 							className='w-24 h-24 object-cover rounded'
-							src='/placeholder.svg'
+							src='/logo-2.png'
 							alt='Organization Logo'
 							width={64}
 							height={64}

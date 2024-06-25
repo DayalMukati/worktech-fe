@@ -3,8 +3,7 @@ import OpenTaskList from '@/components/open-task-list';
 import OrgList from '@/components/org-listings';
 import TaskCardItem from '@/components/task-card-item';
 import Contributors  from '@/components/contributors';
-import Leaderboard from '@/components/leaderboard'
-
+ 
 import {
 	Tabs,
 	TabsContent,
@@ -20,7 +19,7 @@ const page = () => {
 			defaultValue='orgs'
 			className='flex flex-col items-center mt-6 w-full'>
 			<TabsList className=''>
-				<TabsTrigger value='orgs'>Orgs</TabsTrigger>
+				<TabsTrigger value='orgs'>Organizations</TabsTrigger>
 				<TabsTrigger value='tasks'>Tasks</TabsTrigger>
 				<TabsTrigger value='contributors'>Contributors</TabsTrigger>
 				{/* <TabsTrigger value='leaderboard'>Leaderboard</TabsTrigger> */}
