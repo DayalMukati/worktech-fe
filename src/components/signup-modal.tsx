@@ -1,114 +1,136 @@
 // Import necessary libraries and components
-import { useEffect, useState } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Dialog, DialogContent, DialogFooter } from './ui/dialog';
 import {
-	selectLayout,
-	setIsSignupModalOpen
-} from '@/store/layoutSlice';
-import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogTitle
+} from './ui/dialog';
 import { Button } from './ui/button';
+import { MultiSelectComponent } from './ui/multi-select'; // Assuming this is the correct import path
+import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
+import {
+	setIsSignupModalOpen,
+	selectLayout
+} from '@/store/layoutSlice';
 
-/
-const stepSchemas = [
-	z.object({
-		firstName: z
-			.string()
-			.min(1,'First name is required'),
-		lastName: z
-			.string()
-			.min(1,'Last name is required' )
-	}),
-	z.object({
-		email: z.string().email({ message: 'Invalid email address' })
-	})
+// Define the form schema
+const formSchema = z.object({
+	firstName: z.string().min(1, 'First name is required'),
+	lastName: z.string().min(1, 'Last name is required'),
+	email: z.string().email('Invalid email address'),
+	skills: z
+		.array(
+			z.object({
+				value: z.string(),
+				label: z.string()
+			})
+		)
+		.min(1, 'At least one skill is required')
+});
+type FormData = z.infer<typeof formSchema>;
+
+// Skills options for the multi-select component
+const skillsOptions = [
+	{ value: 'react', label: 'React' },
+	{ value: 'vue', label: 'Vue' },
+	{ value: 'angular', label: 'Angular' }
 ];
 
-const defaultValues = {
-	firstName: '',
-	lastName: '',
-	address: '',
-	job: ''
-};
-type FormData = z.infer<typeof stepSchemas>;
-
-function MultiStepModal() {
+function SignupModal() {
 	const { isSignupModalOpen } = useAppSelector(selectLayout);
 	const dispatch = useAppDispatch();
-	const [currentStep, setCurrentStep] = useState(0);
 	const methods = useForm<FormData>({
-		resolver: zodResolver(stepSchemas[currentStep]),
-		mode: 'all'
+		resolver: zodResolver(formSchema),
+		mode: 'onBlur'
 	});
 
-	// Update resolver when step changes
-	useEffect(() => {
-		// Reset form errors/state without clearing values on step change
-		methods.reset({}, { keepValues: true });
-	}, [currentStep, methods]);
-
-	const nextStep = () =>
-		setCurrentStep(prev =>
-			Math.min(prev + 1, stepSchemas.length - 1)
-		);
-	const prevStep = () =>
-		setCurrentStep(prev => Math.max(prev - 1, 0));
-
-	const onSubmit = methods.handleSubmit(data => {
-		console.log(data);
-		// Handle form submission
-	});
+	const onSubmit = methods.handleSubmit(
+		data => {
+			console.log(data);
+			// Handle form submission
+		},
+		e => {
+			console.log(e);
+		}
+	);
 
 	return (
 		<Dialog
 			open={isSignupModalOpen}
 			onOpenChange={val => dispatch(setIsSignupModalOpen(val))}>
-			<form onSubmit={onSubmit}>
-				<DialogContent>
-					{currentStep === 0 && (
-						<div>
-							<Label htmlFor='firstName'>First Name</Label>
-							<Input
-								id='firstName'
-								{...methods.register('firstName')}
-							/>
-						</div>
-					)}
-					{currentStep === 1 && (
-						<div>
-							<Label htmlFor='lastName'>Last Name</Label>
-							<Input
-								id='lastName'
-								{...methods.register('lastName')}
-							/>
-						</div>
-					)}
-					{currentStep === 2 && (
-						<div>
-							<Label htmlFor='email'>Email</Label>
-							<Input id='email' {...methods.register('email')} />
-						</div>
-					)}
-					<DialogFooter>
-						<Button onClick={prevStep} disabled={currentStep === 0}>
-							Previous
-						</Button>
-						{currentStep < stepSchemas.length - 1 ? (
-							<Button type='submit' onClick={nextStep}>
-								Next
-							</Button>
-						) : (
-							<Button type='submit'>Submit</Button>
+			<DialogContent>
+				<DialogTitle>
+					<h2 className='font-bold text-2xl text-primary'>Sign Up</h2>
+				</DialogTitle>
+				<form onSubmit={onSubmit}>
+					<div>
+						<Label htmlFor='firstName'>First Name</Label>
+						<Input
+							id='firstName'
+							{...methods.register('firstName')}
+						/>
+						{methods.formState.errors.firstName && (
+							<p className='text-red-500 text-sm'>
+								*{methods.formState.errors.firstName.message}
+							</p>
 						)}
-					</DialogFooter>
-				</DialogContent>
-			</form>
+					</div>
+					<div>
+						<Label htmlFor='lastName'>Last Name</Label>
+						<Input id='lastName' {...methods.register('lastName')} />
+						{methods.formState.errors.lastName && (
+							<p className='text-red-500 text-sm'>
+								*{methods.formState.errors.lastName.message}
+							</p>
+						)}
+					</div>
+					<div>
+						<Label htmlFor='email'>Email</Label>
+						<Input id='email' {...methods.register('email')} />
+						{methods.formState.errors.email && (
+							<p className='text-red-500 text-sm'>
+								*{methods.formState.errors.email.message}
+							</p>
+						)}
+					</div>
+					<div>
+						<Label htmlFor='skills'>Skills</Label>
+						<Controller
+							name='skills'
+							control={methods.control}
+							render={({ field, fieldState: { error } }) => (
+								<>
+									<MultiSelectComponent
+										createAble={true}
+										isMulti={true}
+										options={skillsOptions}
+										{...field}
+										placeholder='Select Skills'
+									/>
+									{error && (
+										<p className='text-red-500 text-sm'>
+											*{error.message}
+										</p>
+									)}
+								</>
+							)}
+						/>
+					</div>
+					<div className='flex justify-center mt-2.5 w-full'>
+						<Button className='w-2/3' type='submit'>
+							Submit
+						</Button>
+					</div>
+				</form>
+			</DialogContent>
 		</Dialog>
 	);
 }
 
-export default MultiStepModal;
+export default SignupModal;
