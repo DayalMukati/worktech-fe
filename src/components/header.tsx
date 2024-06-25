@@ -133,13 +133,8 @@ const Header = () => {
 				) : (
 					<>
 						<Button
-							variant='outline'
-							onClick={() => dispatch(setIsSignupModalOpen(true))}>
-							Signup
-						</Button>
-						<Button
 							onClick={() => dispatch(setIsLoginModalOpen(true))}>
-							Login
+							Connect
 						</Button>
 					</>
 				)}
