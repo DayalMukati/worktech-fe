@@ -35,7 +35,9 @@ type Schema = z.infer<typeof loginSchema>;
 
 function LoginModal() {
 	// Existing code...
-	const { account, error, signMessage, chainId } = useMetamask();
+	// const { account, error, signMessage, chainId } = useMetamask();
+	const { web3, account, error, connectMetamask, signMessage, isConnected } = useMetamask();
+
 	const dispatch = useAppDispatch();
 	const { isLoginModalOpen } = useAppSelector(selectLayout);
 
@@ -57,9 +59,9 @@ function LoginModal() {
 		// Logic for MetaMask login
 		console.log('MetaMask login initiated', account);
 		const messageToSign = "Worktech Sign In"
-
+		const a = await connectMetamask();
 		const signature = await signMessage(messageToSign);
-		console.log("signature+++++", signature, account);
+		console.log("signature+++++",a, signature, account);
 
 	};
 

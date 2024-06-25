@@ -6,8 +6,29 @@ const useMetamask = () => {
   const [account, setAccount] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [chainId, setChainId] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const targetChainId = '0x128'; // Replace with your target chain ID (e.g., 0x2a for Kovan testnet)
+
+  const connectMetamask = async () => {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const web3Instance = new Web3(window.ethereum as any); // Add 'as any' here
+        setWeb3(web3Instance);
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        setChainId(chainId);
+        if (chainId !== targetChainId) {
+          await switchChain();
+        }
+        setIsConnected(true);
+      } catch (error) {
+        setError('User denied account access');
+      }
+    } else {
+      setError('Non-Ethereum browser detected. You should consider trying MetaMask!');
+    }
+  };
 
   const switchChain = async () => {
     if (window.ethereum) {
@@ -27,30 +48,29 @@ const useMetamask = () => {
     const loadWeb3 = async () => {
       if (window.ethereum) {
         const web3Instance = new Web3(window.ethereum as any); // Add 'as any' here
-        try {
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          setWeb3(web3Instance);
-          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-          setChainId(chainId);
-          if (chainId !== targetChainId) {
-            await switchChain();
-          }
-        } catch (error) {
-          setError('User denied account access');
+        setWeb3(web3Instance);
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        setChainId(chainId);
+        if (chainId !== targetChainId) {
+          await switchChain();
         }
       } else {
         setError('Non-Ethereum browser detected. You should consider trying MetaMask!');
       }
     };
 
-    loadWeb3();
-  }, []);
+    // Don't load Metamask automatically on component mount
+    // Load it when connectMetamask is called
+    if (isConnected) {
+      loadWeb3();
+    }
+  }, [isConnected]);
 
   useEffect(() => {
     const fetchAccount = async () => {
       if (web3) {
         const accounts = await web3.eth.getAccounts();
-        setAccount(accounts[0]);
+        setAccount(accounts[0] || '');
       }
     };
 
@@ -59,7 +79,6 @@ const useMetamask = () => {
 
   useEffect(() => {
     const handleAccountsChanged = (accounts: string[]) => {
-      console.log("account changed")
       if (accounts.length > 0) {
         setAccount(accounts[0]);
       } else {
@@ -68,8 +87,6 @@ const useMetamask = () => {
     };
 
     const handleChainChanged = (chainId: string) => {
-      console.log("chain changed")
-
       setChainId(chainId);
       if (chainId !== targetChainId) {
         switchChain();
@@ -95,7 +112,7 @@ const useMetamask = () => {
     return signedMessage;
   };
 
-  return { web3, account, error, signMessage, chainId };
+  return { web3, account, error, signMessage, chainId, connectMetamask, isConnected };
 };
 
 export default useMetamask;
