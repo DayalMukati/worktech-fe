@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "gql:typegen": "graphql-codegen",
-		"gql:watch": "graphql-codegen -w"
+    "gql:watch": "graphql-codegen -w"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.6",
     "@headlessui/react": "^2.1.0",
     "@hookform/resolvers": "^3.6.0",
     "@iconify/react": "^5.0.1",
