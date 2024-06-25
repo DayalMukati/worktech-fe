@@ -17,12 +17,20 @@ import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import {
 	selectLayout,
 	setIsLoginModalOpen,
+	setIsSignupModalOpen,
 	setOrgCreationModal
 } from '@/store/layoutSlice';
 import { Wallet } from 'lucide-react';
 import MetaMaskBtn from './metamask-btn';
 import { useState } from 'react';
 import useMetamask from '@/hooks/useMetamask';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
+import {
+	handleLogin,
+	loadUser,
+	selectUserAuth
+} from '@/store/authSlice';
 
 // Define the schema using Zod
 const loginSchema = z.object({
@@ -36,12 +44,23 @@ type Schema = z.infer<typeof loginSchema>;
 function LoginModal() {
 	// Existing code...
 	// const { account, error, signMessage, chainId } = useMetamask();
-	const { web3, account, error, connectMetamask, signMessage, isConnected } = useMetamask();
+	const {
+		web3,
+		account,
+		error,
+		connectMetamask,
+		signMessage,
+		isConnected
+	} = useMetamask();
 
 	const dispatch = useAppDispatch();
 	const { isLoginModalOpen } = useAppSelector(selectLayout);
 
 	const [isLoading, setIsLoading] = useState(false);
+
+	const [logInUser, { loading: AuthUserLoading }] = useMutation(
+		LOGIN_USER_WITH_WALLET
+	);
 
 	const {
 		register,
@@ -55,14 +74,43 @@ function LoginModal() {
 		console.log(data);
 	};
 
-	const handleMetaMaskLogin = async() => {
+	const handleMetaMaskLogin = async () => {
 		// Logic for MetaMask login
 		console.log('MetaMask login initiated', account);
-		const messageToSign = "Worktech Sign In"
+		const messageToSign = 'Worktech Sign In';
 		const a = await connectMetamask();
 		const signature = await signMessage(messageToSign);
-		console.log("signature+++++",a, signature, account);
-
+		console.log('signature+++++', { a, signature, account });
+		try {
+			await logInUser({
+				variables: {
+					walletAddress: account
+				},
+				update: (cache, { data }) => {
+					console.log('data', data);
+					if (data?.loginUser?.token) {
+						localStorage.setItem('authToken', data.loginUser.token);
+						// window.location.reload();
+						if (data.loginUser.isProfileCreated) {
+							dispatch(
+								handleLogin({
+									token: data.loginUser.token,
+									user: {
+										walletAddress: account
+									}
+								})
+							);
+							dispatch(setIsSignupModalOpen(true));
+						}
+					}
+				},
+				onError: error => {
+					console.log('error', error);
+				}
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (

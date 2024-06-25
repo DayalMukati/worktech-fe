@@ -18,6 +18,7 @@ export const LOGIN_USER_WITH_WALLET = gql(`
         status
       }
       token
+      isProfileCreated
     }
   }
 `);
@@ -26,18 +27,10 @@ export const REGISTER_USER = gql(`
   mutation registerUser($input: CreateUserInput!) {
     registerUser(input: $input) {
       user {
-        _id
-        userRoles {
-          _id
-        }
-        skills {
-          _id
-        }
-        firstName
-        lastName
-        status
+       email
       }
       token
+      isProfileCreated
     }
   }
 `);
