@@ -13,7 +13,7 @@ import {
 	CardTitle
 } from '@/components/ui/card';
 import Image from 'next/image';
-import organizations from '@/data/data';
+import organizations from '@/conf/data';
 import { Badge } from './ui/badge';
 
 export function SearchBar() {
@@ -41,7 +41,7 @@ export function OrgListingCard({
 					<div className='flex  items-center gap-4'>
 						<Image
 							className='w-24 h-24 object-cover rounded'
-							src='/placeholder.svg'
+							src='/logo-2.png'
 							alt='Organization Logo'
 							width={64}
 							height={64}

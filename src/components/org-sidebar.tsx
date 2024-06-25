@@ -31,12 +31,12 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
       label: "Overview",
     },
     {
-      href: "/dashboard/tasks",
+      href: "/orgs/org-overview/tasks",
       icon: "FolderKanban",
       label: "Tasks",
     },
     {
-      href: "/dashboard/leadership",
+      href: "/orgs/org-overview/leaderboard",
       icon: <Trophy className="w-4 h-4 " />,
       label: "Leadership Boards",
     },
