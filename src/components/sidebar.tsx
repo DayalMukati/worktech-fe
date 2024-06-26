@@ -27,6 +27,17 @@ import { Orgs } from '@/graphql/__generated__/graphql';
 import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
 
 const Sidebar = () => {
+	const pathname = usePathname();
+	let orgUriId = '';
+
+	if (
+		pathname.startsWith('/orgs/') &&
+		pathname.split('/').length > 2
+	) {
+		const segments = pathname.split('/');
+		orgUriId = segments[segments.length - 1];
+	}
+
 	const dispatch = useAppDispatch();
 	const currentURI = usePathname();
 
@@ -79,7 +90,10 @@ const Sidebar = () => {
 					{orgs.map(({ name, _id }) => (
 						<Tooltip key={name}>
 							<TooltipTrigger asChild>
-								<Button asChild variant='outline' size={'icon'}>
+								<Button
+									asChild
+									variant={orgUriId === _id ? 'default' : 'outline'}
+									size={'icon'}>
 									<Link href={`/orgs/org-overview/${_id}`}>
 										<Building2 />
 										<span className='sr-only'>{name}</span>
