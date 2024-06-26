@@ -1,3 +1,4 @@
+import { User } from '@/graphql/__generated__/graphql';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface User {
@@ -7,15 +8,19 @@ interface User {
 }
 
 interface AuthState {
-	user?: User;
+	user?: User | null;
 	authToken?: string | null;
+	walletAddress?: string | null;
+	web3?: null;
+
+	
+
 }
 
 const initialState: AuthState = {
-	user: {
-		walletAddress: '',
-		web3: null
-	},
+	walletAddress: '',
+	web3: null,
+	user: null,
 	authToken: ''
 };
 
