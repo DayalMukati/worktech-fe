@@ -80,9 +80,10 @@ function LoginModal() {
 		const messageToSign = 'Worktech Sign In';
 		const a = await connectMetamask();
 		const signature = await signMessage(messageToSign);
-		console.log('signature+++++', { a, signature, account });
+		console.log('account+++++', { account });
 		try {
 			await logInUser({
+				fetchPolicy: 'no-cache',
 				variables: {
 					walletAddress: account
 				},
@@ -91,8 +92,8 @@ function LoginModal() {
 					if (data?.loginUser) {
 						// window.location.reload();
 						if (!data.loginUser.isProfileCreated) {
-							localStorage.setItem('address', signature);
-							dispatch(loadUser({ walletAddress: signature }));
+							localStorage.setItem('address', account);
+							dispatch(loadUser({ walletAddress: account }));
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));
 						}

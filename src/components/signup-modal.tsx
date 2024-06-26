@@ -86,11 +86,11 @@ function SignupModal() {
 							'authToken',
 							data.registerUser.token as string
 						);
+						dispatch(setIsSignupModalOpen(false));
 					}
 				});
 
 				// Close the modal
-				dispatch(setIsSignupModalOpen(false));
 			}
 		},
 		e => {
