@@ -5,7 +5,7 @@ import React from "react";
 
 const Profile = () => {
   return (
-    <div className="grid grid-cols-3 h-screen gap-2 px-24 p-6">
+    <div className="grid grid-cols-3  gap-2 px-36 p-6">
       <div className="col-span-1 ">
         <div className="flex h-full flex-col justify-between items-center gap-1 ">
           <div className="h-1/2  w-full rounded-md border border-slate-300 shadow-lg flex flex-col items-center justify-center gap-1 p-4">
@@ -19,15 +19,15 @@ const Profile = () => {
             <span className="text-md  text-slate-400 font-[700]">D-86878</span>
             <p className="text-xs text-slate-300">No bio.</p>
 
-            <Button className="bg-primary text-sm w-full h-fit mt-2">
+            <Button className="bg-primary text-sm  w-full mx-4 my-2 py-1 px-3">
               Edit Profile
             </Button>
-            <Button className="bg-primary text-sm w-full h-fit">
+            <Button className="bg-primary text-sm w-full mx-4">
               Settings
             </Button>
           </div>
 
-          <div className="h-fit w-full rounded-md border border-slate-300 shadow-lg p-4 text-slate-400 flex flex-col gap-8  ">
+          <div className="h-fit w-full rounded-md border border-slate-300 shadow-lg p-4 text-slate-400 flex flex-col gap-6  ">
             <div className="flex  gap-2 items-center text-md">
               <h1 className="text-sm text-slate-400 font-semibold">REPUATION SCORE</h1>
               <CircleHelp className="text-slate-400 w-4 h-4" />
@@ -41,7 +41,7 @@ const Profile = () => {
               <span>1.00%</span>
             </div>
           </div>
-          <div className="h-fit w-full rounded-md border border-slate-300 shadow-lg  p-4 text-slate-400 flex flex-col gap-8 ">
+          <div className="h-fit w-full rounded-md border border-slate-300 shadow-lg  p-4 text-slate-400 flex flex-col gap-6 ">
             <div className="w-full">
               <h1 className="text-sm text-slate-400 font-semibold">ORGANIZATIONS</h1>
               <div className="border-primary/60 border-2 rounded-md flex gap-2 p-2">
@@ -52,7 +52,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      <div className="col-span-2 space-y-1 ">
+      <div className="col-span-2 space-y-1 h-[85%] ">
         <div className="flex flex-col h-1/2 rounded-md border border-slate-300 shadow-lg p-2 ">
           <h1 className="text-md text-slate-700 font-semibold">Featured work</h1>
 
