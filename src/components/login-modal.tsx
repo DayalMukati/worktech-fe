@@ -4,145 +4,114 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import {
-	selectLayout,
-	setIsLoginModalOpen,
-	setIsSignupModalOpen,
-	setOrgCreationModal
+  selectLayout,
+  setIsLoginModalOpen,
+  setIsSignupModalOpen,
 } from '@/store/layoutSlice';
-import { Wallet } from 'lucide-react';
 import MetaMaskBtn from './metamask-btn';
 import { useState } from 'react';
 import useMetamask from '@/hooks/useMetamask';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
-import {
-	handleLogin,
-	loadUser,
-	selectUserAuth
-} from '@/store/authSlice';
+import { loadUser } from '@/store/authSlice';
 
-// Define the schema using Zod
 const loginSchema = z.object({
-	name: z.string().min(1, 'Name is required')
+  name: z.string().min(1, 'Name is required'),
 });
 
 type Schema = z.infer<typeof loginSchema>;
 
-// Importing a generic wallet icon, replace with MetaMask icon if available
-
 function LoginModal() {
-	// Existing code...
-	// const { account, error, signMessage, chainId } = useMetamask();
-	const {
-		web3,
-		account,
-		error,
-		connectMetamask,
-		signMessage,
-		isConnected
-	} = useMetamask();
+  const { connectToMetamask, account, signedMessage, error, web3 } = useMetamask();
+  const dispatch = useAppDispatch();
+  const { isLoginModalOpen } = useAppSelector(selectLayout);
+  const [isLoading, setIsLoading] = useState(false);
 
-	const dispatch = useAppDispatch();
-	const { isLoginModalOpen } = useAppSelector(selectLayout);
+  const [logInUser, { loading: AuthUserLoading }] = useMutation(LOGIN_USER_WITH_WALLET);
 
-	const [isLoading, setIsLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<Schema>({
+    resolver: zodResolver(loginSchema),
+  });
 
-	const [logInUser, { loading: AuthUserLoading }] = useMutation(
-		LOGIN_USER_WITH_WALLET
-	);
+  const onSubmit = (data: Schema) => {
+    console.log(data);
+  };
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors }
-	} = useForm<Schema>({
-		resolver: zodResolver(loginSchema)
-	});
+  const handleMetaMaskLogin = async () => {
+    console.log('MetaMask login initiated');
+    const { account, signedMessage, web3Instance } = await connectToMetamask();
+    console.log('account:', account, {web3Instance});
+    console.log('signedMessage:', signedMessage);
+    if (!account || !signedMessage) return;
 
-	const onSubmit = (data: Schema) => {
-		console.log(data);
-	};
-
-	const handleMetaMaskLogin = async () => {
-		// Logic for MetaMask login
-		console.log('MetaMask login initiated', account);
-		const messageToSign = 'Worktech Sign In';
-		const a = await connectMetamask();
-		const signature = await signMessage(messageToSign);
-		console.log('account+++++', { account });
-		try {
-			await logInUser({
-				fetchPolicy: 'no-cache',
-				variables: {
-					walletAddress: account
-				},
-				update: (cache, { data }) => {
-					console.log('data', data);
-					if (data?.loginUser) {
-						// window.location.reload();
-						if (!data.loginUser.isProfileCreated) {
-							localStorage.setItem('address', account);
-							dispatch(loadUser({ walletAddress: account }));
-							dispatch(setIsLoginModalOpen(false));
-							dispatch(setIsSignupModalOpen(true));
-						}
-					}
-				},
-				onError: error => {
-					console.log('error', error);
+    try {
+      await logInUser({
+        fetchPolicy: 'no-cache',
+        variables: {
+          walletAddress: account,
+        },
+		onCompleted: (data)=>{
+			if (data?.loginUser) {
+				if (!data.loginUser.isProfileCreated) {
+				  dispatch(loadUser({ walletAddress: account , web3: web3Instance}));
+				  dispatch(setIsLoginModalOpen(false));
+				  dispatch(setIsSignupModalOpen(true));
+				}else{
+					localStorage.setItem('address', account);
+					dispatch(loadUser({ walletAddress: account, web3: web3Instance}));
+					dispatch(setIsLoginModalOpen(false));
+					dispatch(setIsSignupModalOpen(false));
 				}
-			});
-		} catch (error) {
-			console.log(error);
-		}
-	};
+			  }
+		},
 
-	return (
-		<Dialog
-			modal={true}
-			open={isLoginModalOpen}
-			onOpenChange={val => dispatch(setIsLoginModalOpen(val))}>
-			<DialogContent
-				onInteractOutside={e => {
-					e.preventDefault();
-				}}
-				className='sm:max-w-[450px]'>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<DialogHeader className='flex flex-col justify-center items-center gap-2'>
-						<DialogTitle className='text-3xl text-center text-primary uppercase'>
-							Login
-						</DialogTitle>
-					</DialogHeader>
+        onError: (error) => {
+          console.log('error', error);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-					{/* Existing form elements... */}
+  return (
+    <Dialog
+      modal={true}
+      open={isLoginModalOpen}
+      onOpenChange={(val) => dispatch(setIsLoginModalOpen(val))}>
+      <DialogContent
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+        className='sm:max-w-[450px]'>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogHeader className='flex flex-col justify-center items-center gap-2'>
+            <DialogTitle className='text-3xl text-center text-primary uppercase'>
+              Login
+            </DialogTitle>
+          </DialogHeader>
 
-					{/* MetaMask Login Button */}
-					<div className='flex justify-center my-6 w-full'>
-						<MetaMaskBtn
-							isLoading={isLoading}
-							onClick={handleMetaMaskLogin}
-						/>
-					</div>
+          <div className='flex justify-center my-6 w-full'>
+            <MetaMaskBtn
+              isLoading={isLoading}
+              onClick={handleMetaMaskLogin}
+            />
+          </div>
 
-					{/* Uncommented DialogFooter for demonstration */}
-					<DialogFooter>
-						{/* Other buttons can be added here */}
-					</DialogFooter>
-				</form>
-			</DialogContent>
-		</Dialog>
-	);
+          <DialogFooter>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export default LoginModal;
