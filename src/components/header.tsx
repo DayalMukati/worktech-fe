@@ -46,7 +46,7 @@ import { User } from '@/graphql/__generated__/graphql';
 const Header = () => {
 	const dispatch = useAppDispatch();
 
-	const { user } = useAppSelector(selectUserAuth);
+	const { user, walletAddress } = useAppSelector(selectUserAuth);
 
 	const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
 		onCompleted: data => {
@@ -116,7 +116,7 @@ const Header = () => {
 						className='bg-background pl-8 rounded-lg w-full md:w-[200px] lg:w-[336px]'
 					/>
 				</div>
-				{user?.walletAddress ? (
+				{walletAddress ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button

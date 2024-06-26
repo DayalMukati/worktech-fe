@@ -65,11 +65,11 @@ function SignupModal() {
 		resolver: zodResolver(formSchema),
 		mode: 'all'
 	});
-	const { user } = useAppSelector(selectUserAuth);
+	const { user, walletAddress } = useAppSelector(selectUserAuth);
 
 	const onSubmit = methods.handleSubmit(
 		async data => {
-			if (typeof user?.walletAddress === 'undefined') {
+			if (typeof walletAddress === 'undefined') {
 				// Handle the undefined case, maybe show an error or use a default value
 				console.log('Wallet address is undefined');
 			} else {
@@ -79,8 +79,7 @@ function SignupModal() {
 							email: data.username,
 							skills: data.skills.map(skill => skill.value),
 							status: 0,
-							walletAddress: user.walletAddress
-						}
+							walletAddress: walletAddress as string					}
 					},
 					onCompleted: data => {
 						localStorage.setItem(

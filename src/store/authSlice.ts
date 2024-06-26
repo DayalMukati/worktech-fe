@@ -6,7 +6,7 @@ interface AuthState {
 	user?: User | null;
 	authToken?: string | null;
 	walletAddress?: string | null;
-	web3?: null;
+	web3?: any | null;
 }
 
 const initialState: AuthState = {
@@ -25,6 +25,11 @@ export const authSlice = createSlice({
 				...state.user,
 				...action.payload
 			};
+		},
+		setWeb3: (state, action: PayloadAction<{web3: any, walletAddress: string}>) => {
+			state.web3 = action.payload.web3;
+			state.walletAddress = action.payload.walletAddress;
+
 		},
 		// handleLogin: (state, action: PayloadAction<{ user: User }>) => {
 		// 	// console.log({ payload: action.payload });
@@ -51,7 +56,7 @@ export const authSlice = createSlice({
 	}
 });
 
-export const { handleLogin, handleLogout, loadUser } =
+export const { handleLogin, handleLogout, loadUser, setWeb3 } =
 	authSlice.actions;
 export const selectUserAuth = (state: { authSlice: AuthState }) =>
 	state.authSlice;

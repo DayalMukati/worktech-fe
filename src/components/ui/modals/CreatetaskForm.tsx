@@ -22,6 +22,8 @@ import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import { selectLayout } from "@/store/layoutSlice";
 import { space } from "postcss/lib/list";
 import { getStatusNumber } from "@/lib/getStatusNumber";
+import useSmartContract from '@/hooks/useSmartContract';
+import { selectUserAuth } from "@/store/authSlice";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -166,8 +168,16 @@ const CreateTaskForm = ({
   });
   const dispatch = useAppDispatch();
 
+  const { web3 } = useAppSelector(selectUserAuth);
+
+  const { callMethod, connectToMetamask, account } = useSmartContract(web3);
+
   const onSubmitFrom = async (data: Schema) => {
     try {
+      console.log('data+++++', data);
+      const result = await callMethod('createTask', ['Error Handling', 100000000000000000, "0x45f520587bf5CA91c922dEFBc596A6A5Ce294039"]);
+      console.log('result++++++', result);
+      return;
       await createTaskMutaion({
         variables: {
           input: {

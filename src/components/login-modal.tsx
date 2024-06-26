@@ -21,7 +21,7 @@ import { useState } from 'react';
 import useMetamask from '@/hooks/useMetamask';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
-import { loadUser } from '@/store/authSlice';
+import { loadUser, setWeb3 } from '@/store/authSlice';
 
 const loginSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -61,12 +61,12 @@ function LoginModal() {
 		onCompleted: (data)=>{
 			if (data?.loginUser) {
 				if (!data.loginUser.isProfileCreated) {
-				  dispatch(loadUser({ walletAddress: account , web3: web3Instance}));
+				  dispatch(setWeb3({ walletAddress: account , web3: web3Instance}));
 				  dispatch(setIsLoginModalOpen(false));
 				  dispatch(setIsSignupModalOpen(true));
 				}else{
 					localStorage.setItem('address', account);
-					dispatch(loadUser({ walletAddress: account, web3: web3Instance}));
+					dispatch(setWeb3({ walletAddress: account, web3: web3Instance}));
 					dispatch(setIsLoginModalOpen(false));
 					dispatch(setIsSignupModalOpen(false));
 				}
