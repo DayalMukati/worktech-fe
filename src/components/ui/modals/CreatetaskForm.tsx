@@ -20,6 +20,8 @@ import { useMutation } from "@apollo/client";
 import { CREATE_TASK_MUTATION } from "@/graphql/mutation";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import { selectLayout } from "@/store/layoutSlice";
+import { space } from "postcss/lib/list";
+import { getStatusNumber } from "@/lib/getStatusNumber";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -29,18 +31,19 @@ const createTaskSchema = z.object({
   status: z.number().min(1, "Status is required"),
   assignee: z.array(z.string()).min(1, "Assignee is required"),
   priority: z.string().min(1, "Priority is required"),
-  reviewers: z.array(z.string()).min(1, "Reviewers is required"),
+  reviewer: z.string().min(1, "Reviewers is required"),
   price: z.string().min(1, "Price is required"),
 });
 
 type Schema = z.infer<typeof createTaskSchema>;
 
 const status = [
-  { value: 1, label: "open", icon: <CircleCheck /> },
-  { value: 2, label: "to-do", icon: <CircleCheck /> },
-  { value: 3, label: "in-progress", icon: <CircleCheck /> },
-  { value: 4, label: "completed", icon: <CircleCheck /> },
-  { value: 5, label: "cancelled", icon: <CircleCheck /> },
+  { value: 0, label: "open", icon: <CircleCheck /> },
+  { value: 1, label: "to-do", icon: <CircleCheck /> },
+  { value: 2, label: "in-progress", icon: <CircleCheck /> },
+  { value: 3, label: "in-review", icon: <CircleCheck /> },
+  { value: 4, label: "done", icon: <CircleCheck /> },
+  { value: 5, label: "backlog", icon: <CircleCheck /> },
 ];
 
 const customOption = (props: any) => {
@@ -143,9 +146,13 @@ const Reviewers = [
 ];
 
 const CreateTaskForm = ({
+  spaceId,
   handlePostSubmit,
+  column,
 }: {
+  spaceId: string;
   handlePostSubmit: Function;
+  column: string;
 }) => {
   const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
   const {
@@ -164,12 +171,13 @@ const CreateTaskForm = ({
       await createTaskMutaion({
         variables: {
           input: {
+            space: spaceId,
             name: data.taskName,
             description: data.description,
             priority: data.priority,
             amount: data.price,
             activities: [],
-            reviewer: data.reviewers,
+            reviewer: data.reviewer,
             assinees: [],
             skills: [],
             acceptanceCriteria: data.acceptanceCriteria,
@@ -181,6 +189,7 @@ const CreateTaskForm = ({
         },
         onCompleted(data: any) {
           // console.log("data->", data);
+
           handlePostSubmit(data);
         },
       });
@@ -262,7 +271,7 @@ const CreateTaskForm = ({
 
         <div>
           <div className="flex flex-col justify-between items-center gap-4">
-            <div className="text-sm text-slate-900 uppercase w-full">
+            <div className="text-sm text-slate-900 uppercase w-full ">
               <Label className="text-sm text-slate-800 "> Status</Label>
               <Controller
                 name="status"
@@ -270,6 +279,9 @@ const CreateTaskForm = ({
                 render={({ field }) => (
                   <Select
                     options={status}
+                    defaultValue={status.find(
+                      (status) => status.value === getStatusNumber(column)
+                    )}
                     onChange={(selectedOption) => {
                       field.onChange(
                         selectedOption ? selectedOption.value : null
@@ -352,7 +364,7 @@ const CreateTaskForm = ({
           <div className="text-sm mt-2 text-slate-900 uppercase w-full">
             <Label className="uppercase">HBAR-Price</Label>
             <Input
-              type="number"
+              type="text"
               placeholder="Price"
               {...register("price")}
               onChange={(e) => {
@@ -367,27 +379,25 @@ const CreateTaskForm = ({
           </div>
 
           <div className="text-sm mt-2 text-slate-900 uppercase w-full">
-            <Label className="text-sm text-slate-800 "> Reviewers</Label>
+            <Label className="text-sm text-slate-800 "> Reviewer</Label>
             <Controller
-              name="reviewers"
+              name="reviewer"
               control={control}
               render={({ field }) => (
                 <Select
                   options={Reviewers}
-                  isMulti
-                  onChange={(selectedOptions) => {
-                    const values = selectedOptions
-                      ? selectedOptions.map((option) => option.value)
-                      : [];
-                    field.onChange(values);
-                    clearErrors("reviewers"); // Clear error on change
+                  onChange={(selectedOption) => {
+                    field.onChange(
+                      selectedOption ? selectedOption.value : null
+                    );
+                    clearErrors("reviewer"); // Clear error on change
                   }}
                 />
               )}
             />
-            {errors.reviewers && (
+            {errors.reviewer && (
               <span className="text-red-500 text-xs">
-                {errors.reviewers.message}
+                {errors.reviewer.message}
               </span>
             )}
           </div>

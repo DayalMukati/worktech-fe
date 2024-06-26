@@ -117,3 +117,34 @@ export const GET_USER_BY_TOKEN = gql(`
     }
   }
 `);
+
+export const CREATE_SPACE_MUTATION = gql(`
+  mutation CreateSpace($input: SpacesInput!) {
+    createSpace(input: $input) {
+      _id
+      name
+      description
+      visibility
+      tasks {
+        _id
+      }
+      status
+    }
+  }
+`);
+
+export const UPDATE_SPACE_MUTATION = gql(`
+  mutation UpdateSpace($_id: String!, $input: UpdateSpacesInput!) {
+    updateSpace(_id: $_id, input: $input) {
+      _id
+      name
+      description
+      visibility
+      tasks {
+        _id
+      }
+      status
+    }
+  }
+`);
+

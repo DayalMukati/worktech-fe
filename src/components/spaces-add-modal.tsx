@@ -22,7 +22,7 @@ import {
 import { Aperture, Building2, SpaceIcon } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { spaces } from "@/conf/data";
-import { createSpace } from "@/store/spacesSlice";
+// import { createSpace } from "@/store/spacesSlice";
 
 // Define the schema using Zod
 const spacesSchema = z.object({
@@ -55,7 +55,7 @@ function SpacesAddModal() {
       name: data.name,
       visibility: data.visibility,
     };
-    dispatch(createSpace({ space: newSpace }));
+    // dispatch(createSpace({ space: newSpace }));
     dispatch(setIsCreateSpaceModalOpen(false));
   };
 

@@ -1,3 +1,4 @@
+"use client";
 import TaskBoard from "@/components/task-board";
 
 import React from "react";
