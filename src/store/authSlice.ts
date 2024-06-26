@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface User {
 	username?: string;
 	walletAddress?: string;
+	web3?: any;
 }
 
 interface AuthState {
@@ -12,7 +13,8 @@ interface AuthState {
 
 const initialState: AuthState = {
 	user: {
-		walletAddress: ''
+		walletAddress: '',
+		web3: null
 	},
 	authToken: ''
 };
