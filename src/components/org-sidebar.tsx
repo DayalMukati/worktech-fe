@@ -1,45 +1,47 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
-import { Icons } from './icons';
-import { space } from 'postcss/lib/list';
+import React, { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { Icons } from "./icons";
+import { space } from "postcss/lib/list";
 import {
-	LayoutDashboard,
-	ChevronsLeft,
-	Trophy,
-	BarChart4,
-	PlusIcon
-} from 'lucide-react';
-import SpacesAddModal from './spaces-add-modal';
-import { setIsCreateSpaceModalOpen } from '@/store/layoutSlice';
-import { useAppDispatch } from '@/hooks/toolKitTyped';
-import { useSelector } from 'react-redux';
+  LayoutDashboard,
+  ChevronsLeft,
+  Trophy,
+  BarChart4,
+  PlusIcon,
+} from "lucide-react";
+import SpacesAddModal from "./spaces-add-modal";
+import { setIsCreateSpaceModalOpen } from "@/store/layoutSlice";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
+import { useSelector } from "react-redux";
 import { selectSpaces, setSpaces } from "@/store/spacesSlice";
-import { LIST_ALL_SPACES_QUERY } from "@/graphql/queries";
+import { GET_ALL_SPACES_BY_ORG_ID_QUERY } from "@/graphql/queries";
 import { useQuery } from "@apollo/client";
-import { ListAllSpacesQuery } from "@/graphql/__generated__/graphql";
 
 const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
   return currentPath === menuItemHref;
 };
 var currentURl = "";
 
-const OrgSidebar = ({ Title }: { Title: string }) => {
+const OrgSidebar = ({ Title, orgId }: { Title: string; orgId: string }) => {
   const { spaces } = useSelector(selectSpaces);
   const dispatch = useAppDispatch();
 
-  useQuery(LIST_ALL_SPACES_QUERY, {
-    onCompleted: (data) => {
-      console.log("data->", data.listAllSpaces);
-      dispatch(
-        setSpaces({
-          spaces: data.listAllSpaces,
-        })
-      );
-    },
+  const { loading, error, data } = useQuery(GET_ALL_SPACES_BY_ORG_ID_QUERY, {
+    variables: { _id: orgId },
   });
+  useEffect(() => {
+    if (loading) return;
+    if (error) return;
+    console.log("data->", data?.getAllSpacesByOrgId);
+    dispatch(
+      setSpaces({
+        spaces: data?.getAllSpacesByOrgId,
+      })
+    );
+  }, [loading, error, data]);
 
   //   console.log("spaces->", spaces);
 
@@ -48,15 +50,15 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
   currentURl = currentURI;
   const menuItems = [
     {
-      href: "/orgs/org-overview",
+      href: `/orgs/org-overview/${orgId}`,
       icon: <LayoutDashboard className="w-6 h-6" />,
       label: "Overview",
     },
-    {
-      href: "/orgs/org-overview/tasks",
-      icon: "FolderKanban",
-      label: "Tasks",
-    },
+    // {
+    //   href: "/orgs/org-overview/tasks",
+    //   icon: "FolderKanban",
+    //   label: "Tasks",
+    // },
     {
       href: "/orgs/org-overview/leaderboard",
       icon: <Trophy className="w-4 h-4" />,
@@ -102,7 +104,7 @@ const OrgSidebar = ({ Title }: { Title: string }) => {
         </ul>
       </nav>
       <Spaces spacesItem={spaces as any} />
-      <SpacesAddModal />
+      <SpacesAddModal orgId={orgId} />
     </aside>
   );
 };

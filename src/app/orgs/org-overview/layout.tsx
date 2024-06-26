@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 import DashboardSidebar from "@/components/dashboard-sidebar";
@@ -62,12 +62,16 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       label: "Projects",
     },
   ];
+  const params = useParams<{ orgId: string }>();
   return (
     <div className="flex flex-col bg-muted/40 w-full h-screen">
       <Sidebar />
 
       <main className="grid grid-cols-4 lg:grid-cols-6 sm:py-0 sm:pl-20 h-full overflow-y-hidden">
-        <OrgSidebar Title="Ten (Formaly known as Org) Overview)" />
+        <OrgSidebar
+          Title="Ten (Formaly known as Org) Overview)"
+          orgId={params.orgId}
+        />
         <div className=" col-span-3 lg:col-span-5  mt-2 h-full overflow-auto">
           <Header />
           {children}

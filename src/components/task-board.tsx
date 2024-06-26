@@ -27,7 +27,7 @@ import {
   GET_SPACE_QUERY,
   GET_ALL_TASKS_BY_SPACE_ID_QUERY,
 } from "@/graphql/queries";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
 import { string } from "zod";
 
@@ -303,6 +303,7 @@ const Card = ({
     "bg-yellow-500",
     "bg-purple-500",
   ];
+  const router = useRouter();
   return (
     <>
       <DropIndicator before={id} column={column} />
@@ -311,7 +312,8 @@ const Card = ({
         layoutId={id}
         draggable={true}
         onDragStart={(e) => handleDragStart(e, { title, id, column })}
-        className="space-y-2 bg-secondary/70 shadow-sm hover:shadow p-3 rounded transition-shadow cursor-grab active:cursor-grabbing"
+        className="space-y-2 bg-secondary/70 shadow-sm hover:shadow p-3 rounded transition-shadow cursor-grab active:cursor-grabbing0"
+        onClick={() => router.push(`tasks/${id}`)}
       >
         <p className="font-bold text-muted-foreground text-sm">{title}</p>
         <div className="flex justify-start items-center w-full text-muted-foreground">
