@@ -178,22 +178,6 @@ export const LIST_ALL_ORGS_BY_USER_QUERY = gql(`
     listAllOrgsByUser {
       _id
       name
-      description
-      reviewers {
-        _id
-      }
-      contributors {
-        _id
-      }
-      spaces {
-        _id
-      }
-      roles {
-        _id
-      }
-      createdBy {
-        _id
-      }
       status
     }
   }

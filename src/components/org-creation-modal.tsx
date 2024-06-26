@@ -20,6 +20,9 @@ import {
 } from '@/store/layoutSlice';
 import { Building2 } from 'lucide-react';
 import { createOrg } from '@/store/orgSlice';
+import { useMutation } from '@apollo/client';
+import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
+import { Orgs } from '@/graphql/__generated__/graphql';
 
 // Define the schema using Zod
 const orgSchema = z.object({
@@ -32,6 +35,10 @@ function OrgCreationModal() {
 	const dispatch = useAppDispatch();
 	const { isOrgCreationModalOpen } = useAppSelector(selectLayout);
 
+	const [createOrgMutation, { loading: isOrgCreating }] = useMutation(
+		CREATE_ORG_MUTATION
+	);
+
 	const {
 		register,
 		handleSubmit,
@@ -40,14 +47,18 @@ function OrgCreationModal() {
 		resolver: zodResolver(orgSchema)
 	});
 
-	const onSubmit = (data: Schema) => {
-		dispatch(
-			createOrg({
-				org: {
-					name: data.name
+	const onSubmit = async (data: Schema) => {
+		await createOrgMutation({
+			variables: {
+				input: {
+					name: data.name,
+					status: 1
 				}
-			})
-		);
+			},
+			onCompleted: data => {
+				dispatch(createOrg(data.createOrg as Orgs));
+			}
+		});
 		dispatch(setOrgCreationModal(false));
 	};
 
@@ -88,7 +99,10 @@ function OrgCreationModal() {
 					</div>
 					<DialogFooter>
 						<div className='flex flex-col justify-center items-center space-y-2 w-full'>
-							<Button className='w-2/3' type='submit'>
+							<Button
+								loading={isOrgCreating}
+								className='w-2/3'
+								type='submit'>
 								Create Organization
 							</Button>
 							<Button

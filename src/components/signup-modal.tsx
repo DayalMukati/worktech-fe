@@ -20,6 +20,7 @@ import {
 } from '@/store/layoutSlice';
 import { useMutation, useQuery } from '@apollo/client';
 import {
+	CREATE_ORG_MUTATION,
 	LOGIN_USER_WITH_WALLET,
 	REGISTER_USER
 } from '@/graphql/mutation';
