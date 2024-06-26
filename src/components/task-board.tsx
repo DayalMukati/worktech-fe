@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@radix-ui/react-dialog";
+import { stat } from "fs";
 
 interface ColumnProps {
   title: string;
@@ -320,21 +321,20 @@ const AddCard = ({
   const [text, setText] = useState("");
   const [adding, setAdding] = useState(false);
 
-  const handleSubmit = (data: any) => {
+  const handlePostSubmit = (data: any) => {
     console.log("data->", data);
-
-    // if (!text.trim().length) return;
-
     const newCard = {
       column,
-      title: data.taskName,
-      id: Math.random().toString(36),
+      title: data.createTask.name,
+      description: data.createTask.description,
+      id: data.createTask._id,
       tags: data.tags,
-      createdAt: new Date().toISOString(),
+      createdAt: Math.floor(Math.random()),
     };
+    console.log("newCard->", newCard);
     setCards((prev: any) => [...prev, newCard]);
     setText("");
-    setAdding(false);
+    setAdding(false); // for this i have to handle the postsubmit here
   };
 
   return (
@@ -354,11 +354,10 @@ const AddCard = ({
               </Button>
             </DialogClose>
 
-            <CreateTaskForm onSubmit={handleSubmit} />
+            <CreateTaskForm handlePostSubmit={handlePostSubmit} />
           </DialogContent>
         </Dialog>
       ) : (
-
         <Button
           variant={"ghost"}
           className="flex justify-start items-center gap-1.5 hover:bg-primary/30 px-3 py-1.5 w-full text-muted-foreground text-xs hover:text-primary-foreground transition-colors"

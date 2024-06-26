@@ -11,10 +11,15 @@ import {
   CircleCheck,
   Users,
   LeafyGreen,
+  DraftingCompass,
 } from "lucide-react";
 import { Textarea } from "@headlessui/react";
 import { Label } from "@radix-ui/react-label";
 import Select, { components } from "react-select";
+import { useMutation } from "@apollo/client";
+import { CREATE_TASK_MUTATION } from "@/graphql/mutation";
+import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
+import { selectLayout } from "@/store/layoutSlice";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -23,7 +28,7 @@ const createTaskSchema = z.object({
   acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
   status: z.number().min(1, "Status is required"),
   assignee: z.array(z.string()).min(1, "Assignee is required"),
-  priority: z.number().min(1, "Priority is required"),
+  priority: z.string().min(1, "Priority is required"),
   reviewers: z.array(z.string()).min(1, "Reviewers is required"),
   price: z.string().min(1, "Price is required"),
 });
@@ -62,17 +67,17 @@ const customSingleValue = (props: any) => {
 
 const Assignee = [
   {
-    value: "ak@gmail.com",
+    value: "6672dba833963a34ca6b6b9d",
     label: "ak@gmail.com",
     icon: <Users className="w-4 h-4" />,
   },
   {
-    value: "dn@gmail.com",
+    value: "6672dba833963a34ca6b6b9d",
     label: "dayal@gmail.com",
     icon: <Users className="w-4 h-4" />,
   },
   {
-    value: "vineet@gmail.com",
+    value: "6672dba833963a34ca6b6b9d",
     label: "vineet@gmail.com",
     icon: <Users className="w-4 h-4" />,
   },
@@ -100,9 +105,9 @@ const customSingleValueAssignee = (props: any) => {
 };
 
 const Priority = [
-  { value: 1, label: "low", color: "green" },
-  { value: 2, label: "medium", color: "yellow" },
-  { value: 3, label: "high", color: "red" },
+  { value: "low", label: "low", color: "green" },
+  { value: "medium", label: "medium", color: "yellow" },
+  { value: "high", label: "high", color: "red" },
 ];
 
 const customPriorityOption = (props: any) => {
@@ -137,7 +142,12 @@ const Reviewers = [
   { value: "vineet@gmail.com", label: "Vk-123" },
 ];
 
-const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
+const CreateTaskForm = ({
+  handlePostSubmit,
+}: {
+  handlePostSubmit: Function;
+}) => {
+  const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
   const {
     register,
     handleSubmit,
@@ -147,9 +157,36 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
   } = useForm<Schema>({
     resolver: zodResolver(createTaskSchema),
   });
+  const dispatch = useAppDispatch();
 
-  const onSubmitFrom = (data: Schema) => {
-    onSubmit(data);
+  const onSubmitFrom = async (data: Schema) => {
+    try {
+      await createTaskMutaion({
+        variables: {
+          input: {
+            name: data.taskName,
+            description: data.description,
+            priority: data.priority,
+            amount: data.price,
+            activities: [],
+            reviewer: data.reviewers,
+            assinees: [],
+            skills: [],
+            acceptanceCriteria: data.acceptanceCriteria,
+            status: data.status,
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted(data: any) {
+          // console.log("data->", data);
+          handlePostSubmit(data);
+        },
+      });
+    } catch (error) {
+      console.log("error->", error);
+    }
   };
 
   const onerror = (err: any) => {
@@ -160,11 +197,12 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
     <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
       <div className="grid grid-cols-3 gap-6 p-4">
         <div className="col-span-2 ">
+          <Label className="text-md text-slate-800">Task Name</Label>
           <Input
             type="text"
             {...register("taskName")}
             placeholder="Task Name"
-            className="w-[400px] text-sm  text-slate-600  "
+            className="w-[400px] text-sm  text-slate-600 border-slate-400 border-2 rounded-md "
           />
           {errors.taskName && (
             <span className="text-red-500 text-xs">
@@ -176,10 +214,13 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
               <ShieldCheck className="w-4 h-4 " />
               Permissions
             </Button>
-            <Button className="bg-[#7D6CE2FF] text-center">Add Skils</Button>
+            <Button className="bg-[#7D6CE2FF] text-center gap-3">
+              <DraftingCompass className="w-4 h-4 " />
+              Add Skils
+            </Button>
           </div>
           <div className="mt-4">
-            <Label className="text-sm text-slate-800">Task Description</Label>
+            <Label className="text-md text-slate-800">Task Description</Label>
             <Textarea
               placeholder="Task Description "
               {...register("description")}
@@ -187,7 +228,7 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
                 clearErrors(["description"]);
               }}
               name="description"
-              className="w-full  h-[80px] outline-none text-sm font-sm text-slate-400  border-2"
+              className="w-full  h-[80px] outline-none text-sm font-sm text-slate-600  border-2 rounded-md border-slate-400 indent-2"
             />
             {errors.description && (
               <span className="text-red-500 text-xs">
@@ -196,14 +237,13 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
             )}
           </div>
           <div className="mt-4">
-            <Label className="text-sm text-slate-800 mt-4">
+            <Label className="text-md text-slate-800 mt-4">
               Accepted Criteria
             </Label>
-            <Input
-              type="text"
+            <Textarea
               {...register("acceptanceCriteria")}
               placeholder="Acceptace criteria"
-              className="w-[400px] outline-none text-xs font-semibold text-slate-600 "
+              className="w-full   outline-none text-sm font-sm text-slate-600  border-2 border-slate-400  rounded-md indent-2"
             />
             {errors.acceptanceCriteria && (
               <span className="text-red-500 text-xs">
@@ -309,7 +349,7 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
             </div>
           </div>
 
-          <div className="text-sm text-slate-900 uppercase w-full">
+          <div className="text-sm mt-2 text-slate-900 uppercase w-full">
             <Label className="uppercase">HBAR-Price</Label>
             <Input
               type="number"
@@ -326,7 +366,7 @@ const CreateTaskForm = ({ onSubmit }: { onSubmit: Function }) => {
             )}
           </div>
 
-          <div className="text-sm text-slate-900 uppercase w-full">
+          <div className="text-sm mt-2 text-slate-900 uppercase w-full">
             <Label className="text-sm text-slate-800 "> Reviewers</Label>
             <Controller
               name="reviewers"
