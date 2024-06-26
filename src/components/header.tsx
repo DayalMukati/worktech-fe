@@ -38,12 +38,21 @@ import {
 } from '@/store/layoutSlice';
 import LoginModal from './login-modal';
 import SignupModal from './signup-modal';
-import { selectUserAuth } from '@/store/authSlice';
+import { loadUser, selectUserAuth } from '@/store/authSlice';
+import { useQuery } from '@apollo/client';
+import { GET_USER_BY_TOKEN } from '@/graphql/queries';
+import { User } from '@/graphql/__generated__/graphql';
 
 const Header = () => {
 	const dispatch = useAppDispatch();
 
 	const { user } = useAppSelector(selectUserAuth);
+
+	const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
+		onCompleted: data => {
+			dispatch(loadUser(data.getUserByToken as User));
+		}
+	});
 	return (
 		<>
 			<header className='top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14'>
