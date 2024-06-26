@@ -17,8 +17,20 @@ import { Orgs } from "@/graphql/__generated__/graphql";
 import { CREATE_ORG_MUTATION } from "@/graphql/mutation";
 
 const Sidebar = () => {
-  const dispatch = useAppDispatch();
-  const currentURI = usePathname();
+	const pathname = usePathname();
+	let orgUriId = '';
+
+	if (
+		pathname.startsWith('/orgs/') &&
+		pathname.split('/').length > 2
+	) {
+		const segments = pathname.split('/');
+		orgUriId = segments[segments.length - 1];
+	}
+
+	const dispatch = useAppDispatch();
+	const currentURI = usePathname();
+  
 
   const { orgs } = useAppSelector(selectOrg);
 
