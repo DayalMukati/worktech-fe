@@ -34,3 +34,63 @@ export const REGISTER_USER = gql(`
     }
   }
 `);
+
+
+export const CREATE_TASK_MUTATION = gql(`
+  mutation CreateTask($input:  TasksInput!) {
+    createTask(input: $input) {
+      _id
+      name
+      description
+      priority
+      amount
+      activities {
+        userId
+        activity
+        createdAt
+      }
+      reviewer {
+        _id
+      }
+      assinees {
+        _id
+      }
+      skills {
+        _id
+      }
+      acceptanceCriteria
+      status
+    }
+  }
+`);
+
+export const UPDATE_TASK_MUTATION = gql(`
+  mutation UpdateTask($_id: String!, $input:  UpdateTasksInput!) {
+    updateTask(_id: $_id, input: $input) {
+      _id
+      name
+      description
+      priority
+      amount
+      activities {
+        userId
+        activity
+        createdAt
+      }
+      reviewer {
+        _id
+      }
+      assinees {
+        _id
+      }
+      skills {
+        _id
+      }
+      acceptanceCriteria
+      status
+    }
+  }
+`);
+
+
+
