@@ -5,7 +5,7 @@ import React from "react";
 
 const Profile = () => {
   return (
-    <div className="grid grid-cols-3 h-screen gap-2 px-36 p-6">
+    <div className="grid grid-cols-3 h-screen gap-2 px-24 p-6">
       <div className="col-span-1 ">
         <div className="flex h-full flex-col justify-between items-center gap-1 ">
           <div className="h-1/2  w-full rounded-md border border-slate-300 shadow-lg flex flex-col items-center justify-center gap-1 p-4">
