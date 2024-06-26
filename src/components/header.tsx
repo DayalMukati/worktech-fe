@@ -30,7 +30,7 @@ import {
 	SheetContent,
 	SheetTrigger
 } from '@/components/ui/sheet';
-import { useAppDispatch } from '@/hooks/toolKitTyped';
+import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import {
 	setIsLoginModalOpen,
 	setIsSignupModalOpen,
@@ -38,10 +38,12 @@ import {
 } from '@/store/layoutSlice';
 import LoginModal from './login-modal';
 import SignupModal from './signup-modal';
+import { selectUserAuth } from '@/store/authSlice';
 
 const Header = () => {
 	const dispatch = useAppDispatch();
-	const isLoggedIn = false;
+
+	const { user } = useAppSelector(selectUserAuth);
 	return (
 		<>
 			<header className='top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14'>
@@ -105,7 +107,7 @@ const Header = () => {
 						className='bg-background pl-8 rounded-lg w-full md:w-[200px] lg:w-[336px]'
 					/>
 				</div>
-				{isLoggedIn ? (
+				{user?.walletAddress ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
