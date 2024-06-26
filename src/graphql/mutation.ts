@@ -1,4 +1,4 @@
-import { gql } from "./__generated__";
+import { gql } from './__generated__';
 
 // common
 export const LOGIN_USER_WITH_WALLET = gql(`
@@ -39,7 +39,7 @@ export const CREATE_TASK_MUTATION = gql(`
   mutation CreateTask($input:  TasksInput!) {
     createTask(input: $input) {
       _id
-      name
+      
       description
       priority
       amount
@@ -91,29 +91,91 @@ export const UPDATE_TASK_MUTATION = gql(`
   }
 `);
 
-export const GET_USER_BY_TOKEN = gql(`
-  query GetUserByToken {
-    getUserByToken {
+export const UPDATE_SKILL_MUTATION = gql(`
+  mutation UpdateSkill($_id: String!, $input: UpdateSkillsInput!) {
+    updateSkill(_id: $_id, input: $input) {
       _id
-      firstName
-      lastName
-      email
-      gender
-      mobile
-      signupMode
-      userRoles {
+      title
+      description
+      status
+    }
+  }
+`);
+export const CREATE_ORG_MUTATION = gql(`
+  mutation CreateOrg($input: OrgsInput!) {
+    createOrg(input: $input) {
+      _id
+      name
+      description
+      reviewers {
         _id
-        title
+      }
+      contributors {
+        _id
+      }
+      spaces {
+        _id
+      }
+      roles {
+        _id
+      }
+      createdBy {
+        _id
       }
       status
-      profilePic
-      walletAddress
-      skills {
+    }
+  }
+`);
+export const UPDATE_ORG_MUTATION = gql(`
+  mutation UpdateOrg($_id: String!, $input: UpdateOrgsInput!) {
+    updateOrg(_id: $_id, input: $input) {
+      _id
+      name
+      description
+      reviewers {
         _id
-        title
       }
-      createdAt
-      updatedAt
+      contributors {
+        _id
+      }
+      spaces {
+        _id
+      }
+      roles {
+        _id
+      }
+      createdBy {
+        _id
+      }
+      status
+    }
+  }
+`);
+export const CREATE_SPACE_MUTATION = gql(`
+  mutation CreateSpace($input: SpacesInput!) {
+    createSpace(input: $input) {
+      _id
+      name
+      description
+      visibility
+      tasks {
+        _id
+      }
+      status
+    }
+  }
+`);
+export const UPDATE_SPACE_MUTATION = gql(`
+  mutation UpdateSpace($_id: String!, $input: UpdateSpacesInput!) {
+    updateSpace(_id: $_id, input: $input) {
+      _id
+      name
+      description
+      visibility
+      tasks {
+        _id
+      }
+      status
     }
   }
 `);

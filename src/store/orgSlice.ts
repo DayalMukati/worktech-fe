@@ -26,6 +26,9 @@ export const orgSlice = createSlice({
 		createOrg: (state, action: PayloadAction<{ org: Org }>) => {
 			// console.log({ payload: action.payload });
 			state.orgs.push(action.payload.org);
+		},
+		loadOrgs: (state, action: PayloadAction<{ orgs: Org[] }>) => {
+			state.orgs = action.payload.orgs;
 		}
 	}
 });
