@@ -26,3 +26,14 @@ export const GET_TASK_QUERY = gql(`
     }
   }
 `);
+
+export const LIST_ALL_SKILLS = gql(`
+	query ListAllSkills {
+	  listAllSkills {
+		 _id
+		 title
+		 description
+		 status
+	  }
+	}
+ `);

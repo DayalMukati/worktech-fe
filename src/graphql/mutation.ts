@@ -1,4 +1,4 @@
-import { gql } from './__generated__';
+import { gql } from "./__generated__";
 
 // common
 export const LOGIN_USER_WITH_WALLET = gql(`
@@ -34,7 +34,6 @@ export const REGISTER_USER = gql(`
     }
   }
 `);
-
 
 export const CREATE_TASK_MUTATION = gql(`
   mutation CreateTask($input:  TasksInput!) {
@@ -92,5 +91,29 @@ export const UPDATE_TASK_MUTATION = gql(`
   }
 `);
 
-
-
+export const GET_USER_BY_TOKEN = gql(`
+  query GetUserByToken {
+    getUserByToken {
+      _id
+      firstName
+      lastName
+      email
+      gender
+      mobile
+      signupMode
+      userRoles {
+        _id
+        title
+      }
+      status
+      profilePic
+      walletAddress
+      skills {
+        _id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`);

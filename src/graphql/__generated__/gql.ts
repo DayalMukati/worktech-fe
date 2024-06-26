@@ -17,7 +17,9 @@ const documents = {
     "\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n": types.RegisterUserDocument,
     "\n  mutation CreateTask($input:  TasksInput!) {\n    createTask(input: $input) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.CreateTaskDocument,
     "\n  mutation UpdateTask($_id: String!, $input:  UpdateTasksInput!) {\n    updateTask(_id: $_id, input: $input) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.UpdateTaskDocument,
+    "\n  query GetUserByToken {\n    getUserByToken {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetUserByTokenDocument,
     "\n  query GetTask($_id: String!) {\n    getTask(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.GetTaskDocument,
+    "\n\tquery ListAllSkills {\n\t  listAllSkills {\n\t\t _id\n\t\t title\n\t\t description\n\t\t status\n\t  }\n\t}\n ": types.ListAllSkillsDocument,
 };
 
 /**
@@ -53,7 +55,15 @@ export function gql(source: "\n  mutation UpdateTask($_id: String!, $input:  Upd
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  query GetUserByToken {\n    getUserByToken {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query GetUserByToken {\n    getUserByToken {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  query GetTask($_id: String!) {\n    getTask(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n"): (typeof documents)["\n  query GetTask($_id: String!) {\n    getTask(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n\tquery ListAllSkills {\n\t  listAllSkills {\n\t\t _id\n\t\t title\n\t\t description\n\t\t status\n\t  }\n\t}\n "): (typeof documents)["\n\tquery ListAllSkills {\n\t  listAllSkills {\n\t\t _id\n\t\t title\n\t\t description\n\t\t status\n\t  }\n\t}\n "];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
