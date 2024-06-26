@@ -65,7 +65,7 @@ const OrgList = () => {
 		<div className='w-full flex  justify-center '>
 			<div className='flex flex-col items-center p-4 space-y-3'>
 				<h1 className='text-3xl text-primary'>Top Organizations</h1>
-				<p>Find top organizations</p>
+				<p>Find hundreds of web3 Orgs, see their roadmap and explore open tasks and work</p>
 				<SearchBar />
 				<div className='w-full grid grid-cols-3 gap-4'>
 					{organizations.map(org => (

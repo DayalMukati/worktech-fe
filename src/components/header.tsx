@@ -38,21 +38,34 @@ import {
 } from '@/store/layoutSlice';
 import LoginModal from './login-modal';
 import SignupModal from './signup-modal';
-import { loadUser, selectUserAuth } from '@/store/authSlice';
+import {
+	loadUser,
+	logoutUser,
+	selectUserAuth
+} from '@/store/authSlice';
 import { useQuery } from '@apollo/client';
 import { GET_USER_BY_TOKEN } from '@/graphql/queries';
 import { User } from '@/graphql/__generated__/graphql';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
 	const dispatch = useAppDispatch();
+	const router = useRouter();
 
-	const { user } = useAppSelector(selectUserAuth);
+	const { user, walletAddress } = useAppSelector(selectUserAuth);
 
 	const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
 		onCompleted: data => {
 			dispatch(loadUser(data.getUserByToken as User));
 		}
 	});
+
+	const handleLogout = () => {
+		localStorage.removeItem('authToken');
+		localStorage.removeItem('walletAddress');
+		dispatch(logoutUser());
+		router.push('/');
+	};
 	return (
 		<>
 			<header className='top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14'>
@@ -116,7 +129,7 @@ const Header = () => {
 						className='bg-background pl-8 rounded-lg w-full md:w-[200px] lg:w-[336px]'
 					/>
 				</div>
-				{user?.walletAddress ? (
+				{user?._id ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
@@ -138,7 +151,9 @@ const Header = () => {
 							<DropdownMenuItem>Settings</DropdownMenuItem>
 							<DropdownMenuItem>Support</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Logout</DropdownMenuItem>
+							<DropdownMenuItem onClick={handleLogout}>
+								Logout
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				) : (

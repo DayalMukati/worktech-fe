@@ -6,56 +6,34 @@ import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import {
 	selectLayout,
 	setIsLoginModalOpen,
-	setIsSignupModalOpen,
-	setOrgCreationModal
+	setIsSignupModalOpen
 } from '@/store/layoutSlice';
-import { Wallet } from 'lucide-react';
 import MetaMaskBtn from './metamask-btn';
 import { useState } from 'react';
 import useMetamask from '@/hooks/useMetamask';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
-import {
-	handleLogin,
-	loadUser,
-	selectUserAuth
-} from '@/store/authSlice';
+import { loadUser, setWeb3 } from '@/store/authSlice';
 
-// Define the schema using Zod
 const loginSchema = z.object({
 	name: z.string().min(1, 'Name is required')
 });
 
 type Schema = z.infer<typeof loginSchema>;
 
-// Importing a generic wallet icon, replace with MetaMask icon if available
-
 function LoginModal() {
-	// Existing code...
-	// const { account, error, signMessage, chainId } = useMetamask();
-	const {
-		web3,
-		account,
-		error,
-		connectMetamask,
-		signMessage,
-		isConnected
-	} = useMetamask();
-
+	const { connectToMetamask, account, signedMessage, error, web3 } =
+		useMetamask();
 	const dispatch = useAppDispatch();
 	const { isLoginModalOpen } = useAppSelector(selectLayout);
-
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [logInUser, { loading: AuthUserLoading }] = useMutation(
@@ -75,30 +53,48 @@ function LoginModal() {
 	};
 
 	const handleMetaMaskLogin = async () => {
-		// Logic for MetaMask login
-		console.log('MetaMask login initiated', account);
-		const messageToSign = 'Worktech Sign In';
-		const a = await connectMetamask();
-		const signature = await signMessage(messageToSign);
-		console.log('account+++++', { account });
+		console.log('MetaMask login initiated');
+		const { account, signedMessage, web3Instance } =
+			await connectToMetamask();
+		console.log('account:', account, { web3Instance });
+		console.log('signedMessage:', signedMessage);
+		if (!account || !signedMessage) return;
+
 		try {
 			await logInUser({
 				fetchPolicy: 'no-cache',
 				variables: {
 					walletAddress: account
 				},
-				update: (cache, { data }) => {
-					console.log('data', data);
+				onCompleted: data => {
 					if (data?.loginUser) {
-						// window.location.reload();
 						if (!data.loginUser.isProfileCreated) {
-							localStorage.setItem('address', account);
-							dispatch(loadUser({ walletAddress: account }));
+							dispatch(
+								setWeb3({
+									walletAddress: account,
+									web3: web3Instance
+								})
+							);
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));
+						} else {
+							localStorage.setItem('address', account);
+							localStorage.setItem(
+								'authToken',
+								data.loginUser?.token as string
+							);
+							dispatch(
+								setWeb3({
+									walletAddress: account,
+									web3: web3Instance
+								})
+							);
+							dispatch(setIsLoginModalOpen(false));
+							dispatch(setIsSignupModalOpen(false));
 						}
 					}
 				},
+
 				onError: error => {
 					console.log('error', error);
 				}
@@ -125,9 +121,6 @@ function LoginModal() {
 						</DialogTitle>
 					</DialogHeader>
 
-					{/* Existing form elements... */}
-
-					{/* MetaMask Login Button */}
 					<div className='flex justify-center my-6 w-full'>
 						<MetaMaskBtn
 							isLoading={isLoading}
@@ -135,10 +128,7 @@ function LoginModal() {
 						/>
 					</div>
 
-					{/* Uncommented DialogFooter for demonstration */}
-					<DialogFooter>
-						{/* Other buttons can be added here */}
-					</DialogFooter>
+					<DialogFooter></DialogFooter>
 				</form>
 			</DialogContent>
 		</Dialog>

@@ -4,9 +4,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface AuthState {
 	user?: User | null;
 	authToken?: string | null;
+	walletAddress?: string | null;
+	web3?: any | null;
 }
 
 const initialState: AuthState = {
+	walletAddress: '',
+	web3: null,
 	user: null,
 	authToken: ''
 };
@@ -20,6 +24,13 @@ export const authSlice = createSlice({
 				...state.user,
 				...action.payload
 			};
+		},
+		setWeb3: (
+			state,
+			action: PayloadAction<{ web3: any; walletAddress: string }>
+		) => {
+			state.web3 = action.payload.web3;
+			state.walletAddress = action.payload.walletAddress;
 		},
 		// handleLogin: (state, action: PayloadAction<{ user: User }>) => {
 		// 	// console.log({ payload: action.payload });
@@ -39,14 +50,16 @@ export const authSlice = createSlice({
 				...action.payload.user
 			};
 		},
-		handleLogout: (state, action: PayloadAction<void>) => {
+		logoutUser: state => {
 			state.authToken = initialState.authToken;
 			state.user = initialState.user;
+			state.web3 = null;
+			state.walletAddress = null;
 		}
 	}
 });
 
-export const { handleLogin, handleLogout, loadUser } =
+export const { handleLogin, logoutUser, loadUser, setWeb3 } =
 	authSlice.actions;
 export const selectUserAuth = (state: { authSlice: AuthState }) =>
 	state.authSlice;
