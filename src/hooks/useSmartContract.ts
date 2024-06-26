@@ -6,10 +6,10 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from '../lib/sc-constants';
 
 const useSmartContract = (web3: any) => {
   const { account, connectToMetamask } = useMetamask();
-  const [contract, setContract] = useState<any>(null);
+  let [contract, setContract] = useState<any>(null);
 
   useEffect(() => {
-      console.log('web3....',web3,CONTRACT_ADDRESS, CONTRACT_ABI)
+      console.log('web3....',{web3},CONTRACT_ADDRESS, CONTRACT_ABI)
     if (web3 && CONTRACT_ADDRESS && CONTRACT_ABI) {
       const contractInstance = new web3.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
       console.log('contractInstance++++', contractInstance)
@@ -19,10 +19,12 @@ const useSmartContract = (web3: any) => {
 
   const callMethod = async (methodName: string, ...args: any[]) => {
     
-    // if (!contract) {
-    //   throw new Error('Contract not initialized');
-    // }
-    const contractInstance = new web3.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
+    if (!contract) {
+      // throw new Error('Contract not initialized');
+        const contractInstance = new web3.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
+        console.log('contractInstance++++', contractInstance)
+        setContract(contractInstance);
+    }
 
 
     return contract.methods[methodName](...args).send({ from: account });
