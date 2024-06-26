@@ -62,7 +62,7 @@ const contributors: Contributor[] = [
 	{
 		name: 'scagria',
 		reputation: 3800,
-		description: 'Crypto Enthusiast',
+		description: 'Polyglot fluent in English, German and Portuguese. I help DAOs and crypto.',
 		avatar: 'https://placehold.co/48x48'
 	},
 	{
@@ -89,13 +89,13 @@ const contributors: Contributor[] = [
 	{
 		name: 'tnrd',
 		reputation: 1400,
-		description: 'Full Stack Developer',
+		description: 'Indian web3 enthusiast specializing in operations, translation and IRL meetups',
 		avatar: 'https://placehold.co/48x48'
 	},
 	{
 		name: 'Latsan',
 		reputation: 1300,
-		description: 'Onchain Analyst',
+		description: 'Indian web3 enthusiast specializing in operations, translation and IRL meetups',
 		avatar: 'https://placehold.co/48x48'
 	}
 ];
@@ -108,7 +108,7 @@ const ContributorCard: React.FC<ContributorCardProps> = ({
 	contributor
 }) => {
 	return (
-		<Card className='hover:bg-secondary transition-colors duration-300 cursor-pointer h-40'>
+		<Card className='hover:bg-secondary transition-colors border-2 border-primary/40 duration-300 cursor-pointer h-40'>
 			<CardHeader>
 				<div className='flex flex-col sm:flex-row justify-between items-end sm:items-center '>
 					<div className='flex  items-center gap-4'>
@@ -123,7 +123,7 @@ const ContributorCard: React.FC<ContributorCardProps> = ({
 							<p className='text-xl'>{contributor.name}</p>
 							<span className='flex space-x-2'>
 								<p>Reputation:</p>
-								<Badge className='text-center bg-primary/60 text-primary-foreground shrink-0 border '>
+								<Badge className=' hover:text-white text-center bg-secondary text-primary border border-primary'>
 									{contributor.reputation}
 								</Badge>
 							</span>
