@@ -164,7 +164,6 @@ const CreateTaskForm = ({
   } = useForm<Schema>({
     resolver: zodResolver(createTaskSchema),
   });
-  const dispatch = useAppDispatch();
 
   const onSubmitFrom = async (data: Schema) => {
     try {

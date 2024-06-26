@@ -21,20 +21,23 @@ import {
 } from "@/store/layoutSlice";
 import { Aperture, Building2, SpaceIcon } from "lucide-react";
 import { Switch } from "./ui/switch";
-import { spaces } from "@/conf/data";
-// import { createSpace } from "@/store/spacesSlice";
+import { addSpace } from "@/store/spacesSlice";
+import { CREATE_SPACE_MUTATION } from "@/graphql/mutation";
+import { useMutation } from "@apollo/client";
 
 // Define the schema using Zod
 const spacesSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  visibility: z.boolean(),
+  visibility: z.boolean().optional(),
   // tasks: z.array(z.string()).min(1, "At least one task is required"),
 });
 
 type Schema = z.infer<typeof spacesSchema>;
 
-function SpacesAddModal() {
+function SpacesAddModal({ orgId }: { orgId: string }) {
   const dispatch = useAppDispatch();
+  const [createSpace] = useMutation(CREATE_SPACE_MUTATION);
+
   const { isCreateSpaceModalOpen } = useAppSelector(selectLayout);
 
   const {
@@ -44,19 +47,44 @@ function SpacesAddModal() {
     formState: { errors },
   } = useForm<Schema>({
     defaultValues: {
-      visibility: false,
+      visibility: true,
     },
     resolver: zodResolver(spacesSchema),
   });
 
   const onSubmit = (data: Schema) => {
-    console.log(data);
     const newSpace = {
+      _id: Math.random().toString(),
+      org: orgId,
       name: data.name,
       visibility: data.visibility,
+      status: 1,
     };
-    // dispatch(createSpace({ space: newSpace }));
-    dispatch(setIsCreateSpaceModalOpen(false));
+
+    try {
+      createSpace({
+        variables: {
+          input: {
+            org: orgId,
+            name: data.name,
+            status: 1,
+            visibility: data.visibility === false ? "private" : "public",
+          },
+        },
+        onCompleted: (data) => {
+          console.log(data);
+          const newSpace = {
+            _id: data.createSpace._id,
+            org: orgId,
+            name: data.createSpace.name,
+            visibility: data.createSpace.visibility,
+            status: data.createSpace.status,
+          };
+          dispatch(addSpace({ space: newSpace }));
+          dispatch(setIsCreateSpaceModalOpen(false));
+        },
+      });
+    } catch (error) {}
   };
 
   const onError = (errors: any) => {

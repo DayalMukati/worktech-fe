@@ -1,71 +1,52 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Icon from "@/components/ui/icon";
-
-interface Task {
-  status: string;
-  assignee: string;
-  skills: string[];
-  reviewer: { name: string; profilePicture: string };
-  description: string;
-  acceptanceCriteria: string;
-  activity: { user: string; statusChange: string; date: string }[];
-}
-
-const dummyData: Task = {
-  status: "To Do",
-  assignee: "",
-  skills: ["COMMUNITY"],
-  reviewer: { name: "scagria", profilePicture: "/av-7.png" },
-  description:
-    "Are you an influencer? Tell your community about Obscuro. Provide a link to your post, and we will appreciate your help in the development of our community. Points will be awarded individually depending on such indicators as:",
-  acceptanceCriteria:
-    "Are you an influencer? Tell your community about Obscuro. Provide a link to your post, and we will appreciate your help in the development of our community. Points will be awarded individually depending on such indicators as:",
-  activity: [
-    {
-      user: "YENGALIA SUJANA",
-      statusChange: "To Do to Done",
-      date: "Jun 2 at 6:32 pm",
-    },
-    {
-      user: "JOHN DEO",
-      statusChange: "To Do to Done",
-      date: "Jun 2 at 6:32 pm",
-    },
-    {
-      user: "AISHA LALCHANDANI",
-      statusChange: "To Do to Done",
-      date: "Jun 2 at 6:32 pm",
-    },
-  ],
-};
+import { useParams } from "next/navigation";
+import { GET_TASK_QUERY } from "@/graphql/queries";
+import { useQuery } from "@apollo/client";
 
 const Taskdetails: React.FC = () => {
-  const [taskData, setTaskData] = useState<Task | null>(null);
+  const params = useParams<{ taskId: string }>();
+
+  const [taskData, setTaskData] = useState({
+    name: "No task name",
+    description: "No task description",
+    skills: ["No task skills"],
+    assignee: "Pawan Kumar",
+    reviewer: "Rahul",
+    acceptanceCriteria: "No task acceptance criteria",
+    status: "No task status",
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
 
+  const {
+    loading: loadingTask,
+    error: errorTask,
+    data: dataTask,
+  } = useQuery(GET_TASK_QUERY, {
+    variables: { _id: params.taskId },
+    onCompleted: () => {
+      setLoading(false);
+    },
+  });
+
   useEffect(() => {
-    // Simulate an API call with a timeout
-    setTimeout(() => {
-      try {
-        setTaskData(dummyData);
-        setError(null);
-      } catch (err) {
-        setError("Failed to fetch data");
-      } finally {
-        setLoading(false);
-      }
-    }, 1000); // Simulating a 1 second delay
-  }, []);
+    console.log("data->", dataTask?.getTask);
+    setTaskData(dataTask?.getTask as any);
+  }, [loadingTask, errorTask, dataTask]);
 
   const toggleShowAll = () => {
     setShowAllActivity((prev) => !prev);
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
@@ -83,7 +64,8 @@ const Taskdetails: React.FC = () => {
           Ten (formerly Obscuro) / Community Contributions /
         </div>
         <h2 className="text-2xl font-bold mb-4">
-          Post about Ten in your community
+          {/* Post about Ten in your community */}
+          {taskData.name}
         </h2>
         <div className="flex flex-wrap gap-2 mb-4">
           <button className="bg-primary flex items-center justify-center text-primary-foreground text-sm px-3 py-1 rounded-md">
@@ -109,7 +91,17 @@ const Taskdetails: React.FC = () => {
           <div className="flex flex-col  space-y-3 pt-4 justify-between   mb-4">
             <div className="flex space-x-12 text-muted-foreground  items-center">
               <div className="text-sm ">Status</div>
-              <div className="text-sm ">{taskData.status}</div>
+              <div className="text-sm ">
+                {taskData.status == "1"
+                  ? "To Do"
+                  : taskData.status == "2"
+                  ? "In Progress"
+                  : taskData.status == "3"
+                  ? "In Review"
+                  : taskData.status == "4"
+                  ? "Done"
+                  : "No task status"}
+              </div>
             </div>
             <div className="flex space-x-8 text-muted-foreground items-center">
               <div className="text-sm  ">Assignee</div>
@@ -128,10 +120,10 @@ const Taskdetails: React.FC = () => {
               <div className="flex items-center gap-2">
                 <img
                   className="w-8 h-8 rounded-full border border-primary"
-                  src={taskData.reviewer.profilePicture}
+                  src={"/av-7.png"}
                   alt="reviewer profile picture"
                 />
-                <span className="text-sm ">{taskData.reviewer.name}</span>
+                <span className="text-sm ">{"No task reviewer"}</span>
               </div>
             </div>
           </div>
@@ -165,11 +157,11 @@ const Taskdetails: React.FC = () => {
             {taskData.acceptanceCriteria}
           </p>
           <ul className="list-decimal list-inside text-sm text-muted-foreground mb-4">
-            <li>coverage,</li>
+            {/* <li>coverage,</li>
             <li>number of subs,</li>
             <li>platform,</li>
             <li>number of comments,</li>
-            <li>post quality.</li>
+            <li>post quality.</li> */}
           </ul>
         </div>
       </div>
@@ -199,7 +191,7 @@ const Taskdetails: React.FC = () => {
           )}
         </div>
 
-        {showAllActivity
+        {/* {showAllActivity
           ? taskData.activity.slice(0, 1).map((activity, index) => (
               <div key={index} className="text-sm m-2 text-muted-foreground">
                 {activity.user} changed status from {activity.statusChange}
@@ -215,7 +207,7 @@ const Taskdetails: React.FC = () => {
                   {activity.date}
                 </div>
               </div>
-            ))}
+            ))} */}
         <div className="flex mt-[35rem] p-2 ">
           <input
             type="text"

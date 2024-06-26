@@ -6,7 +6,7 @@ interface Space {
   _id: string;
   name: string;
   description?: string | null;
-  visibility: boolean | null;
+  visibility: string | null;
   tasks?: TaskDto[] | null;
 }
 
@@ -25,13 +25,13 @@ export const spacesSlice = createSlice({
     setSpaces: (state, action: PayloadAction<{ spaces: any }>) => {
       state.spaces = action.payload.spaces;
     },
-    createSpace: (state, action: PayloadAction<{ space: Space }>) => {
+    addSpace: (state, action: PayloadAction<{ space: any }>) => {
       state.spaces.push(action.payload.space);
     },
   },
 });
 
-export const { createSpace, setSpaces } = spacesSlice.actions;
+export const { addSpace, setSpaces } = spacesSlice.actions;
 export const selectSpaces = (state: { spacesSlice: spacesState }) =>
   state.spacesSlice;
 
