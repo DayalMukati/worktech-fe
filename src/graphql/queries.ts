@@ -37,3 +37,29 @@ export const LIST_ALL_SKILLS = gql(`
 	  }
 	}
  `);
+ export const GET_USER_BY_TOKEN = gql(`
+  query GetUserByToken {
+    getUserByToken {
+      _id
+      firstName
+      lastName
+      email
+      gender
+      mobile
+      signupMode
+      userRoles {
+        _id
+        title
+      }
+      status
+      profilePic
+      walletAddress
+      skills {
+        _id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`);

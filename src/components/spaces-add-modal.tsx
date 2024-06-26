@@ -64,16 +64,16 @@ function SpacesAddModal() {
   };
 
   return (
-    <Dialog modal={true} open={isCreateSpaceModalOpen}>
+    <Dialog modal={true} open={isCreateSpaceModalOpen} >
       <DialogContent
         onInteractOutside={(e) => {
           e.preventDefault();
           dispatch(setIsCreateSpaceModalOpen(false));
         }}
-        className="sm:max-w-[700px]"
+        className="sm:max-w-[700px] p-8 "
       >
         <form onSubmit={handleSubmit(onSubmit, onError)}>
-          <DialogHeader className="flex flex-col justify-center items-center ">
+          <DialogHeader className="flex flex-col justify-center items-center   ">
             <DialogTitle className="text-md font-thin text-left w-full ">
               SPACE NAME
             </DialogTitle>
@@ -82,7 +82,7 @@ function SpacesAddModal() {
             type="text"
             {...register("name")}
             placeholder="Enter a name"
-            className="w-full text-lg   text-slate-600  py-6 px-4 border-2 border-slate-300 mt-2 "
+            className="w-full text-md   text-slate-600  py-4 px-6 border-2 border-slate-300 mt-4 "
           />
 
           {/* <Aperture className="w-6 h-6 absolute left-4 top-4 text-slate-600 " /> */}
@@ -90,25 +90,25 @@ function SpacesAddModal() {
             <span className="text-red-500 text-xs">{errors.name.message}</span>
           )}
           <div className="flex justify-center items-center gap-4 p-4 my-4">
-            <div className="w-1/2 flex gap-2">
-              <input type="radio" name="spaces" className="w-6 h-6" />
+            <div className="w-1/2 flex gap-2 border p-2 rounded-lg border-primary/60 shadow-lg">
+              <input type="radio" name="spaces" className="w-6 h-6 text-primary" />
               <div className="flex flex-col justify-center items-center">
                 <Building2 className="w-4 h-4 text-slate-600 " />
                 <span className="text-md text-slate-600">Spaces</span>
 
-                <span className="text-lg text-slate-600">
+                <span className="text-md text-slate-600">
                   Use Spaces as containers to organize and categorize work.
                   Recommended for your Guilds, Teams, Pods.
                 </span>
               </div>
             </div>
-            <div className="w-1/2 flex gap-2">
+            <div className="w-1/2 flex gap-2 border p-2 rounded-lg border-primary/60 shadow-lg">
               <input type="radio" name="spaces" className="w-6 h-6" />
 
               <div className="flex flex-col justify-center items-center">
                 <Building2 className="w-4 h-4 text-slate-600 " />
                 <span className="text-md text-slate-600">Projects</span>
-                <span className="text-lg text-slate-600">
+                <span className="text-md text-slate-600">
                   Use Projects to manage tasks that are part of a larger goal.
                   Projects can have a Status Finish Date and Budget.
                 </span>
@@ -116,7 +116,7 @@ function SpacesAddModal() {
             </div>
           </div>
           <div className="flex flex-col">
-            <h1 className="text-xl ">VISIBILITY</h1>
+            <h1 className="text-md text-slate-700 ">VISIBILITY</h1>
             <span className="text-md text-slate-400">
               Anyone can view this space and its tasks
             </span>
@@ -127,7 +127,7 @@ function SpacesAddModal() {
                 control={control}
                 render={({ field }) => (
                   <>
-                    <h1 className="text-lg text-gray-700">
+                    <h1 className="text-md text-gray-700">
                       {field.value ? "Private" : "Public"}
                     </h1>
                     <Switch
