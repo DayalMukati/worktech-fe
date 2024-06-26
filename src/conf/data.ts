@@ -107,6 +107,7 @@ export const tasks: Task[] = Array.from(
 		organizationId: index + 1 // Assuming each task is associated with a corresponding organization by ID
 	})
 );
+
 export const DEFAULT_CARDS = [
 	// BACKLOG
 	{

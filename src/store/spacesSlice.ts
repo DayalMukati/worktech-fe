@@ -1,38 +1,37 @@
+import { ListAllSpacesQuery, TaskDto } from "@/graphql/__generated__/graphql";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { set } from "zod";
 
-interface spaces {
-  name?: string;
-  visibility?: boolean;
+interface Space {
+  _id: string;
+  name: string;
+  description?: string | null;
+  visibility: boolean | null;
+  tasks?: TaskDto[] | null;
 }
 
 interface spacesState {
-  spaces: spaces[];
+  spaces: Space[];
 }
 
 const initialState: spacesState = {
-  spaces: [
-    {
-      name: "Developer challenges",
-      visibility: false,
-    },
-    {
-      name: "Community Contributions",
-      visibility: false,
-    },
-  ],
+  spaces: [],
 };
 
 export const spacesSlice = createSlice({
   name: "spaces",
   initialState: initialState,
   reducers: {
-    createSpace: (state, action: PayloadAction<{ space: spaces }>) => {
+    setSpaces: (state, action: PayloadAction<{ spaces: any }>) => {
+      state.spaces = action.payload.spaces;
+    },
+    createSpace: (state, action: PayloadAction<{ space: Space }>) => {
       state.spaces.push(action.payload.space);
     },
   },
 });
 
-export const { createSpace } = spacesSlice.actions;
+export const { createSpace, setSpaces } = spacesSlice.actions;
 export const selectSpaces = (state: { spacesSlice: spacesState }) =>
   state.spacesSlice;
 
