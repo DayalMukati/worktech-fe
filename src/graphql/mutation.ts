@@ -148,3 +148,53 @@ export const UPDATE_SPACE_MUTATION = gql(`
   }
 `);
 
+export const CREATE_ORG_MUTATION = gql(`
+  mutation CreateOrg($input: OrgsInput!) {
+    createOrg(input: $input) {
+      _id
+      name
+      description
+      reviewers {
+        _id
+      }
+      contributors {
+        _id
+      }
+      spaces {
+        _id
+      }
+      roles {
+        _id
+      }
+      createdBy {
+        _id
+      }
+      status
+    }
+  }
+`);
+export const UPDATE_ORG_MUTATION = gql(`
+  mutation UpdateOrg($_id: String!, $input: UpdateOrgsInput!) {
+    updateOrg(_id: $_id, input: $input) {
+      _id
+      name
+      description
+      reviewers {
+        _id
+      }
+      contributors {
+        _id
+      }
+      spaces {
+        _id
+      }
+      roles {
+        _id
+      }
+      createdBy {
+        _id
+      }
+      status
+    }
+  }
+`);

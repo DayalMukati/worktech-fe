@@ -18,15 +18,28 @@ import { Button } from './ui/button';
 import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import { setOrgCreationModal } from '@/store/layoutSlice';
 import OrgCreationModal from './org-creation-modal';
-import { selectOrg } from '@/store/orgSlice';
+import { loadOrgs, selectOrg } from '@/store/orgSlice';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
 import { AvatarImage } from './ui/avatar';
+import { useMutation, useQuery } from '@apollo/client';
+import { LIST_ALL_ORGS_BY_USER_QUERY } from '@/graphql/queries';
+import { Orgs } from '@/graphql/__generated__/graphql';
+import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
 
 const Sidebar = () => {
 	const dispatch = useAppDispatch();
 	const currentURI = usePathname();
 
 	const { orgs } = useAppSelector(selectOrg);
+
+	const { loading: isLoadingOrgs } = useQuery(
+		LIST_ALL_ORGS_BY_USER_QUERY,
+		{
+			onCompleted: data => {
+				dispatch(loadOrgs(data.listAllOrgsByUser as Orgs[]));
+			}
+		}
+	);
 
 	const Icons: { [key: string]: JSX.Element } = {
 		Home: <Home className='w-5 h-5' />,
@@ -63,11 +76,11 @@ const Sidebar = () => {
 							<TooltipContent side='right'>{label}</TooltipContent>
 						</Tooltip>
 					))}
-					{orgs.map(({ name }) => (
+					{orgs.map(({ name, _id }) => (
 						<Tooltip key={name}>
 							<TooltipTrigger asChild>
 								<Button asChild variant='outline' size={'icon'}>
-									<Link href={`/orgs/org-overview/${name}`}>
+									<Link href={`/orgs/org-overview/${_id}`}>
 										<Building2 />
 										<span className='sr-only'>{name}</span>
 									</Link>

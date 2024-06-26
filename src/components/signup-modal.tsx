@@ -20,6 +20,7 @@ import {
 } from '@/store/layoutSlice';
 import { useMutation, useQuery } from '@apollo/client';
 import {
+	CREATE_ORG_MUTATION,
 	LOGIN_USER_WITH_WALLET,
 	REGISTER_USER
 } from '@/graphql/mutation';
@@ -86,11 +87,11 @@ function SignupModal() {
 							'authToken',
 							data.registerUser.token as string
 						);
+						dispatch(setIsSignupModalOpen(false));
 					}
 				});
 
 				// Close the modal
-				dispatch(setIsSignupModalOpen(false));
 			}
 		},
 		e => {

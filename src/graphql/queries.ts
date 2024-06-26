@@ -1,5 +1,4 @@
-import { gql } from './__generated__';
-
+import { gql } from "./__generated__";
 
 export const LIST_ALL_SKILLS = gql(`
 	query ListAllSkills {
@@ -12,6 +11,32 @@ export const LIST_ALL_SKILLS = gql(`
 	}
  `);
 
+export const GET_USER_BY_TOKEN = gql(`
+  query GetUserByToken {
+    getUserByToken {
+      _id
+      firstName
+      lastName
+      email
+      gender
+      mobile
+      signupMode
+      userRoles {
+        _id
+        title
+      }
+      status
+      profilePic
+      walletAddress
+      skills {
+        _id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`);
 export const LIST_ALL_TASKS_QUERY = gql(`
   query ListAllTasks {
     listAllTasks {
@@ -39,22 +64,97 @@ export const LIST_ALL_TASKS_QUERY = gql(`
     }
   }
 `);
-
-export const LIST_ALL_SPACES_QUERY = gql(`
-  query ListAllSpaces {
-    listAllSpaces {
+export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
+  query GetAllTasksBySpaceId($_id: String!) {
+    getAllTasksBySpaceId(_id: $_id) {
       _id
       name
       description
-      visibility
-      tasks {
+      priority
+      amount
+      activities {
+        userId
+        activity
+        createdAt
+      }
+      reviewer {
+        _id
+      }
+      space {
+        _id
+        name
+      }
+      assinees {
+        _id
+      }
+      skills {
+        _id
+        title
+      }
+      acceptanceCriteria
+      status
+    }
+  }
+`);
+export const GET_ORG_QUERY = gql(`
+  query GetOrg($_id: String!) {
+    getOrg(_id: $_id) {
+      _id
+      name
+      description
+      reviewers {
+        _id
+      }
+      contributors {
+        _id
+      }
+      spaces {
+        _id
+      }
+      roles {
+        _id
+      }
+      createdBy {
         _id
       }
       status
     }
   }
 `);
-
+export const LIST_ALL_ORGS_QUERY = gql(`
+  query ListAllOrgs {
+    listAllOrgs {
+      _id
+      name
+      description
+      reviewers {
+        _id
+      }
+      contributors {
+        _id
+      }
+      spaces {
+        _id
+      }
+      roles {
+        _id
+      }
+      createdBy {
+        _id
+      }
+      status
+    }
+  }
+`);
+export const LIST_ALL_ORGS_BY_USER_QUERY = gql(`
+  query ListAllOrgsByUser {
+    listAllOrgsByUser {
+      _id
+      name
+      status
+    }
+  }
+`);
 export const GET_SPACE_QUERY = gql(`
   query GetSpace($_id: String!) {
     getSpace(_id: $_id) {
@@ -89,33 +189,56 @@ export const GET_SPACE_QUERY = gql(`
     }
   }
 `);
-
-export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
-  query GetAllTasksBySpaceId($_id: String!) {
-    getAllTasksBySpaceId(_id: $_id) {
+export const GET_ALL_SPACES_BY_ORG_ID_QUERY = gql(`
+  query GetAllSpacesByOrgId($_id: String!) {
+    getAllSpacesByOrgId(_id: $_id) {
       _id
       name
       description
-      priority
-      amount
-      activities {
-        userId
-        activity
-        createdAt
-      }
-      reviewer {
+      visibility
+      org {
         _id
+        name
       }
-      assinees {
+      tasks {
         _id
+        name
+        description
+        priority
+        amount
+        activities {
+          userId
+          activity
+          createdAt
+        }
+        reviewer {
+          _id
+        }
+        assinees {
+          _id
+        }
+        skills {
+          _id
+        }
+        acceptanceCriteria
+        status
       }
-      skills {
-        _id
-      }
-      acceptanceCriteria
       status
     }
   }
 `);
 
-
+export const LIST_ALL_SPACES_QUERY = gql(`
+  query ListAllSpaces {
+    listAllSpaces {
+      _id
+      name
+      description
+      visibility
+      tasks {
+        _id
+      }
+      status
+    }
+  }
+`);
