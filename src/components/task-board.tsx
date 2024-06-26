@@ -10,7 +10,7 @@ import {
   Plus,
   Trash,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 import { motion } from "framer-motion";
@@ -22,6 +22,16 @@ import {
   DialogClose,
 } from "@radix-ui/react-dialog";
 import { stat } from "fs";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  GET_SPACE_QUERY,
+  GET_ALL_TASKS_BY_SPACE_ID_QUERY,
+} from "@/graphql/queries";
+import { useParams } from "next/navigation";
+import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
+import { string } from "zod";
+
+import { getStatusNumber } from "@/lib/getStatusNumber";
 
 interface ColumnProps {
   title: string;
@@ -45,15 +55,51 @@ interface DropIndicatorProps {
 }
 
 const TaskBoard = () => {
+  const params = useParams<{ spaceId: string }>();
   return (
     <div className="w-full h-[90vh]">
-      <Board />
+      <Board spaceId={params.spaceId} />
     </div>
   );
 };
 
-const Board = () => {
-  const [cards, setCards] = useState(DEFAULT_CARDS);
+const Board = ({ spaceId }: { spaceId: string }) => {
+  const [cards, setCards] = useState([]);
+  const getColumn = (status: number) => {
+    switch (status) {
+      case 1:
+        return "todo";
+      case 2:
+        return "in-progress";
+      case 3:
+        return "in-review";
+      case 4:
+        return "done";
+      case 5:
+        return "backlog";
+      default:
+        return "todo";
+    }
+  };
+  // console.log("spaceId->", spaceId);
+  useQuery(GET_ALL_TASKS_BY_SPACE_ID_QUERY, {
+    variables: { _id: spaceId },
+    onCompleted: (data) => {
+      // console.log("space data->", data.getAllTasksBySpaceId);
+      const tasks = data?.getAllTasksBySpaceId?.map((task: any) => {
+        return {
+          id: task._id,
+          title: task.name,
+          description: task.description,
+          column: getColumn(task.status),
+          createdAt: Math.floor(Math.random()),
+          tags: task.skills.map((skill: any) => skill.name),
+        };
+      });
+      setCards(tasks as any);
+    },
+  });
+
   return (
     <div className="flex gap-3 p-12 w-full h-full overflow-scroll">
       <Column
@@ -96,6 +142,7 @@ const Column = ({
   cards,
   setCards,
 }: ColumnProps) => {
+  const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
   const [activeCard, setActiveCard] = useState(false);
   const filteredCards = cards.filter((card) => card.column === column);
   const handleDragStart = (
@@ -120,6 +167,7 @@ const Column = ({
     clearHighlights();
 
     const cardId = e.dataTransfer.getData("cardId");
+    console.log("cardId->", cardId);
     if (!cardId) return;
     const { element } = getNearestIndicator(e, getIndicators());
     const before = element.getAttribute("data-before") || "-1";
@@ -143,7 +191,33 @@ const Column = ({
         if (index === undefined) return;
         copy.splice(index, 0, cardToTransfer);
       }
+      handleUpdateTask({ cardId, status: cardToTransfer.column });
       setCards(copy);
+    }
+  };
+
+  const handleUpdateTask = async ({
+    cardId,
+    status,
+  }: {
+    cardId: string;
+    status: string;
+  }) => {
+    console.log("task status->", status);
+    try {
+      await updateTaskMutaion({
+        variables: {
+          _id: cardId,
+          input: {
+            status: getStatusNumber(status),
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+      });
+    } catch (error) {
+      console.log("error->", error);
     }
   };
 
@@ -318,6 +392,8 @@ const AddCard = ({
   column: string;
   setCards: Function;
 }) => {
+  const params = useParams<{ spaceId: string }>();
+
   const [text, setText] = useState("");
   const [adding, setAdding] = useState(false);
 
@@ -354,7 +430,11 @@ const AddCard = ({
               </Button>
             </DialogClose>
 
-            <CreateTaskForm handlePostSubmit={handlePostSubmit} />
+            <CreateTaskForm
+              handlePostSubmit={handlePostSubmit}
+              spaceId={params.spaceId}
+              column={column}
+            />
           </DialogContent>
         </Dialog>
       ) : (
