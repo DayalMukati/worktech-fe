@@ -5,7 +5,7 @@ import { GET_USER_BY_TOKEN } from '@/graphql/queries';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { CircleHelp, CirclePlus, Coffee, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+import { loadUser, selectUserAuth } from '@/store/authSlice';
 interface User {
   firstName: string;
 }
@@ -20,7 +20,7 @@ interface QueryVariables {
 
 const Profile: React.FC<{ userToken: string }> = ({ userToken }) => {
   const [user, setUser] = useState<User | null>(null);
-  const token = localStorage.getItem('token'); 
+  const token = localStorage.getItem('authToken'); 
   
   console.log(token); 
   
@@ -49,8 +49,8 @@ const Profile: React.FC<{ userToken: string }> = ({ userToken }) => {
               />
               <AvatarFallback>Avatar</AvatarFallback>
             </Avatar>
-            <span className="text-md text-slate-400 font-[700]">
-              {data?.getUserByToken?.firstName}
+            <span className="text-md text-slate-700 font-[700]">
+              {data?.getUserByToken?.firstName|| "Username"}
             </span>
             <p className="text-xs text-slate-300">No bio.</p>
 

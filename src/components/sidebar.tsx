@@ -67,9 +67,9 @@ const Sidebar = () => {
           {orgs.map(({ name, _id }) => (
             <Tooltip key={name}>
               <TooltipTrigger asChild>
-                <Button asChild variant="outline" size={"icon"}>
+                <Button asChild variant="outline" size={"icon"} className="bg-primary/20">
                   <Link href={`/orgs/org-overview/${_id}`}>
-                    <Avatar  className="w-24 h-24 cursor-pointer">
+                    <Avatar  className=" font-bold text-lg cursor-pointer">
                       {name.charAt(0)} 
                     </Avatar>
                     <span className="sr-only">{name}</span>
