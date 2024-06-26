@@ -5,7 +5,7 @@ import { GET_USER_BY_TOKEN } from '@/graphql/queries';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { CircleHelp, CirclePlus, Coffee, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+import { loadUser, selectUserAuth } from '@/store/authSlice';
 interface User {
   firstName: string;
 }
@@ -18,22 +18,24 @@ interface QueryVariables {
   token: string;
 }
 
-const Profile: React.FC<{ userToken: string }> = () => {
+const Profile: React.FC<{ userToken: string }> = ({ userToken }) => {
   const [user, setUser] = useState<User | null>(null);
-
+  const token = localStorage.getItem('authToken'); 
+  
+  console.log(token); 
+  
   const { data, loading, error } = useQuery<QueryData, QueryVariables>(GET_USER_BY_TOKEN, {
-    variables: { token:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhcnNocGF0d2FyZTE1MDUrMUBnbWFpbC5jb20iLCJfaWQiOiI2NjdiZTlkYTBmMzRkMzg0Zjg3MTFmODMiLCJleHBpcmF0aW9uIjoiMjAyNC0wNy0xN1QwNjo1NTo1My43MzVaIiwiaWF0IjoxNzE5Mzk5MzUzLCJleHAiOjE3MjExOTkzNTN9.BvC_Ky9sCNFSb-TQuiWa_iiWDqsgwv-l8X-PE7O2jnE' },
+    variables: { token: token || '' },  
   });
-
   useEffect(() => {
     if (data) {
       setUser(data.getUserByToken);
     }
   }, [data]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className='flex justify-center items-center h-full' >Loading...</p>;
 
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <p className='flex justify-center items-center h-full'>Error: {error.message}</p>;
 
   return (
     <div className="grid grid-cols-3 gap-2 px-36 p-6">
@@ -47,8 +49,8 @@ const Profile: React.FC<{ userToken: string }> = () => {
               />
               <AvatarFallback>Avatar</AvatarFallback>
             </Avatar>
-            <span className="text-md text-slate-400 font-[700]">
-              {data?.getUserByToken?.firstName}
+            <span className="text-md text-slate-700 font-[700]">
+              {data?.getUserByToken?.firstName|| "Username"}
             </span>
             <p className="text-xs text-slate-300">No bio.</p>
 
