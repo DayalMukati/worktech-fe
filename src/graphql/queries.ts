@@ -274,3 +274,18 @@ export const GET_TASK_QUERY = gql(`
     }
   }
 `);
+export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
+  query ListAllInterestedContributors {
+    listAllInterestedContributors {
+      _id
+      description
+      userID{
+          _id
+      }
+      taskID{
+          _id
+      }
+      status
+    }
+  }
+  `);

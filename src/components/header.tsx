@@ -125,7 +125,6 @@ const Header = () => {
 						</nav>
 					</SheetContent>
 				</Sheet>
-				<Image src={'/image.png'} alt='logo' width={60} height={30} />
 
 				<div className='relative flex-1 ml-auto md:grow-0'>
 					<Search className='top-2.5 left-2.5 absolute w-4 h-4 text-muted-foreground' />

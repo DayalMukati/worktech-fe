@@ -88,7 +88,9 @@ function OrgCreationModal() {
 							</div>
 							<Input
 								id='name'
-								{...register('name')}
+								{...register('name', {
+									required: 'This field is required'
+								})}
 								placeholder='Enter your organization name...'
 								className='border-primary bg-primary/5 p-3 border rounded w-2/3 text-primary text-sm placeholder:text-center placeholder:text-primary focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors'
 							/>

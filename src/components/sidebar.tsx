@@ -101,7 +101,7 @@ const Sidebar = () => {
 									)}>
 									<Link href={`/orgs/org-overview/${_id}`}>
 										<Avatar className='font-bold text-lg cursor-pointer'>
-											{getInitials(name)}
+											{getInitials(name)?.substring(0,2)}
 										</Avatar>
 										<span className='sr-only'>{name}</span>
 									</Link>

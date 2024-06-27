@@ -121,7 +121,7 @@ const OrgOverview = () => {
               Login
             </Button> */}
 							<Button className='flex bg-primary w-24'>
-								<UserPlus className='w-[20px] h-[20px]' /> Follow
+								<UserPlus className='mr-2 w-[20px] h-[20px]' /> Follow
 							</Button>
 						</div>
 					</div>
@@ -209,7 +209,7 @@ const OrgOverview = () => {
 									About
 								</h1>
 								<p className='text-left text-slate-400'>
-									We&apos;re building the first general. purpose, EVM
+									We're building the first general. purpose, EVM
 									equivalent, encrypted L2 for Ethereum
 								</p>
 								<div className='flex flex-wrap gap-4 overflow-hidden'>
