@@ -243,6 +243,37 @@ export const LIST_ALL_SPACES_QUERY = gql(`
   }
 `);
 
+
+export const GET_TASK_QUERY = gql(`
+  query GetTask($_id: String!) {
+    getTask(_id: $_id) {
+      _id
+      name
+      description
+      priority
+      amount
+      activities {
+        userId
+        activity
+        createdAt
+      }
+      space {
+        _id
+      }
+      reviewer {
+        _id
+      }
+      assinees {
+        _id
+      }
+      skills {
+        _id
+      }
+      acceptanceCriteria
+      status
+    }
+  }
+`);
 export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
   query ListAllInterestedContributors {
     listAllInterestedContributors {

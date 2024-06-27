@@ -166,7 +166,6 @@ const CreateTaskForm = ({
   } = useForm<Schema>({
     resolver: zodResolver(createTaskSchema),
   });
-  const dispatch = useAppDispatch();
 
   const { web3 } = useAppSelector(selectUserAuth);
 
