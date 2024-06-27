@@ -104,7 +104,7 @@ const Profile: React.FC<{ userToken: string }> = ({ userToken }) => {
             </span>
           </div>
         </div>
-        <div className="flex flex-col h-3/7 rounded-md border border-slate-300 shadow-lg bg-white p-2">
+        <div className="flex flex-col h-3/7c rounded-md border border-slate-300 shadow-lg bg-white p-2">
           <h1 className="text-lg text-slate-600 font-semibold">Contribution</h1>
           <div className="flex flex-col gap-2 p-2 justify-center items-center mt-10">
             <Coffee className="w-16 h-16 text-slate-800 cursor-pointer  rounded-full p-2" />
