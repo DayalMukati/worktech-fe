@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -49,33 +49,38 @@ interface ContributorCardProps {
 
 const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
   return (
-    <Card className="hover:bg-secondary transition-colors border-2 border-primary/40 duration-300 cursor-pointer h-40">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center ">
-          <div className="flex items-center gap-4">
+    <Card className="hover:bg-secondary border-2  min-w-[350px] max-w-[400px]  border-primary/20 transition-colors duration-300 cursor-pointer  h-30 ">
+      <CardHeader className="p-2">
+        <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center   ">
+          <div className="flex  items-center gap-4 w-full">
             <Image
               className="w-14 h-14 border object-cover rounded-full p-1"
-              src='/av-7.png'
+              src="/av-7.png"
               alt="Avatar"
               width={64}
               height={64}
             />
-            <div>
-              <p className="text-xl">
-				{contributor.name}</p>
+            <div className="space-y-1">
+              <CardTitle className=" text-wrap text-md overflow-hidden text-ellipsis ">
+                {contributor.name?.length > 25
+                  ? contributor.name.substring(0, 25) + "..."
+                  : contributor.name || "Username"}
+              </CardTitle>
               <span className="flex space-x-2">
                 <p>Reputation:</p>
                 <Badge className="hover:text-white text-center bg-secondary text-primary border border-primary">
                   {/* {contributor.reputation} */}
-				  1001
+                  1001
                 </Badge>
               </span>
             </div>
           </div>
         </div>
         <div>
-          <CardDescription className="text-slate-500 mt-2">
-            {contributor.description}
+          <CardDescription className="text-slate-500 mx-2 ">
+            {contributor.description?.length > 85
+              ? contributor.description.substring(0,85) + "..."
+              : contributor.description}
           </CardDescription>
         </div>
       </CardHeader>
@@ -85,7 +90,9 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
 
 // ContributorList component
 const ContributorList: React.FC = () => {
-  const { data, loading, error } = useQuery<QueryData>(LIST_ALL_INTERESTED_CONTRIBUTORS);
+  const { data, loading, error } = useQuery<QueryData>(
+    LIST_ALL_INTERESTED_CONTRIBUTORS
+  );
   const [contributors, setContributors] = useState<Contributor[]>([]);
 
   useEffect(() => {
@@ -107,8 +114,8 @@ const ContributorList: React.FC = () => {
     );
 
   return (
-    <div className="w-full flex justify-center px-24">
-      <div className="flex flex-col items-center p-6 space-y-4">
+    <div className="w-full flex justify-center px-12 py-6 ">
+      <div className="flex flex-col items-center space-y-4">
         <h1 className="text-4xl text-primary justify-start">
           Top Contributors
         </h1>

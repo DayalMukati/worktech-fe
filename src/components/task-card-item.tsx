@@ -10,7 +10,7 @@ import React from "react";
 
 function TaskCardItem({ task }: any) {
   return (
-    <Card className="hover:bg-secondary border-2 border-primary/20 transition-colors duration-300 cursor-pointer">
+    <Card className="hover:bg-secondary border-2 border-primary/20 transition-colors h-24 min-w-[350px] max-w-[400px] duration-300 cursor-pointer">
       <CardHeader>
         <div className="flex sm:flex-row flex-col justify-between items-end sm:items-center">
           <div className="flex items-center gap-4">
@@ -22,11 +22,11 @@ function TaskCardItem({ task }: any) {
               height={64}
             />
             <div>
-              <CardTitle className=" text-wrap overflow-hidden text-ellipsis ">
-                {task.name}
+              <CardTitle className=" text-wrap text-md overflow-hidden text-ellipsis ">
+                {task.name.length > 25 ? task.name.substring(0, 25) + '...' : task.name}
               </CardTitle>
               <CardDescription className="text-wrap overflow-hidden text-ellipsis">
-                {task.description}
+              { task.description.length > 60 ? task.description.substring(0, 60) + '...' : task.description}
               </CardDescription>
             </div>
           </div>
