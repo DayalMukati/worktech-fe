@@ -22,6 +22,7 @@ import useWeb3 from '@/hooks/useWeb3';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
 import { loadUser, setWeb3 } from '@/store/authSlice';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
 	name: z.string().min(1, 'Name is required')
@@ -31,6 +32,8 @@ type Schema = z.infer<typeof loginSchema>;
 
 function LoginModal() {
 	const { connectToMetaMask, account , signMessage} = useWeb3();
+	const router = useRouter();
+
 	const dispatch = useAppDispatch();
 	const { isLoginModalOpen } = useAppSelector(selectLayout);
 	const [isLoading, setIsLoading] = useState(false);
@@ -92,6 +95,12 @@ function LoginModal() {
 									web3: null
 								})
 							);
+							router.push('/dashboard');
+							// dispatch(
+							// 	setWeb3({
+							// 		web3: web3Instance
+							// 	})
+							// );
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(false));
 						}
@@ -99,19 +108,24 @@ function LoginModal() {
 				},
 
 				onError: error => {
-					console.log('error', error);
+					console.log('error', error.stack);
+					dispatch(setIsLoginModalOpen(false));
+					dispatch(setIsSignupModalOpen(false));
 				}
 			});
 		} catch (error) {
 			console.log(error);
 		}
 	};
+	const handleModalClose = (val: boolean) => {
+		dispatch(setIsLoginModalOpen(val));
+	};
 
 	return (
 		<Dialog
 			modal={true}
 			open={isLoginModalOpen}
-			onOpenChange={val => dispatch(setIsLoginModalOpen(val))}>
+			onOpenChange={handleModalClose}>
 			<DialogContent
 				onInteractOutside={e => {
 					e.preventDefault();

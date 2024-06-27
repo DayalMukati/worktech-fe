@@ -24,6 +24,9 @@ import { space } from "postcss/lib/list";
 import { getStatusNumber } from "@/lib/getStatusNumber";
 import useSmartContract from '@/hooks/useSmartContract';
 import { selectUserAuth } from "@/store/authSlice";
+import Web3, { AbiItem } from "web3";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
+import useWeb3 from "@/hooks/useWeb3";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -167,16 +170,18 @@ const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema),
   });
 
-  const { web3 } = useAppSelector(selectUserAuth);
+  const { web3, walletAddress } = useAppSelector(selectUserAuth);
+	const { connectToMetaMask , callSCMethod, active} = useWeb3();
 
-  const { callMethod, connectToMetamask, account } = useSmartContract(web3);
+  const { callMethod, account } = useSmartContract();
 
   const onSubmitFrom = async (data: Schema) => {
     try {
-      console.log('data+++++', data);
-      const result = await callMethod('createTask', ['Error Handling', 100000000000000000, "0x45f520587bf5CA91c922dEFBc596A6A5Ce294039"]);
-      console.log('result++++++', result);
-      return;
+      
+      if (!active) {
+        await connectToMetaMask();
+      }
+
       await createTaskMutaion({
         variables: {
           input: {
@@ -197,7 +202,11 @@ const CreateTaskForm = ({
           throw new Error(error);
         },
         onCompleted(data: any) {
-          // console.log("data->", data);
+          const priceInWei = web3.utils.toWei(data.price, 'ether');
+
+          let txn = callSCMethod("createTask", [data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
+
+          console.log("data->", txn);
 
           handlePostSubmit(data);
         },
