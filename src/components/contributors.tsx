@@ -114,7 +114,7 @@ const ContributorList: React.FC = () => {
     );
 
   return (
-    <div className="w-full flex justify-center px-12 py-6 ">
+    <div className="w-full flex justify-center px-24 py-6 ">
       <div className="flex flex-col items-center space-y-4">
         <h1 className="text-4xl text-primary justify-start">
           Top Contributors
