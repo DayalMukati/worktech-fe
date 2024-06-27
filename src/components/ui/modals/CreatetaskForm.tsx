@@ -366,11 +366,10 @@ const CreateTaskForm = ({
                       }),
                     }}
                     options={Assignee}
-                    onChange={(selectedOptions) => {
-                      const values = selectedOptions
-                        ? selectedOptions.value
-                        : "";
-                      field.onChange(values);
+                    onChange={(selectedOption) => {
+                      field.onChange(
+                        selectedOption ? selectedOption.value : null
+                      );
                       clearErrors("assignee"); // Clear error on change
                     }}
                     components={{
