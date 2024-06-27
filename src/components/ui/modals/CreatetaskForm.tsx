@@ -31,7 +31,7 @@ const createTaskSchema = z.object({
   description: z.string().min(2, "Description is required"),
   acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
   status: z.number().min(1, "Status is required"),
-  assignee: z.array(z.string()).min(1, "Assignee is required"),
+  assignee: z.string().min(1, "Assignee is required"),
   priority: z.string().min(1, "Priority is required"),
   reviewer: z.string().min(1, "Reviewers is required"),
   price: z.string().min(1, "Price is required"),
@@ -365,15 +365,11 @@ const CreateTaskForm = ({
                         cursor: "pointer",
                       }),
                     }}
-                    isMulti
                     options={Assignee}
                     onChange={(selectedOptions) => {
                       const values = selectedOptions
-                        ? selectedOptions.map(
-                            (option: any) => option.value as any
-                          )
-                        : [];
-
+                        ? selectedOptions.value
+                        : "";
                       field.onChange(values);
                       clearErrors("assignee"); // Clear error on change
                     }}
