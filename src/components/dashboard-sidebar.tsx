@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation';
 
 const DashboardSidebar = () => {
 	const currentURI = usePathname();
@@ -32,7 +32,7 @@ const DashboardSidebar = () => {
 			<nav className='p-4'>
 				<ul className='space-y-2'>
 					{menuItems.map(({ href, icon, label }) => (
-						<li>
+						<li key={href}>
 							<Button
 								className={cn(
 									'flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors',

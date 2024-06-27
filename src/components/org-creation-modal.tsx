@@ -75,7 +75,7 @@ function OrgCreationModal() {
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<DialogHeader className='flex flex-col justify-center items-center gap-2'>
 						<DialogTitle className='text-3xl text-center'>
-							What's the name of your Organization?
+							What&apos;s the name of your Organization?
 						</DialogTitle>
 					</DialogHeader>
 					<div className='gap-4 grid py-4'>

@@ -96,12 +96,12 @@ function LoginModal() {
 						);
 
 						if (!data.loginUser.isProfileCreated) {
-							dispatch(
-								setWeb3({
-									walletAddress: account,
-									web3: web3Instance
-								})
-							);
+							// dispatch(
+							// 	setWeb3({
+							// 		walletAddress: account,
+							// 		web3: web3Instance
+							// 	})
+							// );
 
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));
