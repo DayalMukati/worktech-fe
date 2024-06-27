@@ -419,8 +419,8 @@ const AddCard = ({
     <>
       {adding ? (
         <Dialog open={true} onOpenChange={(val) => setAdding(val)}>
-          <div className="fixed inset-0 bg-black opacity-30 z-2"></div>
-          <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform p-4 w-full max-w-5xl rounded-lg  bg-background shadow-lg ">
+          <div className="fixed inset-0 bg-black opacity-30 z-10"></div>
+          <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform p-4 lg:w-full w-[80vw] max-w-5xl rounded-lg  bg-background shadow-lg z-20">
             <DialogTitle className="text-center">Add Task</DialogTitle>
             <DialogClose asChild>
               <Button
