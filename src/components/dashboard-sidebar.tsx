@@ -13,17 +13,17 @@ const DashboardSidebar = () => {
 		return currentPath === menuItemHref;
 	};
 	const menuItems = [
-		{
-			href: '/dashboard',
-			icon: 'Home',
-			label: 'Explore'
-		},
-		{
-			href: '/dashboard/tasks',
-			icon: 'FolderKanban',
-			label: 'Tasks'
-		}
-	];
+    {
+      href: "/dashboard",
+      icon: "Home",
+      label: "Explore",
+    },
+    {
+      href: "/dashboard/tasks",
+      icon: "FolderKanban",
+      label: "My Tasks",
+    },
+  ];
 	return (
     <aside className="col-span-1 bg-background border-r">
       <div className="p-3.5 border-b-2">

@@ -26,6 +26,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   GET_SPACE_QUERY,
   GET_ALL_TASKS_BY_SPACE_ID_QUERY,
+  GET_USERS_QUERY,
 } from "@/graphql/queries";
 import { useParams, useRouter } from "next/navigation";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
@@ -39,6 +40,7 @@ interface ColumnProps {
   column: string;
   cards: typeof DEFAULT_CARDS;
   setCards: Function;
+  isContributer: boolean;
 }
 interface CardProps {
   title: string;
@@ -54,16 +56,22 @@ interface DropIndicatorProps {
   column: string;
 }
 
-const TaskBoard = () => {
+const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
   const params = useParams<{ spaceId: string }>();
   return (
     <div className="w-full h-[90vh]">
-      <Board spaceId={params.spaceId} />
+      <Board spaceId={params.spaceId} isContributer={isContributer} />
     </div>
   );
 };
 
-const Board = ({ spaceId }: { spaceId: string }) => {
+const Board = ({
+  spaceId,
+  isContributer,
+}: {
+  spaceId: string;
+  isContributer: boolean;
+}) => {
   const [cards, setCards] = useState([]);
   const getColumn = (status: number) => {
     switch (status) {
@@ -81,6 +89,7 @@ const Board = ({ spaceId }: { spaceId: string }) => {
         return "todo";
     }
   };
+
   // console.log("spaceId->", spaceId);
   useQuery(GET_ALL_TASKS_BY_SPACE_ID_QUERY, {
     variables: { _id: spaceId },
@@ -101,13 +110,14 @@ const Board = ({ spaceId }: { spaceId: string }) => {
   });
 
   return (
-    <div className="flex gap-3 p-12 w-full h-full overflow-scroll">
+    <div className="flex gap-3 p-12  w-full h-full overflow-scroll">
       <Column
         title="To Do"
         headingColor="text-red-500"
         column="todo"
         cards={cards}
         setCards={setCards}
+        isContributer={isContributer as any}
       />
       <Column
         title="In Progress"
@@ -115,6 +125,7 @@ const Board = ({ spaceId }: { spaceId: string }) => {
         column="in-progress"
         cards={cards}
         setCards={setCards}
+        isContributer={isContributer as any}
       />
       <Column
         title="In Review"
@@ -122,6 +133,7 @@ const Board = ({ spaceId }: { spaceId: string }) => {
         column="in-review"
         cards={cards}
         setCards={setCards}
+        isContributer={isContributer as any}
       />
       <Column
         title="Done"
@@ -129,6 +141,7 @@ const Board = ({ spaceId }: { spaceId: string }) => {
         column="done"
         cards={cards}
         setCards={setCards}
+        isContributer={isContributer as any}
       />
       {/* <DropZone setCards={setCards} /> */}
     </div>
@@ -141,6 +154,7 @@ const Column = ({
   column,
   cards,
   setCards,
+  isContributer,
 }: ColumnProps) => {
   const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
   const [activeCard, setActiveCard] = useState(false);
@@ -282,7 +296,7 @@ const Column = ({
           <Card key={card.id} {...card} handleDragStart={handleDragStart} />
         ))}
         <DropIndicator before="-1" column={column} />
-        <AddCard column={column} setCards={setCards} />
+        {!isContributer && <AddCard column={column} setCards={setCards} />}
       </div>
     </div>
   );
@@ -415,6 +429,11 @@ const AddCard = ({
     setAdding(false); // for this i have to handle the postsubmit here
   };
 
+  const { data: usersData, error: usersError } = useQuery(GET_USERS_QUERY, {
+    onCompleted: (data) => {
+      console.log("all user data->", data.users);
+    },
+  });
   return (
     <>
       {adding ? (
@@ -436,6 +455,7 @@ const AddCard = ({
               handlePostSubmit={handlePostSubmit}
               spaceId={params.spaceId}
               column={column}
+              users={usersData?.users}
             />
           </DialogContent>
         </Dialog>

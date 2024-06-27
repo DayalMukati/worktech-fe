@@ -70,23 +70,24 @@ const customSingleValue = (props: any) => {
   );
 };
 
-const Assignee = [
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "ak@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "dayal@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "vineet@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-];
+// const Assignee = [
+//   {
+//     value: "6672dba833963a34ca6b6b9d",
+//     label: "ak@gmail.com",
+//     icon: <Users className="w-4 h-4" />,
+//   },
+//   {
+//     value: "6672dba833963a34ca6b6b9d",
+//     label: "dayal@gmail.com",
+//     icon: <Users className="w-4 h-4" />,
+//   },
+//   {
+//     value: "6672dba833963a34ca6b6b9d",
+//     label: "vineet@gmail.com",
+//     icon: <Users className="w-4 h-4" />,
+//   },
+// ];
+
 
 const customOptionAssignee = (props: any) => {
   return (
@@ -110,9 +111,9 @@ const customSingleValueAssignee = (props: any) => {
 };
 
 const Priority = [
-  { value: "low", label: "low", color: "green" },
-  { value: "medium", label: "medium", color: "yellow" },
   { value: "high", label: "high", color: "red" },
+  { value: "medium", label: "medium", color: "yellow" },
+  { value: "low", label: "low", color: "green" },
 ];
 
 const customPriorityOption = (props: any) => {
@@ -151,10 +152,12 @@ const CreateTaskForm = ({
   spaceId,
   handlePostSubmit,
   column,
+  users,
 }: {
   spaceId: string;
   handlePostSubmit: Function;
   column: string;
+  users: any;
 }) => {
   const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
   const {
@@ -167,16 +170,28 @@ const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema),
   });
 
+  
+const Assignee = users?.map((user: any) => ({
+  value: user._id,
+  label: user.email,
+  icon: <Users className="w-4 h-4" />,
+}));
+
   const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, connectToMetamask, account } = useSmartContract(web3);
 
   const onSubmitFrom = async (data: Schema) => {
     try {
-      console.log('data+++++', data);
-      const result = await callMethod('createTask', ['Error Handling', 100000000000000000, "0x45f520587bf5CA91c922dEFBc596A6A5Ce294039"]);
-      console.log('result++++++', result);
+      console.log("data+++++", data);
+      const result = await callMethod("createTask", [
+        "Error Handling",
+        100000000000000000,
+        "0x45f520587bf5CA91c922dEFBc596A6A5Ce294039",
+      ]);
+      console.log("result++++++", result);
       return;
+
       await createTaskMutaion({
         variables: {
           input: {
@@ -236,6 +251,7 @@ const CreateTaskForm = ({
               <DraftingCompass className="w-4 h-4 " />
               Add Skils
             </Button>
+             
           </div>
           <div className="mt-4">
             <Label className="text-md text-slate-800">Task Description</Label>
@@ -336,7 +352,7 @@ const CreateTaskForm = ({
                     isMulti
                     onChange={(selectedOptions) => {
                       const values = selectedOptions
-                        ? selectedOptions.map((option) => option.value)
+                        ? selectedOptions.map((option : any) => option.value as any)
                         : [];
                       field.onChange(values);
                       clearErrors("assignee"); // Clear error on change

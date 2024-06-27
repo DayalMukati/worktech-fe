@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -16,8 +17,14 @@ import {
   LogIn,
 } from "lucide-react";
 
+import { GET_ORG_QUERY } from "@/graphql/queries";
+import { useQuery } from "@apollo/client";
+import { useParams } from "next/navigation";
 
 const OrgOverview = () => {
+  const params = useParams();
+  const orgId = params.orgId as string;
+
   const spacesItems = [
     {
       id: 1,
@@ -59,6 +66,15 @@ const OrgOverview = () => {
     //   updatedAt: "2023-01-01",
     // },
   ];
+
+  const { data: orgData, error: orgError } = useQuery(GET_ORG_QUERY, {
+    variables: {
+      _id: orgId,
+    },
+    onError: (error) => {
+      console.log("error", error);
+    },
+  });
 
   const OpentaskList = [
     {
@@ -103,9 +119,9 @@ const OrgOverview = () => {
                 alt="logo"
               />
               <div className="flex flex-col ">
-                <h1 className=" text-[30px]">Ten formerly Obscuro</h1>
+                <h1 className=" text-[30px]">{orgData?.getOrg?.name}</h1>
                 <p className="text-[14px] text-slate-400">
-                  Encyrpting Ethereum
+                  {orgData?.getOrg?.description || "Encyrpting Ethereum"}t
                 </p>
                 <div className="flex text-sm text-slate-600 mt-4">
                   <span>Time to payment 0.0 days </span>

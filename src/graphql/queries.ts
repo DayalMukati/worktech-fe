@@ -96,6 +96,7 @@ export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
     }
   }
 `);
+
 export const GET_ORG_QUERY = gql(`
   query GetOrg($_id: String!) {
     getOrg(_id: $_id) {
@@ -271,6 +272,33 @@ export const GET_TASK_QUERY = gql(`
       }
       acceptanceCriteria
       status
+    }
+  }
+`);
+
+export const GET_USERS_QUERY = gql(`
+  query GetUsers {
+    users {
+      _id
+      firstName
+      lastName
+      email
+      gender
+      mobile
+      signupMode
+      userRoles {
+        _id
+        title
+      }
+      status
+      profilePic
+      walletAddress
+      skills {
+        _id
+        title
+      }
+      createdAt
+      updatedAt
     }
   }
 `);
