@@ -13,7 +13,7 @@ import {
 	TooltipTrigger
 } from './ui/tooltip';
 import { usePathname } from 'next/navigation';
-import { checkPathMatch, cn } from '@/lib/utils';
+import { checkPathMatch, cn, getInitials } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import { setOrgCreationModal } from '@/store/layoutSlice';

@@ -11,3 +11,11 @@ export function checkPathMatch(
 	const regex = new RegExp(menuItemHref);
 	return regex.test(currentPath);
 }
+
+export function getInitials(name?: string) {
+	if (!name) return '';
+	return name
+		.match(/\b(\w)/g)
+		?.join('')
+		.toUpperCase();
+}
