@@ -1,9 +1,9 @@
+import { use } from 'react';
 import useSWR from 'swr';
 import { SessionData, defaultSession } from '@/lib/session';
 import useSWRMutation from 'swr/mutation';
 
-const sessionApiRoute =
-	'/app-router-client-component-route-handler-swr/session';
+const sessionApiRoute = '/session';
 
 async function fetchJson<JSON = unknown>(
 	input: RequestInfo,
@@ -18,10 +18,25 @@ async function fetchJson<JSON = unknown>(
 	}).then(res => res.json());
 }
 
-function doLogin(url: string, { arg }: { arg: string }) {
+function doLogin(
+	url: string,
+	{
+		arg
+	}: {
+		arg: {
+			username?: string;
+			walletAddress: string;
+			authToken: string;
+		};
+	}
+) {
 	return fetchJson<SessionData>(url, {
 		method: 'POST',
-		body: JSON.stringify({ username: arg })
+		body: JSON.stringify({
+			username: arg.username,
+			walletAddress: arg.walletAddress,
+			authToken: arg.authToken
+		})
 	});
 }
 

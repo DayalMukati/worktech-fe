@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -47,10 +47,16 @@ import { useQuery } from '@apollo/client';
 import { GET_USER_BY_TOKEN } from '@/graphql/queries';
 import { User } from '@/graphql/__generated__/graphql';
 import { useRouter } from 'next/navigation';
+import useSession from '@/hooks/use-session';
 
 const Header = () => {
+	const { session, logout } = useSession();
 	const dispatch = useAppDispatch();
 	const router = useRouter();
+
+	useEffect(() => {
+		console.log('session:', session);
+	}, [session]);
 
 	const { user, walletAddress } = useAppSelector(selectUserAuth);
 
@@ -61,8 +67,7 @@ const Header = () => {
 	});
 
 	const handleLogout = () => {
-		localStorage.removeItem('authToken');
-		localStorage.removeItem('walletAddress');
+		logout();
 		dispatch(logoutUser());
 		router.push('/');
 	};
@@ -130,7 +135,7 @@ const Header = () => {
 						className='bg-background pl-8 rounded-lg w-full md:w-[200px] lg:w-[336px]'
 					/>
 				</div>
-				{user?._id || walletAddress ? (
+				{session.walletAddress ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button

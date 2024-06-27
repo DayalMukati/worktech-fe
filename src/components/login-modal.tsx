@@ -23,6 +23,7 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
 import { loadUser, setWeb3 } from '@/store/authSlice';
 import { useRouter } from 'next/navigation';
+import useSession from '@/hooks/use-session';
 
 const loginSchema = z.object({
 	name: z.string().min(1, 'Name is required')
@@ -31,6 +32,12 @@ const loginSchema = z.object({
 type Schema = z.infer<typeof loginSchema>;
 
 function LoginModal() {
+	const {
+		session,
+		login,
+		isLoading: isSessionLoading
+	} = useSession();
+
 	const router = useRouter();
 
 	const { connectToMetamask, account, signedMessage, error, web3 } =
@@ -71,6 +78,23 @@ function LoginModal() {
 				},
 				onCompleted: data => {
 					if (data?.loginUser) {
+						console.log({ session, data: data.loginUser });
+						login(
+							{
+								username: data.loginUser?.user?.email as string,
+								walletAddress: account,
+								authToken: data.loginUser.token as string
+							},
+							{
+								optimisticData: {
+									...session,
+									walletAddress: account,
+									authToken: data.loginUser.token as string,
+									username: data.loginUser?.user?.email as string
+								}
+							}
+						);
+
 						if (!data.loginUser.isProfileCreated) {
 							dispatch(
 								setWeb3({
@@ -78,6 +102,7 @@ function LoginModal() {
 									web3: web3Instance
 								})
 							);
+
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));
 						} else {
@@ -136,7 +161,7 @@ function LoginModal() {
 
 					<div className='flex justify-center my-6 w-full'>
 						<MetaMaskBtn
-							isLoading={isLoading}
+							isLoading={isLoading || isSessionLoading}
 							onClick={handleMetaMaskLogin}
 						/>
 					</div>
