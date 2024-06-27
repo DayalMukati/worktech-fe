@@ -1,20 +1,30 @@
-import { Building2, FolderKanban, Home, Package2, Plus } from "lucide-react";
-import Link from "next/link";
-import React from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { usePathname } from "next/navigation";
-import { checkPathMatch, cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
-import { setOrgCreationModal } from "@/store/layoutSlice";
-import OrgCreationModal from "./org-creation-modal";
-import { loadOrgs, selectOrg } from "@/store/orgSlice";
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
-import { AvatarImage } from "./ui/avatar";
-import { useMutation, useQuery } from "@apollo/client";
-import { LIST_ALL_ORGS_BY_USER_QUERY } from "@/graphql/queries";
-import { Orgs } from "@/graphql/__generated__/graphql";
-import { CREATE_ORG_MUTATION } from "@/graphql/mutation";
+import {
+	Building2,
+	FolderKanban,
+	Home,
+	Package2,
+	Plus
+} from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from './ui/tooltip';
+import { usePathname } from 'next/navigation';
+import { checkPathMatch, cn } from '@/lib/utils';
+import { Button } from './ui/button';
+import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
+import { setOrgCreationModal } from '@/store/layoutSlice';
+import OrgCreationModal from './org-creation-modal';
+import { loadOrgs, selectOrg } from '@/store/orgSlice';
+import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
+import { AvatarImage } from './ui/avatar';
+import { useMutation, useQuery } from '@apollo/client';
+import { LIST_ALL_ORGS_BY_USER_QUERY } from '@/graphql/queries';
+import { Orgs } from '@/graphql/__generated__/graphql';
+import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
 
 const Sidebar = () => {
 	const pathname = usePathname();
@@ -30,27 +40,29 @@ const Sidebar = () => {
 
 	const dispatch = useAppDispatch();
 	const currentURI = usePathname();
-  
 
-  const { orgs } = useAppSelector(selectOrg);
+	const { orgs } = useAppSelector(selectOrg);
 
-  const { loading: isLoadingOrgs } = useQuery(LIST_ALL_ORGS_BY_USER_QUERY, {
-    onCompleted: (data) => {
-      dispatch(loadOrgs(data.listAllOrgsByUser as Orgs[]));
-    },
-  });
+	const { loading: isLoadingOrgs } = useQuery(
+		LIST_ALL_ORGS_BY_USER_QUERY,
+		{
+			onCompleted: data => {
+				dispatch(loadOrgs(data.listAllOrgsByUser as Orgs[]));
+			}
+		}
+	);
 
-  const Icons: { [key: string]: JSX.Element } = {
-    Home: <Home className="w-5 h-5" />,
-    FolderKanban: <FolderKanban className="w-5 h-5" />,
-  };
-  const menuItems = [
-    {
-      href: "/dashboard",
-      icon: "Home",
-      label: "Dashboard",
-    },
-  ];
+	const Icons: { [key: string]: JSX.Element } = {
+		Home: <Home className='w-5 h-5' />,
+		FolderKanban: <FolderKanban className='w-5 h-5' />
+	};
+	const menuItems = [
+		{
+			href: '/dashboard',
+			icon: 'Home',
+			label: 'Dashboard'
+		}
+	];
 
   return (
     <>
@@ -91,7 +103,7 @@ const Sidebar = () => {
                 >
                   <Link href={`/orgs/org-overview/${_id}`}>
                     <Avatar className=" font-bold text-lg cursor-pointer">
-                      {name.charAt(0)}
+                      {name.slice(0, 2).toUpperCase()}
                     </Avatar>
                     <span className="sr-only">{name}</span>
                   </Link>

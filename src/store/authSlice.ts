@@ -27,10 +27,10 @@ export const authSlice = createSlice({
 		},
 		setWeb3: (
 			state,
-			action: PayloadAction<{ web3: any; walletAddress: string }>
+			action: PayloadAction<{ web3?: any; walletAddress?: string }>
 		) => {
-			state.web3 = action.payload.web3;
 			state.walletAddress = action.payload.walletAddress;
+			state.web3 = action.payload.web3;
 		},
 		// handleLogin: (state, action: PayloadAction<{ user: User }>) => {
 		// 	// console.log({ payload: action.payload });
