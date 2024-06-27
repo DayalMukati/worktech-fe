@@ -20,10 +20,10 @@ import { LIST_ALL_ORGS_QUERY } from "@/graphql/queries";
 
 export function SearchBar() {
   return (
-    <div className="flex items-center space-x-2 px-4 border w-full max-w-xl bg-secondary rounded">
-      <Search className="" />
+    <div className="flex items-center space-x-2 px-4 border w-full max-w-xl bg-secondary rounded-full">
+      <Search className=" w-6 h-6  " />
       <Input
-        className="border-0 ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0 bg-secondary"
+        className=" border-0 text-md ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0 bg-secondary "
         type="text"
         placeholder="Search Orgs..."
       />

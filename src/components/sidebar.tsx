@@ -79,10 +79,19 @@ const Sidebar = () => {
           {orgs.map(({ name, _id }) => (
             <Tooltip key={name}>
               <TooltipTrigger asChild>
-                <Button asChild variant="outline" size={"icon"} className="bg-primary/20">
+                <Button
+                  asChild
+                  variant="outline"
+                  size={"icon"}
+                  className={`bg-primary/20 ${
+                    checkPathMatch(currentURI, `/orgs/org-overview/${_id}`)
+                      ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
                   <Link href={`/orgs/org-overview/${_id}`}>
-                    <Avatar  className=" font-bold text-lg cursor-pointer">
-                      {name.charAt(0)} 
+                    <Avatar className=" font-bold text-lg cursor-pointer">
+                      {name.charAt(0)}
                     </Avatar>
                     <span className="sr-only">{name}</span>
                   </Link>

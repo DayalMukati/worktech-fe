@@ -220,7 +220,7 @@ const CreateTaskForm = ({
             type="text"
             {...register("taskName")}
             placeholder="Task Name"
-            className="w-[400px] text-sm  text-slate-600 border-slate-400 border-2 rounded-md "
+            className="w-[400px] text-sm focus-visible:ring-0 focus:ring-0 text-slate-600 border-slate-400 border-2 rounded-md "
           />
           {errors.taskName && (
             <span className="text-red-500 text-xs">
@@ -287,6 +287,13 @@ const CreateTaskForm = ({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
                     options={status}
                     defaultValue={status.find(
                       (status) => status.value === getStatusNumber(column)
@@ -318,6 +325,13 @@ const CreateTaskForm = ({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
                     options={Assignee}
                     isMulti
                     onChange={(selectedOptions) => {
@@ -348,6 +362,13 @@ const CreateTaskForm = ({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
                     options={Priority}
                     onChange={(selectedOption) => {
                       field.onChange(
@@ -374,6 +395,7 @@ const CreateTaskForm = ({
             <Label className="uppercase">HBAR-Price</Label>
             <Input
               type="text"
+              className="focus-visible:ring-0 focus:ring-0"
               placeholder="Price"
               {...register("price")}
               onChange={(e) => {
@@ -394,6 +416,13 @@ const CreateTaskForm = ({
               control={control}
               render={({ field }) => (
                 <Select
+                  styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      borderColor: state.isFocused ? "red" : "grey",
+                      cursor: "pointer",
+                    }),
+                  }}
                   options={Reviewers}
                   onChange={(selectedOption) => {
                     field.onChange(
