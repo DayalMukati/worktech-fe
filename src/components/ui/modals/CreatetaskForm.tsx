@@ -35,6 +35,7 @@ const createTaskSchema = z.object({
   priority: z.string().min(1, "Priority is required"),
   reviewer: z.string().min(1, "Reviewers is required"),
   price: z.string().min(1, "Price is required"),
+  skills: z.array(z.string()).min(1, "Skills is required"),
 });
 
 type Schema = z.infer<typeof createTaskSchema>;
@@ -69,25 +70,6 @@ const customSingleValue = (props: any) => {
     </components.SingleValue>
   );
 };
-
-// const Assignee = [
-//   {
-//     value: "6672dba833963a34ca6b6b9d",
-//     label: "ak@gmail.com",
-//     icon: <Users className="w-4 h-4" />,
-//   },
-//   {
-//     value: "6672dba833963a34ca6b6b9d",
-//     label: "dayal@gmail.com",
-//     icon: <Users className="w-4 h-4" />,
-//   },
-//   {
-//     value: "6672dba833963a34ca6b6b9d",
-//     label: "vineet@gmail.com",
-//     icon: <Users className="w-4 h-4" />,
-//   },
-// ];
-
 
 const customOptionAssignee = (props: any) => {
   return (
@@ -153,11 +135,13 @@ const CreateTaskForm = ({
   handlePostSubmit,
   column,
   users,
+  skillsData,
 }: {
   spaceId: string;
   handlePostSubmit: Function;
   column: string;
   users: any;
+  skillsData: any;
 }) => {
   const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
   const {
@@ -170,12 +154,17 @@ const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema),
   });
 
-  
-const Assignee = users?.map((user: any) => ({
-  value: user._id,
-  label: user.email,
-  icon: <Users className="w-4 h-4" />,
-}));
+  const Assignee = users?.map((user: any) => ({
+    value: user.walletAddress,
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
+
+  const Skills = skillsData?.map((skill: any) => ({
+    value: skill._id,
+    label: skill.title,
+    icon: <DraftingCompass className="w-4 h-4" />,
+  }));
 
   const { web3 } = useAppSelector(selectUserAuth);
 
@@ -247,11 +236,39 @@ const Assignee = users?.map((user: any) => ({
               <ShieldCheck className="w-4 h-4 " />
               Permissions
             </Button>
-            <Button className="bg-[#7D6CE2FF] text-center gap-3">
-              <DraftingCompass className="w-4 h-4 " />
-              Add Skils
-            </Button>
-             
+            <div className="flex  gap-4 max-w-xl">
+              <Controller
+                name="skills"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    placeholder="Select Skills"
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={Skills}
+                    isMulti
+                    onChange={(selectedOptions) => {
+                      const values = selectedOptions
+                        ? selectedOptions.map(
+                            (option: any) => option.value as any
+                          )
+                        : [];
+                      field.onChange(values);
+                      clearErrors("skills"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customOptionAssignee,
+                      SingleValue: customSingleValueAssignee,
+                    }}
+                  />
+                )}
+              />
+            </div>
           </div>
           <div className="mt-4">
             <Label className="text-md text-slate-800">Task Description</Label>
@@ -348,12 +365,15 @@ const Assignee = users?.map((user: any) => ({
                         cursor: "pointer",
                       }),
                     }}
-                    options={Assignee}
                     isMulti
+                    options={Assignee}
                     onChange={(selectedOptions) => {
                       const values = selectedOptions
-                        ? selectedOptions.map((option : any) => option.value as any)
+                        ? selectedOptions.map(
+                            (option: any) => option.value as any
+                          )
                         : [];
+
                       field.onChange(values);
                       clearErrors("assignee"); // Clear error on change
                     }}

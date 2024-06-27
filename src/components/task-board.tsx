@@ -27,6 +27,7 @@ import {
   GET_SPACE_QUERY,
   GET_ALL_TASKS_BY_SPACE_ID_QUERY,
   GET_USERS_QUERY,
+  LIST_ALL_SKILLS,
 } from "@/graphql/queries";
 import { useParams, useRouter } from "next/navigation";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
@@ -434,6 +435,9 @@ const AddCard = ({
       console.log("all user data->", data.users);
     },
   });
+
+  const { data: skillsData, error: skillsError } = useQuery(LIST_ALL_SKILLS);
+
   return (
     <>
       {adding ? (
@@ -456,6 +460,7 @@ const AddCard = ({
               spaceId={params.spaceId}
               column={column}
               users={usersData?.users}
+              skillsData={skillsData?.listAllSkills}
             />
           </DialogContent>
         </Dialog>
