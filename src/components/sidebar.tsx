@@ -13,7 +13,7 @@ import {
 	TooltipTrigger
 } from './ui/tooltip';
 import { usePathname } from 'next/navigation';
-import { checkPathMatch, cn } from '@/lib/utils';
+import { checkPathMatch, cn, getInitials } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
 import { setOrgCreationModal } from '@/store/layoutSlice';
@@ -94,10 +94,14 @@ const Sidebar = () => {
 									asChild
 									variant='outline'
 									size={'icon'}
-									className='bg-primary/20'>
+									className={cn(
+										'bg-primary/20',
+										orgUriId === _id &&
+											'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+									)}>
 									<Link href={`/orgs/org-overview/${_id}`}>
 										<Avatar className='font-bold text-lg cursor-pointer'>
-											{name.slice(0, 2).toUpperCase()}
+											{getInitials(name)}
 										</Avatar>
 										<span className='sr-only'>{name}</span>
 									</Link>
