@@ -95,7 +95,10 @@ const Sidebar = () => {
 									variant='outline'
 									size={'icon'}
 									className={`bg-primary/20 ${
-										checkPathMatch(currentURI, orgUriId)
+										checkPathMatch(
+											currentURI,
+											`/orgs/org-overview/${_id}`
+										)
 											? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
 											: 'text-muted-foreground'
 									}`}>
