@@ -31,10 +31,11 @@ const createTaskSchema = z.object({
   description: z.string().min(2, "Description is required"),
   acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
   status: z.number().min(1, "Status is required"),
-  assignee: z.array(z.string()).min(1, "Assignee is required"),
+  assignee: z.string().min(1, "Assignee is required"),
   priority: z.string().min(1, "Priority is required"),
   reviewer: z.string().min(1, "Reviewers is required"),
   price: z.string().min(1, "Price is required"),
+  skills: z.array(z.string()).min(1, "Skills is required"),
 });
 
 type Schema = z.infer<typeof createTaskSchema>;
@@ -70,24 +71,6 @@ const customSingleValue = (props: any) => {
   );
 };
 
-const Assignee = [
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "ak@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "dayal@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "vineet@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-];
-
 const customOptionAssignee = (props: any) => {
   return (
     <components.Option {...props}>
@@ -110,9 +93,9 @@ const customSingleValueAssignee = (props: any) => {
 };
 
 const Priority = [
-  { value: "low", label: "low", color: "green" },
-  { value: "medium", label: "medium", color: "yellow" },
   { value: "high", label: "high", color: "red" },
+  { value: "medium", label: "medium", color: "yellow" },
+  { value: "low", label: "low", color: "green" },
 ];
 
 const customPriorityOption = (props: any) => {
@@ -151,10 +134,14 @@ const CreateTaskForm = ({
   spaceId,
   handlePostSubmit,
   column,
+  users,
+  skillsData,
 }: {
   spaceId: string;
   handlePostSubmit: Function;
   column: string;
+  users: any;
+  skillsData: any;
 }) => {
   const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
   const {
@@ -167,16 +154,33 @@ const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema),
   });
 
+  const Assignee = users?.map((user: any) => ({
+    value: user.walletAddress,
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
+
+  const Skills = skillsData?.map((skill: any) => ({
+    value: skill._id,
+    label: skill.title,
+    icon: <DraftingCompass className="w-4 h-4" />,
+  }));
+
   const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, connectToMetamask, account } = useSmartContract(web3);
 
   const onSubmitFrom = async (data: Schema) => {
     try {
-      console.log('data+++++', data);
-      const result = await callMethod('createTask', ['Error Handling', 100000000000000000, "0x45f520587bf5CA91c922dEFBc596A6A5Ce294039"]);
-      console.log('result++++++', result);
+      console.log("data+++++", data);
+      const result = await callMethod("createTask", [
+        "Error Handling",
+        100000000000000000,
+        "0x45f520587bf5CA91c922dEFBc596A6A5Ce294039",
+      ]);
+      console.log("result++++++", result);
       return;
+
       await createTaskMutaion({
         variables: {
           input: {
@@ -232,10 +236,39 @@ const CreateTaskForm = ({
               <ShieldCheck className="w-4 h-4 " />
               Permissions
             </Button>
-            <Button className="bg-[#7D6CE2FF] text-center gap-3">
-              <DraftingCompass className="w-4 h-4 " />
-              Add Skils
-            </Button>
+            <div className="flex  gap-4 max-w-xl">
+              <Controller
+                name="skills"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    placeholder="Select Skills"
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={Skills}
+                    isMulti
+                    onChange={(selectedOptions) => {
+                      const values = selectedOptions
+                        ? selectedOptions.map(
+                            (option: any) => option.value as any
+                          )
+                        : [];
+                      field.onChange(values);
+                      clearErrors("skills"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customOptionAssignee,
+                      SingleValue: customSingleValueAssignee,
+                    }}
+                  />
+                )}
+              />
+            </div>
           </div>
           <div className="mt-4">
             <Label className="text-md text-slate-800">Task Description</Label>
@@ -333,12 +366,10 @@ const CreateTaskForm = ({
                       }),
                     }}
                     options={Assignee}
-                    isMulti
-                    onChange={(selectedOptions) => {
-                      const values = selectedOptions
-                        ? selectedOptions.map((option) => option.value)
-                        : [];
-                      field.onChange(values);
+                    onChange={(selectedOption) => {
+                      field.onChange(
+                        selectedOption ? selectedOption.value : null
+                      );
                       clearErrors("assignee"); // Clear error on change
                     }}
                     components={{

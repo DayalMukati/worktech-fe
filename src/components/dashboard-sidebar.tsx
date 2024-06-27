@@ -21,7 +21,7 @@ const DashboardSidebar = () => {
 		{
 			href: '/dashboard/tasks',
 			icon: 'FolderKanban',
-			label: 'Tasks'
+			label: 'My Tasks'
 		}
 	];
 	return (

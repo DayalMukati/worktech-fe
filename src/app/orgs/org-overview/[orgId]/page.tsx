@@ -1,3 +1,4 @@
+'use client';
 import {
 	Avatar,
 	AvatarFallback,
@@ -20,7 +21,14 @@ import {
 	LogIn
 } from 'lucide-react';
 
+import { GET_ORG_QUERY } from '@/graphql/queries';
+import { useQuery } from '@apollo/client';
+import { useParams } from 'next/navigation';
+
 const OrgOverview = () => {
+	const params = useParams();
+	const orgId = params.orgId as string;
+
 	const spacesItems = [
 		{
 			id: 1,
@@ -62,6 +70,15 @@ const OrgOverview = () => {
 		//   updatedAt: "2023-01-01",
 		// },
 	];
+
+	const { data: orgData, error: orgError } = useQuery(GET_ORG_QUERY, {
+		variables: {
+			_id: orgId
+		},
+		onError: error => {
+			console.log('error', error);
+		}
+	});
 
 	const OpentaskList = [
 		{
@@ -106,9 +123,13 @@ const OrgOverview = () => {
 								alt='logo'
 							/>
 							<div className='flex flex-col'>
-								<h1 className='text-[30px]'>Ten formerly Obscuro</h1>
+								<h1 className='text-[30px]'>
+									{orgData?.getOrg?.name}
+								</h1>
 								<p className='text-[14px] text-slate-400'>
-									Encyrpting Ethereum
+									{orgData?.getOrg?.description ||
+										'Encyrpting Ethereum'}
+									t
 								</p>
 								<div className='flex mt-4 text-slate-600 text-sm'>
 									<span>Time to payment 0.0 days </span>
@@ -205,9 +226,7 @@ const OrgOverview = () => {
 
 						<div className='flex flex-col gap-4 py-4 pr-20'>
 							<div className='flex flex-col gap-4'>
-								<h1 className='mb-2 text-slate-700 text-xl'>
-									About
-								</h1>
+								<h1 className='mb-2 text-slate-700 text-xl'>About</h1>
 								<p className='text-left text-slate-400'>
 									We're building the first general. purpose, EVM
 									equivalent, encrypted L2 for Ethereum

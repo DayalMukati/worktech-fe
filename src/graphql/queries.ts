@@ -1,4 +1,4 @@
-import { gql } from "./__generated__";
+import { gql } from './__generated__';
 
 export const LIST_ALL_SKILLS = gql(`
 	query ListAllSkills {
@@ -96,6 +96,7 @@ export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
     }
   }
 `);
+
 export const GET_ORG_QUERY = gql(`
   query GetOrg($_id: String!) {
     getOrg(_id: $_id) {
@@ -243,7 +244,6 @@ export const LIST_ALL_SPACES_QUERY = gql(`
   }
 `);
 
-
 export const GET_TASK_QUERY = gql(`
   query GetTask($_id: String!) {
     getTask(_id: $_id) {
@@ -289,3 +289,30 @@ export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
     }
   }
   `);
+
+export const GET_USERS_QUERY = gql(`
+  query GetUsers {
+    users {
+      _id
+      firstName
+      lastName
+      email
+      gender
+      mobile
+      signupMode
+      userRoles {
+        _id
+        title
+      }
+      status
+      profilePic
+      walletAddress
+      skills {
+        _id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`);
