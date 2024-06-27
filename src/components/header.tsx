@@ -120,6 +120,7 @@ const Header = () => {
 						</nav>
 					</SheetContent>
 				</Sheet>
+				<Image src={'/image.png'} alt='logo' width={60} height={30} />
 
 				<div className='relative flex-1 ml-auto md:grow-0'>
 					<Search className='top-2.5 left-2.5 absolute w-4 h-4 text-muted-foreground' />
@@ -129,7 +130,7 @@ const Header = () => {
 						className='bg-background pl-8 rounded-lg w-full md:w-[200px] lg:w-[336px]'
 					/>
 				</div>
-				{user?._id ? (
+				{user?._id || walletAddress ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
