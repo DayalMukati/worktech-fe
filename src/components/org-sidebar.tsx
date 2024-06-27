@@ -126,9 +126,9 @@ export const Spaces = ({
   return (
     <div className="flex flex-col items-start mt-auto p-2 w-[100%">
       <div className="flex justify-between  p-3.5 items-center  w-full">
-        <h2 className="text-xl">Spaces</h2>
+        <h2 className="text-xl ">Spaces</h2>
         <PlusIcon
-          className="hover:bg-slate-300 rounded-full w-6 h-6 cursor-pointer"
+          className="hover:bg-slate-300 rounded-full w-6 h-6 cursor-pointer "
           onClick={() => dispatch(setIsCreateSpaceModalOpen(true))}
         />
       </div>
@@ -138,12 +138,12 @@ export const Spaces = ({
             <li key={index}>
               <Button
                 className={cn(
-                  "flex justify-start bg-transparent  hover:bg-primary/10 w-full text-foreground transition-colors shadow-md",
+                  "flex justify-start bg-transparent  hover:bg-primary/10 w-full text-foreground transition-colors shadow-sm border-b-[2px]",
                   checkPathMatch(
                     currentURl,
                     `/orgs/org-overview/${orgId}/space/${_id}/tasks`
                   )
-                    ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                    ? "text-primary hover:text-black  text-md trasxture-color ease-linear  shadow-md font-semibold "
                     : ""
                 )}
                 asChild
