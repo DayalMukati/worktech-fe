@@ -1,5 +1,6 @@
 // -- gql setup --//
 import { GQL_SERVER } from '@/conf/config';
+import useSession from '@/hooks/use-session';
 import {
 	ApolloClient,
 	InMemoryCache,
@@ -14,13 +15,14 @@ const GQLProvider = ({ children }: { children: React.ReactNode }) => {
 	const httpLink = createHttpLink({
 		uri: gqlUrl
 	});
+	const { session } = useSession();
 
 	const authLink = setContext((_, { headers }) => {
 		const token = localStorage.getItem('authToken');
 
 		return {
 			headers: {
-				Authorization: token ? `Bearer ${token}` : ''
+				Authorization: token ? `Bearer ${session.authToken}` : ''
 			}
 		};
 	});

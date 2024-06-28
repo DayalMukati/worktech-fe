@@ -26,6 +26,7 @@ import {
 } from '@/graphql/mutation';
 import { handleLogin, selectUserAuth } from '@/store/authSlice';
 import { LIST_ALL_SKILLS } from '@/graphql/queries';
+import useSession from '@/hooks/use-session';
 
 // Define the form schema
 const formSchema = z.object({
@@ -44,6 +45,8 @@ type FormData = z.infer<typeof formSchema>;
 // Skills options for the multi-select component
 
 function SignupModal() {
+	const { session, isLoading, login } = useSession();
+
 	const [skillOptions, setSkillOptions] = useState<
 		{ value: string; label: string }[]
 	>([]);
@@ -79,13 +82,19 @@ function SignupModal() {
 							email: data.username,
 							skills: data.skills.map(skill => skill.value),
 							status: 0,
-							walletAddress: walletAddress as string					}
+							walletAddress: walletAddress as string
+						}
 					},
 					onCompleted: data => {
-						localStorage.setItem(
-							'authToken',
-							data.registerUser.token as string
-						);
+						login({
+							username: data.registerUser?.user?.email as string,
+							walletAddress: walletAddress as string,
+							authToken: data.registerUser.token as string
+						});
+						// localStorage.setItem(
+						// 	'authToken',
+						// 	data.registerUser.token as string
+						// );
 						dispatch(setIsSignupModalOpen(false));
 					}
 				});

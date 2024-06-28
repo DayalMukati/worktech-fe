@@ -1,72 +1,69 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import React, { useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
-	FolderKanban,
-	Home,
-	LineChart,
-	Package,
-	Package2,
-	PanelLeft,
-	PlusCircle,
-	Search,
-	Settings,
-	ShoppingCart,
-	Users2
-} from 'lucide-react';
+  FolderKanban,
+  Home,
+  LineChart,
+  Package,
+  Package2,
+  PanelLeft,
+  PlusCircle,
+  Search,
+  Settings,
+  ShoppingCart,
+  Users2,
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import {
-	Sheet,
-	SheetContent,
-	SheetTrigger
-} from '@/components/ui/sheet';
-import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
-import {
-	setIsLoginModalOpen,
-	setIsSignupModalOpen,
-	setOrgCreationModal
-} from '@/store/layoutSlice';
-import LoginModal from './login-modal';
-import SignupModal from './signup-modal';
-import {
-	loadUser,
-	logoutUser,
-	selectUserAuth
-} from '@/store/authSlice';
-import { useQuery } from '@apollo/client';
-import { GET_USER_BY_TOKEN } from '@/graphql/queries';
-import { User } from '@/graphql/__generated__/graphql';
-import { useRouter } from 'next/navigation';
+  setIsLoginModalOpen,
+  setIsSignupModalOpen,
+  setOrgCreationModal,
+} from "@/store/layoutSlice";
+import LoginModal from "./login-modal";
+import SignupModal from "./signup-modal";
+import { loadUser, logoutUser, selectUserAuth } from "@/store/authSlice";
+import { useQuery } from "@apollo/client";
+import { GET_USER_BY_TOKEN } from "@/graphql/queries";
+import { User } from "@/graphql/__generated__/graphql";
+import { useRouter } from "next/navigation";
+import useSession from "@/hooks/use-session";
 
 const Header = () => {
-	const dispatch = useAppDispatch();
-	const router = useRouter();
+  const { session, logout } = useSession();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
-	const { user, walletAddress } = useAppSelector(selectUserAuth);
+  useEffect(() => {
+    console.log("session:", session);
+  }, [session]);
 
-	const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
-		onCompleted: data => {
-			dispatch(loadUser(data.getUserByToken as User));
-		}
-	});
+  const { user, walletAddress } = useAppSelector(selectUserAuth);
 
-	const handleLogout = () => {
-		localStorage.removeItem('authToken');
-		localStorage.removeItem('walletAddress');
-		dispatch(logoutUser());
-		router.push('/');
-	};
-	return (
+  const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
+    onCompleted: (data) => {
+      dispatch(loadUser(data.getUserByToken as User));
+    },
+  });
+
+  const handleLogout = () => {
+    logout();
+    dispatch(logoutUser());
+    router.push("/");
+  };
+  return (
     <>
       <header className="top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14">
         <Sheet>

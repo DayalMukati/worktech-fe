@@ -14,7 +14,10 @@ function Web3ConnectProvider({
 	children: React.ReactNode;
 }) {
 	return (
-		<Web3ReactProvider getLibrary={getLibrary}>
+		<Web3ReactProvider
+			connectors={[]}
+			// getLibrary={getLibrary}
+		>
 			{children}
 		</Web3ReactProvider>
 	);

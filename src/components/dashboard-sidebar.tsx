@@ -1,18 +1,15 @@
-import Link from 'next/link';
-import React from 'react';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import React from "react";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 const DashboardSidebar = () => {
-	const currentURI = usePathname();
-	const isPathMatch = (
-		currentPath: string,
-		menuItemHref: string
-	): boolean => {
-		return currentPath === menuItemHref;
-	};
-	const menuItems = [
+  const currentURI = usePathname();
+  const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
+    return currentPath === menuItemHref;
+  };
+  const menuItems = [
     {
       href: "/dashboard",
       icon: "Home",
@@ -24,7 +21,7 @@ const DashboardSidebar = () => {
       label: "My Tasks",
     },
   ];
-	return (
+  return (
     <aside className="col-span-1 bg-background border-r">
       <div className="p-3.5 border-b-2">
         <h2 className="text-xl">Dashboard</h2>

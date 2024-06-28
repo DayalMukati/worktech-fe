@@ -161,9 +161,9 @@ const OrgOverview = () => {
                             return (
                               <div
                                 key={index}
-                                className="text-xs text-slate-400 cursor-pointer   "
+                                className="text-slate-400 text-xs cursor-pointer"
                               >
-                                <Tag className="w-8 h-8  " />
+                                <Tag className="w-8 h-8" />
                               </div>
                             );
                           })} */}

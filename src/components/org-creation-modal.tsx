@@ -1,29 +1,25 @@
-'use client';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+"use client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
-import {
-	selectLayout,
-	setOrgCreationModal
-} from '@/store/layoutSlice';
-import { Building2 } from 'lucide-react';
-import { createOrg } from '@/store/orgSlice';
-import { useMutation } from '@apollo/client';
-import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
-import { Orgs } from '@/graphql/__generated__/graphql';
-
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
+import { selectLayout, setOrgCreationModal } from "@/store/layoutSlice";
+import { Building2 } from "lucide-react";
+import { createOrg } from "@/store/orgSlice";
+import { useMutation } from "@apollo/client";
+import { CREATE_ORG_MUTATION } from "@/graphql/mutation";
+import { Orgs } from "@/graphql/__generated__/graphql";
 
 // Define the schema using Zod
 const orgSchema = z.object({
