@@ -178,11 +178,18 @@ const CreateTaskForm = ({
       if (!active) {
         await connectToMetaMask();
       }
-
-      const priceInWei = Web3.utils.toWei(data.price, 'ether');
-      let txn = await callSCMethod([data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
+      const priceInWei = Web3.utils.toWei(data.price, "ether");
+      let txn = await callSCMethod([
+        data.taskName,
+        priceInWei,
+        data.assignee[1],
+      ]); //assignee wallet address
       let taskId = Number(txn.events.TaskCreated.returnValues[0]);
-      console.log("data->", txn, Number(txn.events.TaskCreated.returnValues[0]));
+      console.log(
+        "data->",
+        txn,
+        Number(txn.events.TaskCreated.returnValues[0])
+      );
       await createTaskMutaion({
         variables: {
           input: {
