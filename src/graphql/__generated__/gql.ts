@@ -34,6 +34,7 @@ const documents = {
     "\n  query GetTask($_id: String!) {\n    getTask(_id: $_id) {\n      _id\n      name\n      taskId\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      space {\n        _id\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.GetTaskDocument,
     "\n  query ListAllInterestedContributors {\n    listAllInterestedContributors {\n      _id\n      description\n      userID{\n          _id\n      }\n      taskID{\n          _id\n      }\n      status\n    }\n  }\n  ": types.ListAllInterestedContributorsDocument,
     "\n  query GetUsers {\n    users {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetUsersDocument,
+    "\n  query GetAllTasksByAssineeId($_id: String!) {\n    getAllTasksByAssineeId(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.GetAllTasksByAssineeIdDocument,
 };
 
 /**
@@ -134,6 +135,10 @@ export function gql(source: "\n  query ListAllInterestedContributors {\n    list
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GetUsers {\n    users {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query GetUsers {\n    users {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetAllTasksByAssineeId($_id: String!) {\n    getAllTasksByAssineeId(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n"): (typeof documents)["\n  query GetAllTasksByAssineeId($_id: String!) {\n    getAllTasksByAssineeId(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

@@ -28,6 +28,7 @@ import {
   GET_ALL_TASKS_BY_SPACE_ID_QUERY,
   GET_USERS_QUERY,
   LIST_ALL_SKILLS,
+  GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
 } from "@/graphql/queries";
 import { useParams, useRouter } from "next/navigation";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
@@ -57,11 +58,21 @@ interface DropIndicatorProps {
   column: string;
 }
 
-const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
+const TaskBoard = ({
+  isContributer,
+  assigneeId,
+}: {
+  isContributer: boolean;
+  assigneeId: string;
+}) => {
   const params = useParams<{ spaceId: string }>();
   return (
     <div className="w-full h-[90vh]">
-      <Board spaceId={params.spaceId} isContributer={isContributer} />
+      <Board
+        spaceId={params.spaceId}
+        isContributer={isContributer}
+        assigneeId={assigneeId}
+      />
     </div>
   );
 };
@@ -69,9 +80,11 @@ const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
 const Board = ({
   spaceId,
   isContributer,
+  assigneeId,
 }: {
   spaceId: string;
   isContributer: boolean;
+  assigneeId: string;
 }) => {
   const [cards, setCards] = useState([]);
   const getColumn = (status: number) => {
@@ -93,10 +106,11 @@ const Board = ({
 
   // console.log("spaceId->", spaceId);
   useQuery(GET_ALL_TASKS_BY_SPACE_ID_QUERY, {
-    variables: { _id: spaceId },
+    variables: { _id: isContributer ? assigneeId : spaceId },
+    skip: isContributer,
     onCompleted: (data) => {
-      // console.log("space data->", data.getAllTasksBySpaceId);
-      const tasks = data?.getAllTasksBySpaceId?.map((task: any) => {
+      console.log("tasks data->", data);
+      const tasks = data.getAllTasksBySpaceId?.map((task: any) => {
         return {
           id: task._id,
           title: task.name,
@@ -106,7 +120,36 @@ const Board = ({
           tags: task.skills.map((skill: any) => skill.name),
         };
       });
+
+      console.log("tasks->", tasks);
       setCards(tasks as any);
+    },
+    onError(error: any) {
+      console.log("error->", error);
+    },
+  });
+
+  useQuery(GET_ALL_TASKS_BY_ASSINEE_ID_QUERY, {
+    variables: { _id: assigneeId },
+    skip: !isContributer,
+    onCompleted: (data) => {
+      console.log("tasks data->", data);
+      const tasks = data.getAllTasksByAssineeId?.map((task: any) => {
+        return {
+          id: task._id,
+          title: task.name,
+          description: task.description,
+          column: getColumn(task.status),
+          createdAt: Math.floor(Math.random()),
+          tags: task.skills.map((skill: any) => skill.name),
+        };
+      });
+
+      console.log("tasks->", tasks);
+      setCards(tasks as any);
+    },
+    onError(error: any) {
+      console.log("error->", error);
     },
   });
 
@@ -164,14 +207,17 @@ const Column = ({
     e: React.DragEvent<HTMLDivElement>,
     card: CardProps
   ) => {
+    // if (isContributer) return;
     e.dataTransfer.setData("cardId", card.id);
     setActiveCard(true);
   };
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     highlightIndicator(e);
     setActiveCard(true);
   };
+
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     clearHighlights();
@@ -182,6 +228,10 @@ const Column = ({
     clearHighlights();
 
     const cardId = e.dataTransfer.getData("cardId");
+    if (isContributer) {
+      console.log("Permisssion Denied for contributer");
+      return;
+    }
     console.log("cardId->", cardId);
     if (!cardId) return;
     const { element } = getNearestIndicator(e, getIndicators());
