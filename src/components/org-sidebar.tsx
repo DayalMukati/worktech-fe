@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
+import { checkPathMatch, cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { Icons } from "./icons";
 import { space } from "postcss/lib/list";
@@ -60,7 +60,7 @@ const OrgSidebar = ({ Title, orgId }: { Title: string; orgId: string }) => {
     //   label: "Tasks",
     // },
     {
-      href: "/orgs/org-overview/leaderboard",
+      href: `/orgs/org-overview/${orgId}/leaderboard`,
       icon: <Trophy className="w-4 h-4" />,
       label: "Leadership Boards",
     },
@@ -91,7 +91,7 @@ const OrgSidebar = ({ Title, orgId }: { Title: string; orgId: string }) => {
               <Button
                 className={cn(
                   "flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors border-b-[2px]",
-                  isPathMatch(currentURI, href) || currentURI.startsWith(href)
+                  isPathMatch(currentURI, href)
                     ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
                     : ""
                 )}
@@ -103,7 +103,7 @@ const OrgSidebar = ({ Title, orgId }: { Title: string; orgId: string }) => {
           ))}
         </ul>
       </nav>
-      <Spaces spacesItem={spaces as any} />
+      <Spaces spacesItem={spaces as any} orgId={orgId as string} />
       <SpacesAddModal orgId={orgId} />
     </aside>
   );
@@ -113,7 +113,9 @@ export default OrgSidebar;
 
 export const Spaces = ({
   spacesItem,
+  orgId,
 }: {
+  orgId: string;
   spacesItem: {
     _id: string;
     name: string;
@@ -124,9 +126,9 @@ export const Spaces = ({
   return (
     <div className="flex flex-col items-start mt-auto p-2 w-[100%">
       <div className="flex justify-between  p-3.5 items-center  w-full">
-        <h2 className="text-xl">Spaces</h2>
+        <h2 className="text-xl ">Spaces</h2>
         <PlusIcon
-          className="hover:bg-slate-300 rounded-full w-6 h-6 cursor-pointer"
+          className="hover:bg-slate-300 rounded-full w-6 h-6 cursor-pointer "
           onClick={() => dispatch(setIsCreateSpaceModalOpen(true))}
         />
       </div>
@@ -136,15 +138,18 @@ export const Spaces = ({
             <li key={index}>
               <Button
                 className={cn(
-                  "flex justify-start bg-transparent  hover:bg-primary/10 w-full text-foreground transition-colors shadow-md",
-                  currentURl.endsWith(_id)
-                    ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                  "flex justify-start bg-transparent  hover:bg-primary/10 w-full text-foreground transition-colors shadow-sm border-b-[2px]",
+                  checkPathMatch(
+                    currentURl,
+                    `/orgs/org-overview/${orgId}/space/${_id}/tasks`
+                  )
+                    ? "text-primary hover:text-black  text-md trasxture-color ease-linear  shadow-md font-semibold "
                     : ""
                 )}
                 asChild
               >
                 {/* <Link href={`${name}/${_id}`}>{name}</Link> */}
-                <Link href={`/orgs/org-overview/space/${_id}/tasks`}>
+                <Link href={`/orgs/org-overview/${orgId}/space/${_id}/tasks`}>
                   {name}
                 </Link>
               </Button>

@@ -34,10 +34,11 @@ const createTaskSchema = z.object({
   description: z.string().min(2, "Description is required"),
   acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
   status: z.number().min(1, "Status is required"),
-  assignee: z.array(z.string()).min(1, "Assignee is required"),
+  assignee: z.string().min(1, "Assignee is required"),
   priority: z.string().min(1, "Priority is required"),
   reviewer: z.string().min(1, "Reviewers is required"),
   price: z.string().min(1, "Price is required"),
+  skills: z.array(z.string()).min(1, "Skills is required"),
 });
 
 type Schema = z.infer<typeof createTaskSchema>;
@@ -73,24 +74,6 @@ const customSingleValue = (props: any) => {
   );
 };
 
-const Assignee = [
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "ak@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "dayal@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-  {
-    value: "6672dba833963a34ca6b6b9d",
-    label: "vineet@gmail.com",
-    icon: <Users className="w-4 h-4" />,
-  },
-];
-
 const customOptionAssignee = (props: any) => {
   return (
     <components.Option {...props}>
@@ -113,9 +96,9 @@ const customSingleValueAssignee = (props: any) => {
 };
 
 const Priority = [
-  { value: "low", label: "low", color: "green" },
-  { value: "medium", label: "medium", color: "yellow" },
   { value: "high", label: "high", color: "red" },
+  { value: "medium", label: "medium", color: "yellow" },
+  { value: "low", label: "low", color: "green" },
 ];
 
 const customPriorityOption = (props: any) => {
@@ -154,10 +137,14 @@ const CreateTaskForm = ({
   spaceId,
   handlePostSubmit,
   column,
+  users,
+  skillsData,
 }: {
   spaceId: string;
   handlePostSubmit: Function;
   column: string;
+  users: any;
+  skillsData: any;
 }) => {
   const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
   const {
@@ -170,8 +157,21 @@ const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema),
   });
 
-  const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
 	const { connectToMetaMask , callSCMethod, active} = useWeb3();
+  const Assignee = users?.map((user: any) => ({
+    value: user._id,
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
+
+  const Skills = skillsData?.map((skill: any) => ({
+    value: skill._id,
+    label: skill.title,
+    icon: <DraftingCompass className="w-4 h-4" />,
+  }));
+
+  const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, account } = useSmartContract();
 
@@ -184,7 +184,6 @@ const CreateTaskForm = ({
 
       const priceInWei = Web3.utils.toWei(data.price, 'ether');
 
-      console.log('+++++',data.price, [data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
       await createTaskMutaion({
         variables: {
           input: {
@@ -195,8 +194,8 @@ const CreateTaskForm = ({
             amount: data.price,
             activities: [],
             reviewer: data.reviewer,
-            assinees: [],
-            skills: [],
+            assinees: [data.assignee],
+            skills: data.skills,
             acceptanceCriteria: data.acceptanceCriteria,
             status: data.status,
           },
@@ -229,7 +228,7 @@ const CreateTaskForm = ({
             type="text"
             {...register("taskName")}
             placeholder="Task Name"
-            className="w-[400px] text-sm  text-slate-600 border-slate-400 border-2 rounded-md "
+            className="w-[400px] text-sm focus-visible:ring-0 focus:ring-0 text-slate-600 border-slate-400 border-2 rounded-md "
           />
           {errors.taskName && (
             <span className="text-red-500 text-xs">
@@ -241,10 +240,44 @@ const CreateTaskForm = ({
               <ShieldCheck className="w-4 h-4 " />
               Permissions
             </Button>
-            <Button className="bg-[#7D6CE2FF] text-center gap-3">
-              <DraftingCompass className="w-4 h-4 " />
-              Add Skils
-            </Button>
+            <div className="flex  gap-4 max-w-xl">
+              <Controller
+                name="skills"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    placeholder="Select Skills"
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={Skills}
+                    isMulti
+                    onChange={(selectedOptions) => {
+                      const values = selectedOptions
+                        ? selectedOptions.map(
+                            (option: any) => option.value as any
+                          )
+                        : [];
+                      field.onChange(values);
+                      clearErrors("skills"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customOptionAssignee,
+                      SingleValue: customSingleValueAssignee,
+                    }}
+                  />
+                )}
+              />
+              {errors.skills && (
+                <span className="text-red-500 text-xs mt-auto">
+                  {errors.skills.message}
+                </span>
+              )}
+            </div>
           </div>
           <div className="mt-4">
             <Label className="text-md text-slate-800">Task Description</Label>
@@ -296,6 +329,13 @@ const CreateTaskForm = ({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
                     options={status}
                     defaultValue={status.find(
                       (status) => status.value === getStatusNumber(column)
@@ -327,13 +367,18 @@ const CreateTaskForm = ({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
                     options={Assignee}
-                    isMulti
-                    onChange={(selectedOptions) => {
-                      const values = selectedOptions
-                        ? selectedOptions.map((option) => option.value)
-                        : [];
-                      field.onChange(values);
+                    onChange={(selectedOption) => {
+                      field.onChange(
+                        selectedOption ? selectedOption.value : null
+                      );
                       clearErrors("assignee"); // Clear error on change
                     }}
                     components={{
@@ -357,6 +402,13 @@ const CreateTaskForm = ({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
                     options={Priority}
                     onChange={(selectedOption) => {
                       field.onChange(
@@ -383,6 +435,7 @@ const CreateTaskForm = ({
             <Label className="uppercase">HBAR-Price</Label>
             <Input
               type="text"
+              className="focus-visible:ring-0 focus:ring-0"
               placeholder="Price"
               {...register("price")}
               onChange={(e) => {
@@ -403,6 +456,13 @@ const CreateTaskForm = ({
               control={control}
               render={({ field }) => (
                 <Select
+                  styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      borderColor: state.isFocused ? "red" : "grey",
+                      cursor: "pointer",
+                    }),
+                  }}
                   options={Reviewers}
                   onChange={(selectedOption) => {
                     field.onChange(

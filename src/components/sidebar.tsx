@@ -94,14 +94,17 @@ const Sidebar = () => {
 									asChild
 									variant='outline'
 									size={'icon'}
-									className={cn(
-										'bg-primary/20',
-										orgUriId === _id &&
-											'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
-									)}>
+									className={`bg-primary/20 ${
+										checkPathMatch(
+											currentURI,
+											`/orgs/org-overview/${_id}`
+										)
+											? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
+											: 'text-muted-foreground'
+									}`}>
 									<Link href={`/orgs/org-overview/${_id}`}>
 										<Avatar className='font-bold text-lg cursor-pointer'>
-											{getInitials(name)}
+											{name.slice(0, 2).toUpperCase()}
 										</Avatar>
 										<span className='sr-only'>{name}</span>
 									</Link>
