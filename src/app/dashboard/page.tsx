@@ -12,7 +12,7 @@ import {
 
 import React from 'react';
 
-const page = () => {
+const page = async () => {
 	return (
 		<Tabs
 			defaultValue='orgs'
