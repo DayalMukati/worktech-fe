@@ -1,4 +1,4 @@
-import { gql } from "./__generated__";
+import { gql } from './__generated__';
 
 // common
 export const LOGIN_USER_WITH_WALLET = gql(`
@@ -6,6 +6,7 @@ export const LOGIN_USER_WITH_WALLET = gql(`
     loginUser(input: { walletAddress: $walletAddress }) {
       user {
         _id
+        email
         userRoles {
           _id
         }
@@ -198,3 +199,4 @@ export const UPDATE_ORG_MUTATION = gql(`
     }
   }
 `);
+

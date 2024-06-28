@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { getIronSession } from 'iron-session';
 import { defaultSession, sessionOptions } from '@/lib/session';
-import { sleep, SessionData } from '@/lib/session';
+import { SessionData } from '@/lib/session';
 
 // login
 export async function POST(request: NextRequest) {
@@ -11,17 +11,23 @@ export async function POST(request: NextRequest) {
 		sessionOptions
 	);
 
-	const { username = 'No username' } = (await request.json()) as {
+	const {
+		username = 'No username',
+		authToken,
+		walletAddress
+	} = (await request.json()) as {
 		username: string;
+		authToken: string;
+		walletAddress: string;
 	};
 
-	session.isLoggedIn = true;
 	session.username = username;
-	session.counter = 0;
-	await session.save();
+	session.authToken = authToken;
+	session.walletAddress = walletAddress;
 
-	// simulate looking up the user in db
-	await sleep(250);
+	console.log('session:', session);
+
+	await session.save();
 
 	return Response.json(session);
 }
@@ -31,8 +37,9 @@ export async function PATCH() {
 		cookies(),
 		sessionOptions
 	);
+	// do the update operations here
 
-	session.counter++;
+	// update the session
 	session.updateConfig({
 		...sessionOptions,
 		cookieOptions: {
@@ -54,9 +61,8 @@ export async function GET() {
 	);
 
 	// simulate looking up the user in db
-	await sleep(250);
 
-	if (session.isLoggedIn !== true) {
+	if (!session.walletAddress) {
 		return Response.json(defaultSession);
 	}
 

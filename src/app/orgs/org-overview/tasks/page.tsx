@@ -5,7 +5,7 @@ import React from 'react';
 const ProjectPage = () => {
 	return (
 		<div className='pt-2'>
-			<TaskBoard />
+			<TaskBoard isContributer={false} />
 		</div>
 	);
 };
