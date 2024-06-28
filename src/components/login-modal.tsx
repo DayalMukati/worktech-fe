@@ -18,7 +18,7 @@ import {
 } from '@/store/layoutSlice';
 import MetaMaskBtn from './metamask-btn';
 import { useState } from 'react';
-import useMetamask from '@/hooks/useMetamask';
+import useWeb3 from '@/hooks/useWeb3';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER_WITH_WALLET } from '@/graphql/mutation';
 import { loadUser, setWeb3 } from '@/store/authSlice';
@@ -32,6 +32,7 @@ const loginSchema = z.object({
 type Schema = z.infer<typeof loginSchema>;
 
 function LoginModal() {
+	const { connectToMetaMask, account , signMessage} = useWeb3();
 	const {
 		session,
 		login,
@@ -40,8 +41,6 @@ function LoginModal() {
 
 	const router = useRouter();
 
-	const { connectToMetamask, account, signedMessage, error, web3 } =
-		useMetamask();
 	const dispatch = useAppDispatch();
 	const { isLoginModalOpen } = useAppSelector(selectLayout);
 	const [isLoading, setIsLoading] = useState(false);
@@ -63,12 +62,10 @@ function LoginModal() {
 	};
 
 	const handleMetaMaskLogin = async () => {
-		console.log('MetaMask login initiated');
-		const { account, signedMessage, web3Instance } =
-			await connectToMetamask();
-		console.log('account:', account, { web3Instance });
-		console.log('signedMessage:', signedMessage);
-		if (!account || !signedMessage) return;
+		await connectToMetaMask();
+		let message = "Worktech sign in"
+		let sig = await signMessage(message);
+		if (!account) return;
 
 		try {
 			await logInUser({
@@ -105,6 +102,12 @@ function LoginModal() {
 
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));
+							localStorage.setItem('address', account);
+							localStorage.setItem(
+								'authToken',
+								data.loginUser?.token as string
+							);
+
 						} else {
 							localStorage.setItem('address', account);
 							localStorage.setItem(
@@ -113,7 +116,8 @@ function LoginModal() {
 							);
 							dispatch(
 								setWeb3({
-									walletAddress: account
+									walletAddress: account,
+									web3: null
 								})
 							);
 							router.push('/dashboard');
