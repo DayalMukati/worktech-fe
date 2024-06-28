@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 
 const DashboardSidebar = () => {
   const currentURI = usePathname();
+  const endPath = currentURI.split("/")[currentURI.split("/").length - 1];
+  console.log("endPath->", endPath);
   const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
     return currentPath === menuItemHref;
   };
@@ -33,7 +35,9 @@ const DashboardSidebar = () => {
               <Button
                 className={cn(
                   "flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors",
-                  isPathMatch(currentURI, href)
+                  isPathMatch(currentURI, href) ||
+                    (currentURI.includes(`/tasks/${endPath}`) &&
+                      href !== "/dashboard")
                     ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
                     : ""
                 )}
