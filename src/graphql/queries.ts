@@ -289,3 +289,21 @@ export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
     }
   }
   `);
+
+  export const GET_LEADERBOARD_DATA = gql(`
+    query GetLeaderboard {
+  getLeaderboard {
+    contributionData {
+      name
+      taskCount
+      taskPoints
+      amountEarned
+    }
+    reviewData {
+      name
+      taskCount
+      taskPoints
+      amountEarned
+    }
+  }
+}`)

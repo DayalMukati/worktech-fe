@@ -33,6 +33,7 @@ const documents = {
     "\n  query ListAllSpaces {\n    listAllSpaces {\n      _id\n      name\n      description\n      visibility\n      tasks {\n        _id\n      }\n      status\n    }\n  }\n": types.ListAllSpacesDocument,
     "\n  query GetTask($_id: String!) {\n    getTask(_id: $_id) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      space {\n        _id\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.GetTaskDocument,
     "\n  query ListAllInterestedContributors {\n    listAllInterestedContributors {\n      _id\n      description\n      userID{\n          _id\n      }\n      taskID{\n          _id\n      }\n      status\n    }\n  }\n  ": types.ListAllInterestedContributorsDocument,
+    "\n    query GetLeaderboard {\n  getLeaderboard {\n    contributionData {\n      name\n      taskCount\n      taskPoints\n      amountEarned\n    }\n    reviewData {\n      name\n      taskCount\n      taskPoints\n      amountEarned\n    }\n  }\n}": types.GetLeaderboardDocument,
 };
 
 /**
@@ -129,6 +130,10 @@ export function gql(source: "\n  query GetTask($_id: String!) {\n    getTask(_id
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query ListAllInterestedContributors {\n    listAllInterestedContributors {\n      _id\n      description\n      userID{\n          _id\n      }\n      taskID{\n          _id\n      }\n      status\n    }\n  }\n  "): (typeof documents)["\n  query ListAllInterestedContributors {\n    listAllInterestedContributors {\n      _id\n      description\n      userID{\n          _id\n      }\n      taskID{\n          _id\n      }\n      status\n    }\n  }\n  "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n    query GetLeaderboard {\n  getLeaderboard {\n    contributionData {\n      name\n      taskCount\n      taskPoints\n      amountEarned\n    }\n    reviewData {\n      name\n      taskCount\n      taskPoints\n      amountEarned\n    }\n  }\n}"): (typeof documents)["\n    query GetLeaderboard {\n  getLeaderboard {\n    contributionData {\n      name\n      taskCount\n      taskPoints\n      amountEarned\n    }\n    reviewData {\n      name\n      taskCount\n      taskPoints\n      amountEarned\n    }\n  }\n}"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

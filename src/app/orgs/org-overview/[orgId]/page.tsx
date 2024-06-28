@@ -2,6 +2,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
+import { useSelector } from "react-redux";
+import { selectSpaces, setSpaces } from "@/store/spacesSlice";
+
 import {
   Camera,
   Home,
@@ -18,6 +21,7 @@ import {
 
 
 const OrgOverview = () => {
+  // const { spaces } = useSelector(selectSpaces);
   const spacesItems = [
     {
       id: 1,

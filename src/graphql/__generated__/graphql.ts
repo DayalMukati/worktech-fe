@@ -87,6 +87,20 @@ export type InviteAdminUserOutput = {
   userRoles: Array<RoleDto>;
 };
 
+export type LeaderboardData = {
+  __typename?: 'LeaderboardData';
+  amountEarned: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  taskCount: Scalars['Int']['output'];
+  taskPoints: Scalars['Int']['output'];
+};
+
+export type LeaderboardResponse = {
+  __typename?: 'LeaderboardResponse';
+  contributionData: Array<LeaderboardData>;
+  reviewData: Array<LeaderboardData>;
+};
+
 export type LoginResult = {
   __typename?: 'LoginResult';
   isProfileCreated?: Maybe<Scalars['Boolean']['output']>;
@@ -281,8 +295,10 @@ export type Query = {
   findOneByEmail: User;
   forgotPassword: Scalars['Boolean']['output'];
   getAllSpacesByOrgId: Array<Spaces>;
+  getAllTasksByAssineeId: Array<Tasks>;
   getAllTasksBySpaceId: Array<Tasks>;
   getInterestedContributor: InterestedContributorsDto;
+  getLeaderboard: LeaderboardResponse;
   getOrg: Orgs;
   getRole: Roles;
   getSkill: Skills;
@@ -315,6 +331,11 @@ export type QueryForgotPasswordArgs = {
 
 
 export type QueryGetAllSpacesByOrgIdArgs = {
+  _id: Scalars['String']['input'];
+};
+
+
+export type QueryGetAllTasksByAssineeIdArgs = {
   _id: Scalars['String']['input'];
 };
 
@@ -436,14 +457,27 @@ export type SpacesInput = {
   visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type TaskData = {
+  __typename?: 'TaskData';
+  taskAmount?: Maybe<Array<Scalars['Int']['output']>>;
+  taskCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type TaskDataDto = {
+  __typename?: 'TaskDataDto';
+  taskAmount?: Maybe<Array<Scalars['Int']['output']>>;
+  taskCount?: Maybe<Scalars['Int']['output']>;
+};
+
 export type TaskDto = {
   __typename?: 'TaskDto';
   _id: Scalars['ID']['output'];
   acceptanceCriteria?: Maybe<Scalars['String']['output']>;
   activities?: Maybe<Array<Activity>>;
-  amount?: Maybe<Scalars['String']['output']>;
+  amount?: Maybe<Scalars['Int']['output']>;
   assinees?: Maybe<Array<UserDto>>;
   description?: Maybe<Scalars['String']['output']>;
+  docUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   priority?: Maybe<Scalars['String']['output']>;
   reviewer?: Maybe<UserDto>;
@@ -457,9 +491,10 @@ export type Tasks = {
   _id: Scalars['ID']['output'];
   acceptanceCriteria?: Maybe<Scalars['String']['output']>;
   activities?: Maybe<Array<Activity>>;
-  amount?: Maybe<Scalars['String']['output']>;
+  amount?: Maybe<Scalars['Int']['output']>;
   assinees?: Maybe<Array<UserDto>>;
   description?: Maybe<Scalars['String']['output']>;
+  docUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   priority?: Maybe<Scalars['String']['output']>;
   reviewer?: Maybe<UserDto>;
@@ -471,9 +506,10 @@ export type Tasks = {
 export type TasksInput = {
   acceptanceCriteria?: InputMaybe<Scalars['String']['input']>;
   activities?: InputMaybe<Array<ActivityInput>>;
-  amount?: InputMaybe<Scalars['String']['input']>;
+  amount?: InputMaybe<Scalars['Int']['input']>;
   assinees?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  docUrl?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   priority?: InputMaybe<Scalars['String']['input']>;
   reviewer?: InputMaybe<Scalars['ID']['input']>;
@@ -522,9 +558,10 @@ export type UpdateSpacesInput = {
 export type UpdateTasksInput = {
   acceptanceCriteria?: InputMaybe<Scalars['String']['input']>;
   activities?: InputMaybe<Array<ActivityInput>>;
-  amount?: InputMaybe<Scalars['String']['input']>;
+  amount?: InputMaybe<Scalars['Int']['input']>;
   assinees?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  docUrl?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   priority?: InputMaybe<Scalars['String']['input']>;
   reviewer?: InputMaybe<Scalars['ID']['input']>;
@@ -543,6 +580,7 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID']['output'];
+  contributedTasks?: Maybe<TaskData>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
@@ -552,6 +590,7 @@ export type User = {
   password?: Maybe<Scalars['String']['output']>;
   permissions: Array<Scalars['String']['output']>;
   profilePic?: Maybe<Scalars['String']['output']>;
+  reviewedTasks?: Maybe<TaskData>;
   signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
   status: Scalars['Float']['output'];
@@ -563,6 +602,7 @@ export type User = {
 export type UserDto = {
   __typename?: 'UserDto';
   _id: Scalars['ID']['output'];
+  contributedTasks?: Maybe<TaskDataDto>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
@@ -571,9 +611,10 @@ export type UserDto = {
   mobile?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
   profilePic?: Maybe<Scalars['String']['output']>;
+  reviewedTasks?: Maybe<TaskDataDto>;
   signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
-  status: Scalars['Float']['output'];
+  status: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
   userRoles?: Maybe<Array<RoleDto>>;
   walletAddress: Scalars['String']['output'];
@@ -608,7 +649,7 @@ export type CreateTaskMutationVariables = Exact<{
 }>;
 
 
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } };
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } };
 
 export type UpdateTaskMutationVariables = Exact<{
   _id: Scalars['String']['input'];
@@ -616,7 +657,7 @@ export type UpdateTaskMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTaskMutation = { __typename?: 'Mutation', updateTask: { __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } };
+export type UpdateTaskMutation = { __typename?: 'Mutation', updateTask: { __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } };
 
 export type GetUserByTokenQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -661,14 +702,14 @@ export type ListAllSkillsQuery = { __typename?: 'Query', listAllSkills: Array<{ 
 export type ListAllTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListAllTasksQuery = { __typename?: 'Query', listAllTasks: Array<{ __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null }> };
+export type ListAllTasksQuery = { __typename?: 'Query', listAllTasks: Array<{ __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null }> };
 
 export type GetAllTasksBySpaceIdQueryVariables = Exact<{
   _id: Scalars['String']['input'];
 }>;
 
 
-export type GetAllTasksBySpaceIdQuery = { __typename?: 'Query', getAllTasksBySpaceId: Array<{ __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, space?: { __typename?: 'SpaceDto', _id: string, name: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string, title: string }> | null }> };
+export type GetAllTasksBySpaceIdQuery = { __typename?: 'Query', getAllTasksBySpaceId: Array<{ __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, space?: { __typename?: 'SpaceDto', _id: string, name: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string, title: string }> | null }> };
 
 export type GetOrgQueryVariables = Exact<{
   _id: Scalars['String']['input'];
@@ -692,14 +733,14 @@ export type GetSpaceQueryVariables = Exact<{
 }>;
 
 
-export type GetSpaceQuery = { __typename?: 'Query', getSpace: { __typename?: 'Spaces', _id: string, name: string, description?: string | null, visibility?: string | null, status: number, tasks?: Array<{ __typename?: 'TaskDto', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null }> | null } };
+export type GetSpaceQuery = { __typename?: 'Query', getSpace: { __typename?: 'Spaces', _id: string, name: string, description?: string | null, visibility?: string | null, status: number, tasks?: Array<{ __typename?: 'TaskDto', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null }> | null } };
 
 export type GetAllSpacesByOrgIdQueryVariables = Exact<{
   _id: Scalars['String']['input'];
 }>;
 
 
-export type GetAllSpacesByOrgIdQuery = { __typename?: 'Query', getAllSpacesByOrgId: Array<{ __typename?: 'Spaces', _id: string, name: string, description?: string | null, visibility?: string | null, status: number, org?: { __typename?: 'OrgDto', _id: string, name: string } | null, tasks?: Array<{ __typename?: 'TaskDto', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null }> | null }> };
+export type GetAllSpacesByOrgIdQuery = { __typename?: 'Query', getAllSpacesByOrgId: Array<{ __typename?: 'Spaces', _id: string, name: string, description?: string | null, visibility?: string | null, status: number, org?: { __typename?: 'OrgDto', _id: string, name: string } | null, tasks?: Array<{ __typename?: 'TaskDto', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null }> | null }> };
 
 export type ListAllSpacesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -711,12 +752,17 @@ export type GetTaskQueryVariables = Exact<{
 }>;
 
 
-export type GetTaskQuery = { __typename?: 'Query', getTask: { __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: string | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, space?: { __typename?: 'SpaceDto', _id: string } | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } };
+export type GetTaskQuery = { __typename?: 'Query', getTask: { __typename?: 'Tasks', _id: string, name: string, description?: string | null, priority?: string | null, amount?: number | null, acceptanceCriteria?: string | null, status: number, activities?: Array<{ __typename?: 'Activity', userId: string, activity: string, createdAt: any }> | null, space?: { __typename?: 'SpaceDto', _id: string } | null, reviewer?: { __typename?: 'UserDto', _id: string } | null, assinees?: Array<{ __typename?: 'UserDto', _id: string }> | null, skills?: Array<{ __typename?: 'SkillDto', _id: string }> | null } };
 
 export type ListAllInterestedContributorsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListAllInterestedContributorsQuery = { __typename?: 'Query', listAllInterestedContributors: Array<{ __typename?: 'InterestedContributorsDto', _id: string, description?: string | null, status: number, userID: { __typename?: 'UserDto', _id: string }, taskID: { __typename?: 'TaskDto', _id: string } }> };
+
+export type GetLeaderboardQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLeaderboardQuery = { __typename?: 'Query', getLeaderboard: { __typename?: 'LeaderboardResponse', contributionData: Array<{ __typename?: 'LeaderboardData', name: string, taskCount: number, taskPoints: number, amountEarned: number }>, reviewData: Array<{ __typename?: 'LeaderboardData', name: string, taskCount: number, taskPoints: number, amountEarned: number }> } };
 
 
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"loginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"walletAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loginUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"walletAddress"},"value":{"kind":"Variable","name":{"kind":"Name","value":"walletAddress"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"userRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"isProfileCreated"}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
@@ -739,3 +785,4 @@ export const GetAllSpacesByOrgIdDocument = {"kind":"Document","definitions":[{"k
 export const ListAllSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAllSpaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listAllSpaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<ListAllSpacesQuery, ListAllSpacesQueryVariables>;
 export const GetTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"activities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"activity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assinees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"acceptanceCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetTaskQuery, GetTaskQueryVariables>;
 export const ListAllInterestedContributorsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAllInterestedContributors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listAllInterestedContributors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"userID"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskID"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<ListAllInterestedContributorsQuery, ListAllInterestedContributorsQueryVariables>;
+export const GetLeaderboardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLeaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contributionData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskPoints"}},{"kind":"Field","name":{"kind":"Name","value":"amountEarned"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskPoints"}},{"kind":"Field","name":{"kind":"Name","value":"amountEarned"}}]}}]}}]}}]} as unknown as DocumentNode<GetLeaderboardQuery, GetLeaderboardQueryVariables>;
