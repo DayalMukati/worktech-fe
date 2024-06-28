@@ -346,3 +346,21 @@ export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
     }
   }
 `);
+
+  export const GET_LEADERBOARD_DATA = gql(`
+    query GetLeaderboard {
+  getLeaderboard {
+    contributionData {
+      name
+      taskCount
+      taskPoints
+      amountEarned
+    }
+    reviewData {
+      name
+      taskCount
+      taskPoints
+      amountEarned
+    }
+  }
+}`)
