@@ -13,7 +13,7 @@ import Icons from '@/components/ui/icon';
 import React from 'react';
 import Header from '@/components/header';
 
-const page = () => {
+const page = async () => {
 	return (
 		<>
 			<Header />
