@@ -319,6 +319,34 @@ export const GET_USERS_QUERY = gql(`
 `);
 
 
+export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
+  query GetAllTasksByAssineeId($_id: String!) {
+    getAllTasksByAssineeId(_id: $_id) {
+      _id
+      name
+      description
+      priority
+      amount
+      activities {
+        userId
+        activity
+        createdAt
+      }
+      reviewer {
+        _id
+      }
+      assinees {
+        _id
+      }
+      skills {
+        _id
+      }
+      acceptanceCriteria
+      status
+    }
+  }
+`);
+
   export const GET_LEADERBOARD_DATA = gql(`
     query GetLeaderboard {
   getLeaderboard {
