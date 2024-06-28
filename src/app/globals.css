@@ -51,7 +51,10 @@
 		--ring: 263.4 70% 50.4%;
 	}
 }
-
+.app_height {
+	height: calc((1vh * 100) - 12.1rem);
+  }
+  
 @layer base {
 	* {
 		@apply border-border;

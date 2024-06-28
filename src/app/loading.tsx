@@ -1,5 +1,4 @@
-import WaveLoader from "@/components/loaders/wave-loader";
-import React from "react";
+ import React from "react";
 
 function Loading() {
   return (
@@ -14,3 +13,4 @@ function Loading() {
 }
 
 export default Loading;
+ 
