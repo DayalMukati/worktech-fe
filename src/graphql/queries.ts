@@ -249,6 +249,7 @@ export const GET_TASK_QUERY = gql(`
     getTask(_id: $_id) {
       _id
       name
+      taskId
       description
       priority
       amount
