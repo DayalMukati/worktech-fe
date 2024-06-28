@@ -12,7 +12,26 @@ import {
 
 import React from 'react';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getIronSession } from 'iron-session';
+import { SessionData, sessionOptions } from '@/lib/session';
+
+async function getSession() {
+	const session = await getIronSession<SessionData>(
+		cookies(),
+		sessionOptions
+	);
+
+	return session;
+}
+
 const page = async () => {
+	const session = await getSession();
+
+	if (!session.authToken) {
+		redirect('/');
+	}
 	return (
 		<Tabs
 			defaultValue='orgs'
