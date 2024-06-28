@@ -11,11 +11,13 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 		<>
 			<ReduxProvider store={store}>
 				<Web3ConnectProvider>
-				<GQLProvider>
-					<TooltipProvider skipDelayDuration={50} delayDuration={80}>
-						{children}
-					</TooltipProvider>
-				</GQLProvider>
+					<GQLProvider>
+						<TooltipProvider
+							skipDelayDuration={50}
+							delayDuration={80}>
+							{children}
+						</TooltipProvider>
+					</GQLProvider>
 				</Web3ConnectProvider>
 			</ReduxProvider>
 		</>
