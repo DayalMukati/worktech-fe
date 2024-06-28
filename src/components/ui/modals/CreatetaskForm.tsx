@@ -182,6 +182,9 @@ const CreateTaskForm = ({
         await connectToMetaMask();
       }
 
+      const priceInWei = Web3.utils.toWei(data.price, 'ether');
+
+      console.log('+++++',data.price, [data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
       await createTaskMutaion({
         variables: {
           input: {
@@ -201,15 +204,12 @@ const CreateTaskForm = ({
         onError(error: any): never {
           throw new Error(error);
         },
-        onCompleted(data: any) {
-          const priceInWei = web3.utils.toWei(data.price, 'ether');
-
-          let txn = callSCMethod("createTask", [data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
-
+        onCompleted: async (res: any) => {
+          let txn = await callSCMethod([data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
           console.log("data->", txn);
-
-          handlePostSubmit(data);
-        },
+      
+          handlePostSubmit(res);
+        }
       });
     } catch (error) {
       console.log("error->", error);

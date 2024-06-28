@@ -41,13 +41,20 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
-import DashboardSidebar from "@/components/dashboard-sidebar";
+import DashboardSidebar from '@/components/dashboard-sidebar';
 
-const layout = ({ children }: { children: React.ReactNode }) => {
-  const currentURI = usePathname();
-  const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
-    return currentPath === menuItemHref;
-  };
+const DashboardLayout = ({
+	children
+}: {
+	children: React.ReactNode;
+}) => {
+	const currentURI = usePathname();
+	const isPathMatch = (
+		currentPath: string,
+		menuItemHref: string
+	): boolean => {
+		return currentPath === menuItemHref;
+	};
 
 	const Icons: { [key: string]: JSX.Element } = {
 		Home: <Home className='w-5 h-5' />,
@@ -79,4 +86,4 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 	);
 };
 
-export default layout;
+export default DashboardLayout;

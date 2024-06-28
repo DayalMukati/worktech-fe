@@ -1,28 +1,22 @@
-import { data1, tasks } from '@/conf/data';
 import { SessionOptions } from 'iron-session';
 
 export interface SessionData {
 	username: string;
-	isLoggedIn: boolean;
-	counter: number;
+	walletAddress: string;
+	authToken?: string;
 }
 
 export const defaultSession: SessionData = {
 	username: '',
-	isLoggedIn: false,
-	counter: 0
+	walletAddress: ''
 };
 
 export const sessionOptions: SessionOptions = {
 	password: 'complex_password_at_least_32_characters_long',
-	cookieName: 'worktech_session',
+	cookieName: 'work-tech/',
 	cookieOptions: {
 		// secure only works in `https` environments
 		// if your localhost is not on `https`, then use: `secure: process.env.NODE_ENV === "production"`
 		secure: true
 	}
 };
-
-export function sleep(ms: number) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}

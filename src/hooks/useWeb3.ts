@@ -12,7 +12,7 @@ interface UseWeb3 {
   account: string | null | undefined;
   library: Web3Provider | undefined;
   signMessage: (message: string) => Promise<string | null>;
-  callSCMethod: (method: string, args: any[]) => Promise<any>;
+  callSCMethod: (args: any[]) => Promise<any>;
 }
 
 const injected = new InjectedConnector({
@@ -25,13 +25,16 @@ const useWeb3 = (): UseWeb3 => {
   const [web3Instance, setWeb3Instance] = useState<Web3 | null>(null);
 
   useEffect(() => {
-    if (library) {
-      const web3 = new Web3(library.provider);
+    // if (library) {
+    //   const web3 = new Web3(library.provider);
+    //   setWeb3Instance(web3);
+    // } else {
+    //   const web3 = getWeb3NoAccount();
+    //   setWeb3Instance(web3);
+    // }
+      const web3 = library? new Web3(library.provider): getWeb3NoAccount();
       setWeb3Instance(web3);
-    } else {
-      const web3 = getWeb3NoAccount();
-      setWeb3Instance(web3);
-    }
+
   }, [library]);
 
   const connectToMetaMask = async (): Promise<void> => {
@@ -63,7 +66,7 @@ const useWeb3 = (): UseWeb3 => {
     }
   };
 
-  const callSCMethod = async (method: string, args: any[]): Promise<any> => {
+  const callSCMethod = async (args: any): Promise<any> => {
     try {
       if (!web3Instance) {
         const web3 = library ? new Web3(library.provider) : getWeb3NoAccount();
@@ -76,7 +79,7 @@ const useWeb3 = (): UseWeb3 => {
       }
 
       const accounts = await web3Instance.eth.getAccounts();
-      console.log('accounts+++++', accounts);
+      console.log('accounts+++++', accounts, args);
       const account = accounts[0];
       if (!account) {
         throw new Error('No account found');
@@ -84,7 +87,7 @@ const useWeb3 = (): UseWeb3 => {
 
       const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
 
-      const receipt = await contract.methods[method](...args).send({ from: account });
+      const receipt = await contract.methods.createTask(...args).send({ from: account });
       return receipt;
     } catch (error) {
       console.error('Error calling smart contract method:', error);
