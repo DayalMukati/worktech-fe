@@ -10,7 +10,7 @@ import { GET_LEADERBOARD_DATA } from '@/graphql/queries';
 import { useQuery } from '@apollo/client';
 import { useAppDispatch } from "@/hooks/toolKitTyped";
 import { setLeaderboards } from "@/store/leaderboardSlice";
-
+import SkeletionTable from '@/components/ui/SkeletionTable'
 interface Contributor {
   name: string;
   taskCount: number;
@@ -60,7 +60,7 @@ const TopContributor: React.FC<{}> = () => {
     );
   }, [loading, error, data]);
 
-  if (loading) return <p className='flex justify-center items-center h-full'>Loading...</p>;
+  if (loading) return <SkeletionTable items={undefined} count={1}/>;
   if (error) return <p  className="flex justify-center items-center h-full">Error: {error.message}</p>;
 
   const allContributors = [

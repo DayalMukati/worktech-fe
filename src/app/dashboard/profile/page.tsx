@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { loadUser, selectUserAuth } from '@/store/authSlice';
 import Icons from '@/components/ui/icon';
 import useSession from '@/hooks/use-session';
+import SkeletonGrid from '@/components/ui/SkeletionGrid';
+import ErrorDisplay from '@/components/ui/ErrorDisplay';
 
 const UserProfile = () => {
 	const [user, setUser] = useState(null);
@@ -50,21 +52,8 @@ const UserProfile = () => {
 			// Add save functionality here
 		}
 	};
-
-	if (loading)
-		return (
-			<p className='flex justify-center items-center h-full'>
-				Loading...
-			</p>
-		);
-
-	if (error)
-		return (
-			<p className='flex justify-center items-center h-full'>
-				Error: {error.message}
-			</p>
-		);
-
+	if (loading) return <SkeletonGrid />;
+	if (error) return <ErrorDisplay errorMessage={error.message}/>
 	return (
 		<div className='flex mt-12 px-36'>
 			<div className='flex flex-col gap-4 w-1/3'>

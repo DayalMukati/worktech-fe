@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface loadingProps {
+interface SkeletonGridProps {
   items?: any[];
   count?: number;
 }
 
-const loading: React.FC<loadingProps> = ({ items, count = 6 }) => {
+const SkeletonGrid: React.FC<SkeletonGridProps> = ({ items, count = 6 }) => {
   // Set items length by count
   items = items || Array.from({ length: count });
 
@@ -42,4 +42,4 @@ const loading: React.FC<loadingProps> = ({ items, count = 6 }) => {
   );
 };
 
-export default loading;
+export default SkeletonGrid;
