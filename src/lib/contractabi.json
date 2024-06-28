@@ -11,25 +11,6 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "assignee",
-				"type": "address"
-			}
-		],
-		"name": "TaskAssigned",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "taskId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
 				"name": "creator",
 				"type": "address"
 			},
@@ -69,34 +50,15 @@
 				"internalType": "address",
 				"name": "creator",
 				"type": "address"
-			}
-		],
-		"name": "TaskCreated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "taskId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
 			},
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "reviewer",
+				"name": "assignee",
 				"type": "address"
 			}
 		],
-		"name": "TaskReviewed",
+		"name": "TaskCreated",
 		"type": "event"
 	},
 	{
@@ -111,24 +73,6 @@
 		],
 		"name": "TaskSubmitted",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_taskId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address payable",
-				"name": "_assignee",
-				"type": "address"
-			}
-		],
-		"name": "assignTask",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -156,8 +100,8 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "_reviewer",
+				"internalType": "address payable",
+				"name": "_assignee",
 				"type": "address"
 			}
 		],
@@ -169,24 +113,6 @@
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_taskId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "_approved",
-				"type": "bool"
-			}
-		],
-		"name": "reviewTask",
-		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -239,11 +165,6 @@
 			{
 				"internalType": "address",
 				"name": "creator",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "reviewer",
 				"type": "address"
 			},
 			{

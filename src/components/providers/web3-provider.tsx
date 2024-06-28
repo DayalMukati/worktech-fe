@@ -1,28 +1,20 @@
+import React from 'react';
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
-import React from 'react';
 
-export function getLibrary(provider: any): Web3Provider {
-	const library = new Web3Provider(provider);
-	library.pollingInterval = 12000;
-	return library;
-}
+// Function to initialize Web3Provider with the provided provider
+const getLibrary = (provider: any): Web3Provider => {
+  return new Web3Provider(provider);
+};
 
-function Web3ConnectProvider({
-	children
-}: {
-	children: React.ReactNode;
-}) {
-	return (
-		<Web3ReactProvider
-			connectors={[]}
-			// getLibrary={getLibrary}
-		>
-			{children}
-		</Web3ReactProvider>
-	);
+// Web3ConnectProvider component wraps Web3ReactProvider and provides children
+function Web3ConnectProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Web3ReactProvider getLibrary={getLibrary}>
+      {children}
+    </Web3ReactProvider>
+  );
 }
 
 export default Web3ConnectProvider;
-
 export type { Web3Provider };

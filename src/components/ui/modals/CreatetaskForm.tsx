@@ -23,7 +23,10 @@ import { selectLayout } from '@/store/layoutSlice';
 import { space } from 'postcss/lib/list';
 import { getStatusNumber } from '@/lib/getStatusNumber';
 import useSmartContract from '@/hooks/useSmartContract';
-import { selectUserAuth } from '@/store/authSlice';
+import { selectUserAuth } from "@/store/authSlice";
+import Web3, { AbiItem } from "web3";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
+import useWeb3 from "@/hooks/useWeb3";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -156,11 +159,13 @@ const CreateTaskForm = ({
 		resolver: zodResolver(createTaskSchema)
 	});
 
-	const Assignee = users?.map((user: any) => ({
-		value: user.walletAddress,
-		label: user.email,
-		icon: <Users className='w-4 h-4' />
-	}));
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+	const { connectToMetaMask , callSCMethod, active} = useWeb3();
+  const Assignee = users?.map((user: any) => ({
+    value: user._id,
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
 
 	const Skills = skillsData?.map((skill: any) => ({
 		value: skill._id,
@@ -170,49 +175,47 @@ const CreateTaskForm = ({
 
 	const { web3 } = useAppSelector(selectUserAuth);
 
-	const { callMethod, connectToMetamask, account } =
-		useSmartContract(web3);
+  const { callMethod, account } = useSmartContract();
 
-	const onSubmitFrom = async (data: Schema) => {
-		try {
-			console.log('data+++++', data);
-			const result = await callMethod('createTask', [
-				'Error Handling',
-				100000000000000000,
-				'0x45f520587bf5CA91c922dEFBc596A6A5Ce294039'
-			]);
-			console.log('result++++++', result);
-			return;
+  const onSubmitFrom = async (data: Schema) => {
+    try {
+      
+      if (!active) {
+        await connectToMetaMask();
+      }
 
-			await createTaskMutaion({
-				variables: {
-					input: {
-						space: spaceId,
-						name: data.taskName,
-						description: data.description,
-						priority: data.priority,
-						amount: data.price,
-						activities: [],
-						reviewer: data.reviewer,
-						assinees: [data.assignee],
-						skills: data.skills,
-						acceptanceCriteria: data.acceptanceCriteria,
-						status: data.status
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted(data: any) {
-					// console.log("data->", data);
+      const priceInWei = Web3.utils.toWei(data.price, 'ether');
 
-					handlePostSubmit(data);
-				}
-			});
-		} catch (error) {
-			console.log('error->', error);
-		}
-	};
+      await createTaskMutaion({
+        variables: {
+          input: {
+            space: spaceId,
+            name: data.taskName,
+            description: data.description,
+            priority: data.priority,
+            amount: data.price,
+            activities: [],
+            reviewer: data.reviewer,
+            assinees: [data.assignee],
+            skills: data.skills,
+            acceptanceCriteria: data.acceptanceCriteria,
+            status: data.status,
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          let txn = await callSCMethod([data.taskName, priceInWei, '0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd']);
+          console.log("data->", txn);
+      
+          handlePostSubmit(res);
+        }
+      });
+    } catch (error) {
+      console.log("error->", error);
+    }
+  };
 
 	const onerror = (err: any) => {
 		console.log('err->', err);
@@ -386,7 +389,7 @@ const CreateTaskForm = ({
 										options={Assignee}
 										onChange={selectedOption => {
 											field.onChange(
-												selectedOption ? selectedOption : null
+												selectedOption ? selectedOption.value : null
 											);
 											clearErrors('assignee'); // Clear error on change
 										}}
