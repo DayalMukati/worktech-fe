@@ -191,8 +191,8 @@ const CreateTaskForm = ({
             amount: data.price,
             activities: [],
             reviewer: data.reviewer,
-            assinees: [],
-            skills: [],
+            assinees: [data.assignee],
+            skills: data.skills,
             acceptanceCriteria: data.acceptanceCriteria,
             status: data.status,
           },
@@ -268,6 +268,11 @@ const CreateTaskForm = ({
                   />
                 )}
               />
+              {errors.skills && (
+                <span className="text-red-500 text-xs mt-auto">
+                  {errors.skills.message}
+                </span>
+              )}
             </div>
           </div>
           <div className="mt-4">
