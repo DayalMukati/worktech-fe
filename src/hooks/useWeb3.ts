@@ -25,13 +25,6 @@ const useWeb3 = (): UseWeb3 => {
   const [web3Instance, setWeb3Instance] = useState<Web3 | null>(null);
 
   useEffect(() => {
-    // if (library) {
-    //   const web3 = new Web3(library.provider);
-    //   setWeb3Instance(web3);
-    // } else {
-    //   const web3 = getWeb3NoAccount();
-    //   setWeb3Instance(web3);
-    // }
       const web3 = library? new Web3(library.provider): getWeb3NoAccount();
       setWeb3Instance(web3);
 
@@ -66,7 +59,7 @@ const useWeb3 = (): UseWeb3 => {
     }
   };
 
-  const callSCMethod = async (args: any): Promise<any> => {
+  const createTask = async (args: any): Promise<any> => {
     try {
       if (!web3Instance) {
         const web3 = library ? new Web3(library.provider) : getWeb3NoAccount();
@@ -79,7 +72,6 @@ const useWeb3 = (): UseWeb3 => {
       }
 
       const accounts = await web3Instance.eth.getAccounts();
-      console.log('accounts+++++', accounts, args);
       const account = accounts[0];
       if (!account) {
         throw new Error('No account found');
@@ -95,7 +87,65 @@ const useWeb3 = (): UseWeb3 => {
     }
   };
 
-  return { connectToMetaMask, active, account, library, signMessage, callSCMethod };
+
+  const submitTask = async (args: any): Promise<any> => {
+    try {
+      if (!web3Instance) {
+        const web3 = library ? new Web3(library.provider) : getWeb3NoAccount();
+        setWeb3Instance(web3);
+        console.warn('Web3 instance was not initialized, initializing now');
+      }
+
+      if (!web3Instance) {
+        throw new Error('Failed to initialize Web3 instance');
+      }
+
+      const accounts = await web3Instance.eth.getAccounts();
+      const account = accounts[0];
+      if (!account) {
+        throw new Error('No account found');
+      }
+
+      const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
+
+      const receipt = await contract.methods.submitTask(...args).send({ from: account });
+      return receipt;
+    } catch (error) {
+      console.error('Error calling smart contract method:', error);
+      throw error;
+    }
+  };
+
+
+  const completeTask = async (args: any): Promise<any> => {
+    try {
+      if (!web3Instance) {
+        const web3 = library ? new Web3(library.provider) : getWeb3NoAccount();
+        setWeb3Instance(web3);
+        console.warn('Web3 instance was not initialized, initializing now');
+      }
+
+      if (!web3Instance) {
+        throw new Error('Failed to initialize Web3 instance');
+      }
+
+      const accounts = await web3Instance.eth.getAccounts();
+      const account = accounts[0];
+      if (!account) {
+        throw new Error('No account found');
+      }
+
+      const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
+
+      const receipt = await contract.methods.completeTask(...args).send({ from: account });
+      return receipt;
+    } catch (error) {
+      console.error('Error calling smart contract method:', error);
+      throw error;
+    }
+  };
+
+  return { connectToMetaMask, active, account, library, signMessage, createTask,submitTask, completeTask };
 };
 
 export default useWeb3;

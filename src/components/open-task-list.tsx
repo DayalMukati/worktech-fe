@@ -4,12 +4,13 @@ import { tasks } from '@/conf/data';
 import TaskCardItem from '@/components/task-card-item';
 import { useQuery } from '@apollo/client';
 import { LIST_ALL_TASKS_QUERY } from '@/graphql/queries';
+import SkeletonGrid from './ui/SkeletionGrid';
+import ErrorDisplay from './ui/ErrorDisplay';
 
 const OpenTaskList = () => {
 	const { loading, error, data } = useQuery(LIST_ALL_TASKS_QUERY);
-	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error :</p>;
-
+	if (loading) return <SkeletonGrid />;
+	if (error) return <ErrorDisplay errorMessage={error.message}/>
 	return (
 		<div className='px-24 w-full container'>
 			<div className='flex flex-col justify-center items-center my-6 w-full'>

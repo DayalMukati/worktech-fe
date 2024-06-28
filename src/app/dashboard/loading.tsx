@@ -1,3 +1,4 @@
+import WaveLoader from '@/components/loaders/wave-loader';
 import React from 'react';
 
 const Loading = () => {
