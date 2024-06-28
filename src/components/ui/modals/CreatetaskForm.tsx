@@ -1,10 +1,10 @@
 'use client';
-import React from 'react';
-import { Button } from '../button';
-import { Input } from '../input';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, { useState } from "react";
+import { Button } from "../button";
+import { Input } from "../input";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Icon,
   ShieldCheck,
@@ -156,6 +156,7 @@ const CreateTaskForm = ({
   });
 
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const [isLoading, setIsLoading] = useState(false);
   const { connectToMetaMask, callSCMethod, active } = useWeb3();
   const Assignee = users?.map((user: any) => ({
     value: [user._id, user.walletAddress],
@@ -174,6 +175,7 @@ const CreateTaskForm = ({
   const { callMethod, account } = useSmartContract();
 
   const onSubmitFrom = async (data: Schema) => {
+    setIsLoading(true);
     try {
       if (!active) {
         await connectToMetaMask();
@@ -216,6 +218,8 @@ const CreateTaskForm = ({
       });
     } catch (error) {
       console.log("error->", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -319,6 +323,7 @@ const CreateTaskForm = ({
           <Button
             type="submit"
             className="block bg-[#7D6CE2FF] mt-4 w-full text-center"
+            loading={isLoading}
           >
             Create
           </Button>
