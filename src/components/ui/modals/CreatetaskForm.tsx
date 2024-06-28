@@ -6,27 +6,25 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-	Icon,
-	ShieldCheck,
-	CircleCheck,
-	Users,
-	LeafyGreen,
-	DraftingCompass
-} from 'lucide-react';
-import { Textarea } from '@headlessui/react';
-import { Label } from '@radix-ui/react-label';
-import Select, { components } from 'react-select';
-import { useMutation } from '@apollo/client';
-import { CREATE_TASK_MUTATION } from '@/graphql/mutation';
-import { useAppDispatch, useAppSelector } from '@/hooks/toolKitTyped';
-import { selectLayout } from '@/store/layoutSlice';
-import { space } from 'postcss/lib/list';
-import { getStatusNumber } from '@/lib/getStatusNumber';
-import useSmartContract from '@/hooks/useSmartContract';
+  Icon,
+  ShieldCheck,
+  CircleCheck,
+  Users,
+  DraftingCompass,
+} from "lucide-react";
+
+import { Label } from "@radix-ui/react-label";
+import Select, { components } from "react-select";
+import { useMutation } from "@apollo/client";
+import { CREATE_TASK_MUTATION } from "@/graphql/mutation";
+import { useAppSelector } from "@/hooks/toolKitTyped";
+import { getStatusNumber } from "@/lib/getStatusNumber";
+import useSmartContract from "@/hooks/useSmartContract";
 import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
 import useWeb3 from "@/hooks/useWeb3";
+import { Textarea } from "../textarea";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({

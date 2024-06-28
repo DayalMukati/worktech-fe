@@ -14,6 +14,7 @@ import {
 import { CrossIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+
 const Taskdetails: React.FC = () => {
   const params = useParams<{ taskId: string }>();
 
@@ -24,7 +25,7 @@ const Taskdetails: React.FC = () => {
     assignee: "Pawan Kumar",
     reviewer: "Rahul",
     acceptanceCriteria: "No task acceptance criteria",
-    status: "No task status",
+    status: 0,
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +44,7 @@ const Taskdetails: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log("data->", dataTask?.getTask);
+    // console.log("data->", dataTask?.getTask);
     setTaskData(dataTask?.getTask as any);
   }, [loadingTask, errorTask, dataTask]);
 
@@ -67,13 +68,17 @@ const Taskdetails: React.FC = () => {
     return null;
   }
 
+  const handleSubmit = () => {
+    setSubmitFormOpen(false);
+  };
+
   return (
     <>
       {submitFormOpen && (
         <Dialog open={true}>
           <div className="fixed inset-0 bg-black opacity-30 z-10"></div>
-          <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform p-4 lg:w-full w-[80vw] max-w-5xl rounded-lg  bg-background shadow-lg z-20">
-            <DialogTitle className="text-center">Add Task</DialogTitle>
+          <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform p-4 lg:w-full w-[80vw] max-w-3xl rounded-lg  bg-background shadow-lg z-20">
+            <DialogTitle className="text-center">Submit work</DialogTitle>
             <DialogClose asChild>
               <Button
                 variant={"ghost"}
@@ -84,10 +89,15 @@ const Taskdetails: React.FC = () => {
               </Button>
             </DialogClose>
 
-            <SubmitTaskForm taskId="" handlePostSubmit={() => {}} />
+            <SubmitTaskForm
+              taskId={params.taskId}
+              handlePostSubmit={() => {
+                handleSubmit();
+              }}
+            />
           </DialogContent>
         </Dialog>
-      )}
+      )}{" "}
       <div className="flex flex-col lg:flex-row gap-2 p-2 pb-4  border bg-card text-card-foreground ">
         <div className="flex-1 border p-4 rounded-lg shadow-lg">
           <div className="text-sm text-muted-foreground mb-2">
@@ -125,13 +135,13 @@ const Taskdetails: React.FC = () => {
               <div className="flex space-x-12 text-muted-foreground  items-center">
                 <div className="text-sm ">Status</div>
                 <div className="text-sm ">
-                  {taskData.status == "1"
+                  {taskData.status == 1
                     ? "To Do"
-                    : taskData.status == "2"
+                    : taskData.status == 2
                     ? "In Progress"
-                    : taskData.status == "3"
+                    : taskData.status == 3
                     ? "In Review"
-                    : taskData.status == "4"
+                    : taskData.status == 4
                     ? "Done"
                     : "No task status"}
                 </div>
@@ -162,15 +172,17 @@ const Taskdetails: React.FC = () => {
             </div>
             <div className="ml-auto flex">
               <button
-                className=" mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white"
-                onClick={setSubmitFormOpen(true)}
+                className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
+                  taskData.status !== 1 ? "opacity-70 " : ""
+                }`}
+                onClick={() => setSubmitFormOpen(true)}
+                disabled={taskData.status !== 1}
               >
-                {" "}
                 <Icon
                   icon="fluent:document-pdf-32-filled"
                   className="h-4 w-4 mr-1"
                 ></Icon>
-                Sumbit Work
+                {taskData.status !== 1 ? "Submitted" : "Sumbit Work"}
               </button>
             </div>
           </div>

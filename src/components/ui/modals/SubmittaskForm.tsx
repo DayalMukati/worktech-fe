@@ -1,26 +1,16 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../button";
 import { Input } from "../input";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Icon,
-  ShieldCheck,
-  CircleCheck,
-  Users,
-  LeafyGreen,
-  DraftingCompass,
-} from "lucide-react";
+
 import { Label } from "@radix-ui/react-label";
-import Select, { components } from "react-select";
+import { components } from "react-select";
 import { useMutation } from "@apollo/client";
-import { CREATE_TASK_MUTATION } from "@/graphql/mutation";
+import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
-import { selectLayout } from "@/store/layoutSlice";
-import { space } from "postcss/lib/list";
-import { getStatusNumber } from "@/lib/getStatusNumber";
 import useSmartContract from "@/hooks/useSmartContract";
 import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
@@ -28,109 +18,11 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
 import useWeb3 from "@/hooks/useWeb3";
 
 // Define the schema using Zod
-const createTaskSchema = z.object({
-  taskName: z.string().min(2, "Task Name is required"),
-  description: z.string().min(2, "Description is required"),
-  acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
-  status: z.number().min(1, "Status is required"),
-  assignee: z.array(z.string()).min(1, "Assignee is required"),
-  priority: z.string().min(1, "Priority is required"),
-  reviewer: z.string().min(1, "Reviewers is required"),
-  price: z.string().min(1, "Price is required"),
-  skills: z.array(z.string()).min(1, "Skills is required"),
+const updateTaskSchema = z.object({
+  docUrl: z.string().min(2, "Link is required"),
 });
 
-type Schema = z.infer<typeof createTaskSchema>;
-
-const status = [
-  { value: 0, label: "open", icon: <CircleCheck /> },
-  { value: 1, label: "to-do", icon: <CircleCheck /> },
-  { value: 2, label: "in-progress", icon: <CircleCheck /> },
-  { value: 3, label: "in-review", icon: <CircleCheck /> },
-  { value: 4, label: "done", icon: <CircleCheck /> },
-  { value: 5, label: "backlog", icon: <CircleCheck /> },
-];
-
-const customOption = (props: any) => {
-  return (
-    <components.Option {...props}>
-      <div className="flex items-center">
-        {props.data.icon}
-        <span className="ml-2">{props.data.label}</span>
-      </div>
-    </components.Option>
-  );
-};
-
-const customSingleValue = (props: any) => {
-  return (
-    <components.SingleValue {...props}>
-      <div className="flex items-center">
-        {props.data.icon}
-        <span className="ml-2">{props.data.label}</span>
-      </div>
-    </components.SingleValue>
-  );
-};
-
-const customOptionAssignee = (props: any) => {
-  return (
-    <components.Option {...props}>
-      <div className="flex items-center">
-        {props.data.icon}
-        <span className="ml-2">{props.data.label}</span>
-      </div>
-    </components.Option>
-  );
-};
-const customSingleValueAssignee = (props: any) => {
-  return (
-    <components.SingleValue {...props}>
-      <div className="flex items-center">
-        {props.data.icon}
-        <span className="ml-2">{props.data.label}</span>
-      </div>
-    </components.SingleValue>
-  );
-};
-
-const Priority = [
-  { value: "high", label: "high", color: "red" },
-  { value: "medium", label: "medium", color: "yellow" },
-  { value: "low", label: "low", color: "green" },
-];
-
-const customPriorityOption = (props: any) => {
-  return (
-    <components.Option {...props}>
-      <div className="flex items-center">
-        <span
-          className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
-        />
-        <span>{props.data.label}</span>
-      </div>
-    </components.Option>
-  );
-};
-
-const customPrioritySingleValue = (props: any) => {
-  return (
-    <components.SingleValue {...props}>
-      <div className="flex items-center">
-        <span
-          className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
-        />
-        <span>{props.data.label}</span>
-      </div>
-    </components.SingleValue>
-  );
-};
-
-const Reviewers = [
-  { value: "ak@gmail.com", label: "Ak-8968" },
-  { value: "dn@gmail.com", label: "DM-477" },
-  { value: "vineet@gmail.com", label: "Vk-123" },
-];
+type Schema = z.infer<typeof updateTaskSchema>;
 
 const SubmitTaskForm = ({
   taskId,
@@ -139,7 +31,8 @@ const SubmitTaskForm = ({
   taskId: string;
   handlePostSubmit: Function;
 }) => {
-  const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
+  const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+
   const {
     register,
     handleSubmit,
@@ -147,9 +40,10 @@ const SubmitTaskForm = ({
     clearErrors,
     formState: { errors },
   } = useForm<Schema>({
-    resolver: zodResolver(createTaskSchema),
+    resolver: zodResolver(updateTaskSchema),
   });
 
+  const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
   const { connectToMetaMask, callSCMethod, active } = useWeb3();
 
@@ -158,14 +52,31 @@ const SubmitTaskForm = ({
   const { callMethod, account } = useSmartContract();
 
   const onSubmitFrom = async (data: Schema) => {
+    setLoading(true);
     try {
-      if (!active) {
-        await connectToMetaMask();
-      }
+      await submitTaskMutaion({
+        variables: {
+          _id: taskId,
+          input: {
+            docUrl: data.docUrl,
+            status: 3, // in review
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          handlePostSubmit(res);
+        },
+      });
 
-      const priceInWei = Web3.utils.toWei(data.price, "ether");
+      //   if (!active) {
+      //     await connectToMetaMask();
+      //   }
     } catch (error) {
       console.log("error->", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -175,26 +86,27 @@ const SubmitTaskForm = ({
 
   return (
     <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
-      <div className="gap-6 grid grid-cols-3 p-4">
-        <div className="col-span-2">
+      <div className="flex flex-col gap-6  p-4">
+        <div className="flex flex-col">
           <Label className="text-md text-slate-800">Paste link</Label>
           <Input
-            type="link"
-            {...register("taskName")}
-            placeholder="Task Name"
-            className="w-[400px] text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
+            type="url"
+            {...register("docUrl")}
+            placeholder="paste link here...."
+            className="w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
           />
-          {errors.taskName && (
+          {errors.docUrl && (
             <span className="text-red-500 text-xs">
-              {errors.taskName.message}
+              {errors.docUrl.message}
             </span>
           )}
 
           <Button
             type="submit"
             className="block bg-[#7D6CE2FF] mt-4 w-full text-center"
+            loading={loading}
           >
-            Create
+            Submit
           </Button>
         </div>
       </div>
