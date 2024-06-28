@@ -41,7 +41,7 @@ const page = () => {
 			<Tabs
 				defaultValue='orgs'
 				className='flex flex-col items-center w-full'>
-				<TabsList className='mt-24'>
+				<TabsList className='mt-8'>
 					<TabsTrigger value='orgs'> Organizations</TabsTrigger>
 					<TabsTrigger value='tasks'>Tasks</TabsTrigger>
 					<TabsTrigger value='contributors'>Contributors</TabsTrigger>

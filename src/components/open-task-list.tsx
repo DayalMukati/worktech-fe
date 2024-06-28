@@ -10,7 +10,7 @@ const OpenTaskList = () => {
   if (error) return <p>Error :</p>;
 
   return (
-    <div className="w-full container">
+    <div className="w-full container px-24">
       <div className="flex flex-col justify-center items-center my-6 w-full">
         <h1 className="text-3xl text-primary">Open Tasks</h1>
         <p className="text-muted-foreground">

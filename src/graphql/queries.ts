@@ -1,4 +1,4 @@
-import { gql } from "./__generated__";
+import { gql } from './__generated__';
 
 export const LIST_ALL_SKILLS = gql(`
 	query ListAllSkills {
@@ -244,7 +244,6 @@ export const LIST_ALL_SPACES_QUERY = gql(`
   }
 `);
 
-
 export const GET_TASK_QUERY = gql(`
   query GetTask($_id: String!) {
     getTask(_id: $_id) {
@@ -275,6 +274,21 @@ export const GET_TASK_QUERY = gql(`
     }
   }
 `);
+export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
+  query ListAllInterestedContributors {
+    listAllInterestedContributors {
+      _id
+      description
+      userID{
+          _id
+      }
+      taskID{
+          _id
+      }
+      status
+    }
+  }
+  `);
 
 export const GET_USERS_QUERY = gql(`
   query GetUsers {
