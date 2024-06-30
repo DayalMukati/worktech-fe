@@ -88,11 +88,21 @@ function SignupModal() {
 						}
 					},
 					onCompleted: data => {
-						login({
-							username: data.registerUser?.user?.email as string,
-							walletAddress: walletAddress as string,
-							authToken: data.registerUser.token as string
-						});
+						login(
+							{
+								walletAddress: walletAddress,
+								authToken: data.registerUser.token as string,
+								username: data.registerUser?.user?.email as string
+							},
+							{
+								optimisticData: {
+									...session,
+									walletAddress: walletAddress,
+									authToken: data.registerUser.token as string,
+									username: data.registerUser?.user?.email as string
+								}
+							}
+						);
 						// localStorage.setItem(
 						// 	'authToken',
 						// 	data.registerUser.token as string
