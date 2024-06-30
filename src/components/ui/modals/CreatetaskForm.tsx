@@ -172,13 +172,20 @@ const CreateTaskForm = ({
 	] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(false);
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
 	const { connectToMetaMask, createTask, active } = useWeb3();
 	const Assignee = users?.map((user: any) => ({
-		value: user._id,
+		value: [user._id, user.walletAddress],
 		label: user.email,
 		icon: <Users className='w-4 h-4' />
 	}));
+	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
+
+	// const { connectToMetaMask, createTask, active } = useWeb3();
+	// const Assignee = users?.map((user: any) => ({
+	// 	value: user._id,
+	// 	label: user.email,
+	// 	icon: <Users className='w-4 h-4' />
+	// }));
 
 	const Skills = skillsData?.map((skill: any) => ({
 		value: skill._id,
