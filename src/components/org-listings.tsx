@@ -19,6 +19,7 @@ import { Badge } from './ui/badge';
 import { useQuery } from '@apollo/client';
 import { LIST_ALL_ORGS_QUERY } from '@/graphql/queries';
 import SkeletonGrid from './ui/SkeletionGrid';
+import Link from 'next/link';
 
 export function SearchBar() {
 	return (
@@ -35,32 +36,34 @@ export function SearchBar() {
 
 export function OrgListingCard({ org }: any) {
 	return (
-		<Card className='border-2 border-primary/20 hover:bg-secondary mt-2 min-w-[350px] max-w-[400px] transition-colors duration-300 cursor-pointer'>
-			<CardHeader className='p-2'>
-				<div className='flex sm:flex-row flex-col justify-between items-end sm:items-center'>
-					<div className='flex items-center gap-4 w-full'>
-						<Image
-							className='rounded w-20 h-20 object-cover'
-							src='/logo-3.png'
-							alt='Organization Logo'
-							width={50}
-							height={50}
-						/>
-						<div className='space-y-1'>
-							<CardTitle className='text-lg text-slate-700'>
-								{org.name}
-							</CardTitle>
-							<CardDescription className='max-w-[250px] text-ellipsis text-wrap overflow-hidden'>
-								{org.description}
-							</CardDescription>
-							<Badge className='border-primary bg-secondary border text-center text-primary hover:text-white shrink-0'>
-								{org.location || 'Location'}
-							</Badge>
+		<Link href={`/orgs/org-overview/${org._id}`}>
+			<Card className='border-2 border-primary/20 hover:bg-secondary mt-2 min-w-[350px] max-w-[400px] transition-colors duration-300 cursor-pointer'>
+				<CardHeader className='p-2'>
+					<div className='flex sm:flex-row flex-col justify-between items-end sm:items-center'>
+						<div className='flex items-center gap-4 w-full'>
+							<Image
+								className='rounded w-20 h-20 object-cover'
+								src='/logo-3.png'
+								alt='Organization Logo'
+								width={50}
+								height={50}
+							/>
+							<div className='space-y-1'>
+								<CardTitle className='text-lg text-slate-700'>
+									{org.name}
+								</CardTitle>
+								<CardDescription className='max-w-[250px] text-ellipsis text-wrap overflow-hidden'>
+									{org.description}
+								</CardDescription>
+								<Badge className='border-primary bg-secondary border text-center text-primary hover:text-white shrink-0'>
+									{org.location || 'Location'}
+								</Badge>
+							</div>
 						</div>
 					</div>
-				</div>
-			</CardHeader>
-		</Card>
+				</CardHeader>
+			</Card>
+		</Link>
 	);
 }
 
