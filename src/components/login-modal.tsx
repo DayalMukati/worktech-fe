@@ -65,6 +65,8 @@ function LoginModal() {
 		await connectToMetaMask();
 		let message = "Worktech sign in"
 		let sig = await signMessage(message);
+		console.log('account++++', account);;
+		
 		if (!account) return;
 
 		try {
@@ -93,12 +95,12 @@ function LoginModal() {
 						);
 
 						if (!data.loginUser.isProfileCreated) {
-							// dispatch(
-							// 	setWeb3({
-							// 		walletAddress: account,
-							// 		web3: web3Instance
-							// 	})
-							// );
+							dispatch(
+								setWeb3({
+									walletAddress: account,
+									web3: null
+								})
+							);
 
 							dispatch(setIsLoginModalOpen(false));
 							dispatch(setIsSignupModalOpen(true));

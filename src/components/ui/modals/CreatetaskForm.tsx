@@ -172,9 +172,10 @@ const CreateTaskForm = ({
 	] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(false);
-	const { connectToMetaMask, callSCMethod, active } = useWeb3();
+	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
+	const { connectToMetaMask, createTask, active } = useWeb3();
 	const Assignee = users?.map((user: any) => ({
-		value: [user._id, user.walletAddress],
+		value: user._id,
 		label: user.email,
 		icon: <Users className='w-4 h-4' />
 	}));
@@ -259,11 +260,11 @@ const CreateTaskForm = ({
 				await connectToMetaMask();
 			}
 			const priceInWei = Web3.utils.toWei(data.price, 'ether');
-			let txn = await callSCMethod([
+			let txn = await createTask([
 				data.taskName,
 				priceInWei,
-				data.assignee[1]
-			]); //assignee wallet address
+				'0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd'
+			]);
 			let taskId = Number(txn.events.TaskCreated.returnValues[0]);
 			console.log(
 				'data->',
@@ -281,7 +282,7 @@ const CreateTaskForm = ({
 						amount: Number(data.price),
 						activities: [],
 						reviewer: data.reviewer,
-						assinees: [data.assignee[0]], // [0] is for id and [1] is for walletAddress
+						assinees: [data.assignee],
 						skills: data.skills,
 						acceptanceCriteria: data.acceptanceCriteria,
 						status: data.status
@@ -296,8 +297,6 @@ const CreateTaskForm = ({
 			});
 		} catch (error) {
 			console.log('error->', error);
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
