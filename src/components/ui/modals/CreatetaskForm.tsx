@@ -289,7 +289,7 @@ const CreateTaskForm = ({
 						amount: Number(data.price),
 						activities: [],
 						reviewer: data.reviewer,
-						assinees: [data.assignee],
+						assinees: data.assignee,
 						skills: data.skills,
 						acceptanceCriteria: data.acceptanceCriteria,
 						status: data.status
