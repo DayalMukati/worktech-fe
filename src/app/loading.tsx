@@ -1,4 +1,5 @@
- import React from "react";
+import Icons from "@/components/ui/icon";
+import React from "react";
 
 function Loading() {
   return (
@@ -11,4 +12,4 @@ function Loading() {
 }
 
 export default Loading;
- 
+

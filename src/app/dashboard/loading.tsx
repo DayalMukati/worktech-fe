@@ -1,5 +1,5 @@
-import WaveLoader from '@/components/loaders/wave-loader';
-import React from 'react';
+import Icons from "@/components/ui/icon";
+import React from "react";
 
 const Loading = () => {
 	return (
