@@ -32,7 +32,7 @@ const loginSchema = z.object({
 type Schema = z.infer<typeof loginSchema>;
 
 function LoginModal() {
-	const { connectToMetaMask, account , signMessage} = useWeb3();
+	const { connectToMetaMask, account, signMessage } = useWeb3();
 	const {
 		session,
 		login,
@@ -63,10 +63,10 @@ function LoginModal() {
 
 	const handleMetaMaskLogin = async () => {
 		await connectToMetaMask();
-		let message = "Worktech sign in"
+		let message = 'Worktech sign in';
 		let sig = await signMessage(message);
-		console.log('account++++', account);;
-		
+		console.log('account++++', account);
+
 		if (!account) return;
 
 		try {
@@ -75,7 +75,7 @@ function LoginModal() {
 				variables: {
 					walletAddress: account
 				},
-				onCompleted: data => {
+				onCompleted: async data => {
 					if (data?.loginUser) {
 						console.log({ session, data: data.loginUser });
 						login(
@@ -109,7 +109,6 @@ function LoginModal() {
 								'authToken',
 								data.loginUser?.token as string
 							);
-
 						} else {
 							localStorage.setItem('address', account);
 							localStorage.setItem(

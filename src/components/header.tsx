@@ -61,8 +61,8 @@ const Header = () => {
 	// 	}
 	// });
 
-	const handleLogout = () => {
-		logout();
+	const handleLogout = async () => {
+		await logout();
 		dispatch(logoutUser());
 		router.push('/');
 	};
