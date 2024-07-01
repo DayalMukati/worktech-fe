@@ -102,7 +102,7 @@ const Taskdetails: React.FC = () => {
             />
           </DialogContent>
         </Dialog>
-      )}{" "}
+      )}
       <div className="flex flex-col lg:flex-row gap-2 p-2 pb-4  border bg-card text-card-foreground ">
         <div className="flex-1 border p-4 rounded-lg shadow-lg">
           <div className="text-sm text-muted-foreground mb-2">
