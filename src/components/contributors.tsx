@@ -34,7 +34,7 @@ interface QueryData {
 // SearchBar component
 export function SearchBar(): JSX.Element {
   return (
-    <div className="flex items-center space-x-2 px-4 border w-full max-w-xl bg-secondary rounded">
+    <div className="flex items-center space-x-2 px-4  w-full max-w-xl bg-secondary rounded-full border-2 border-slate-200">
       <Search className="" />
       <Input
         className="border-0 ring-0 focus-visible:ring-0 focus:ring-0 w-full focus-visible:border-0 focus-visible:ring-offset-0 bg-secondary"
