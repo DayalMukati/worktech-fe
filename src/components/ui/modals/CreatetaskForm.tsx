@@ -45,12 +45,12 @@ const createTaskSchema = z.object({
 type Schema = z.infer<typeof createTaskSchema>;
 
 const status = [
-	{ value: 0, label: 'open', icon: <CircleCheck /> },
-	{ value: 1, label: 'to-do', icon: <CircleCheck /> },
-	{ value: 2, label: 'in-progress', icon: <CircleCheck /> },
-	{ value: 3, label: 'in-review', icon: <CircleCheck /> },
-	{ value: 4, label: 'done', icon: <CircleCheck /> },
-	{ value: 5, label: 'backlog', icon: <CircleCheck /> }
+  // { value: 0, label: 'open', icon: <CircleCheck /> },
+  { value: 1, label: "to-do", icon: <CircleCheck /> },
+  // { value: 2, label: 'in-progress', icon: <CircleCheck /> },
+  // { value: 3, label: 'in-review', icon: <CircleCheck /> },
+  // { value: 4, label: 'done', icon: <CircleCheck /> },
+  { value: 5, label: "backlog", icon: <CircleCheck /> },
 ];
 
 const customOption = (props: any) => {
@@ -307,312 +307,298 @@ const CreateTaskForm = ({
 	};
 
 	return (
-		<form
-			autoComplete='off'
-			onSubmit={handleSubmit(onSubmitFrom, onerror)}>
-			<div className='gap-6 grid grid-cols-3 p-4'>
-				<div className='col-span-2'>
-					<Label className='text-md text-slate-800'>Task Name</Label>
-					<Input
-						type='text'
-						{...register('taskName')}
-						placeholder='Task Name'
-						className='w-[400px] text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600'
-					/>
-					{errors.taskName && (
-						<span className='text-red-500 text-xs'>
-							{errors.taskName.message}
-						</span>
-					)}
-					<div className='flex gap-4 mt-4'>
-						<Button className='gap-3 bg-[#7D6CE2FF] text-center'>
-							<ShieldCheck className='w-4 h-4' />
-							Permissions
-						</Button>
-						<div className='flex gap-4 max-w-xl'>
-							<Controller
-								name='skills'
-								control={control}
-								render={({ field }) => (
-									<Select
-										placeholder='Select Skills'
-										styles={{
-											control: (baseStyles, state) => ({
-												...baseStyles,
-												borderColor: state.isFocused ? 'red' : 'grey',
-												cursor: 'pointer'
-											})
-										}}
-										options={Skills}
-										isMulti
-										onChange={selectedOptions => {
-											const values = selectedOptions
-												? selectedOptions.map(
-														(option: any) => option.value as any
-												  )
-												: [];
-											field.onChange(values);
-											clearErrors('skills'); // Clear error on change
-										}}
-										components={{
-											Option: customOptionAssignee,
-											SingleValue: customSingleValueAssignee
-										}}
-									/>
-								)}
-							/>
-							{errors.skills && (
-								<span className='mt-auto text-red-500 text-xs'>
-									{errors.skills.message}
-								</span>
-							)}
-						</div>
-					</div>
-					<div className='mt-4'>
-						<div className='flex justify-between items-center w-full'>
-							<Label className='text-md text-slate-800'>
-								Task Description
-							</Label>
-							{!isDescriptionGenerating ? (
-								<Button
-									variant={'link'}
-									type='button'
-									onClick={fetchDescription}>
-									Generate Description
-								</Button>
-							) : (
-								<LoaderCircle className='w-4 h-4 animate-spin' />
-							)}
-						</div>
-						<Textarea
-							placeholder='Task Description '
-							{...register('description')}
-							onChange={() => {
-								clearErrors(['description']);
-							}}
-							name='description'
-							className='border-2 border-slate-400 rounded-md w-full h-[80px] font-sm text-slate-600 text-sm indent-2 outline-none'
-						/>
+    <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
+      <div className="gap-6 grid grid-cols-3 p-4">
+        <div className="col-span-2">
+          <Label className="text-md text-slate-800">Task Name</Label>
+          <Input
+            type="text"
+            {...register("taskName")}
+            placeholder="Task Name"
+            className="w-[400px] text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
+          />
+          {errors.taskName && (
+            <span className="text-red-500 text-xs">
+              {errors.taskName.message}
+            </span>
+          )}
+          <div className="flex gap-4 mt-4">
+            <Button className="gap-3 bg-[#7D6CE2FF] text-center">
+              <ShieldCheck className="w-4 h-4" />
+              Permissions
+            </Button>
+            <div className="flex gap-4 max-w-xl">
+              <Controller
+                name="skills"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    placeholder="Select Skills"
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={Skills}
+                    isMulti
+                    onChange={(selectedOptions) => {
+                      const values = selectedOptions
+                        ? selectedOptions.map(
+                            (option: any) => option.value as any
+                          )
+                        : [];
+                      field.onChange(values);
+                      clearErrors("skills"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customOptionAssignee,
+                      SingleValue: customSingleValueAssignee,
+                    }}
+                  />
+                )}
+              />
+              {errors.skills && (
+                <span className="mt-auto text-red-500 text-xs">
+                  {errors.skills.message}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="mt-4">
+            <div className="flex justify-between items-center w-full">
+              <Label className="text-md text-slate-800">Task Description</Label>
+              {!isDescriptionGenerating ? (
+                <Button
+                  variant={"link"}
+                  type="button"
+                  onClick={fetchDescription}
+                >
+                  Generate Description
+                </Button>
+              ) : (
+                <LoaderCircle className="w-4 h-4 animate-spin" />
+              )}
+            </div>
+            <Textarea
+              placeholder="Task Description "
+              {...register("description")}
+              onChange={() => {
+                clearErrors(["description"]);
+              }}
+              name="description"
+              className="border-2 border-slate-400 rounded-md w-full h-[80px] font-sm text-slate-600 text-sm indent-2 outline-none"
+            />
 
-						{errors.description && (
-							<span className='text-red-500 text-xs'>
-								{errors.description.message}
-							</span>
-						)}
-					</div>
-					<div className='mt-4'>
-						<div className='flex justify-between items-center w-full'>
-							<Label className='mt-4 text-md text-slate-800'>
-								Accepted Criteria
-							</Label>
-							{!isAcceptanceCriteriaGenerating ? (
-								<Button
-									variant={'link'}
-									type='button'
-									onClick={fetchAcceptanceCriteria}>
-									Generate Accepted Criteria
-								</Button>
-							) : (
-								<LoaderCircle className='w-4 h-4 animate-spin' />
-							)}
-						</div>
-						<Textarea
-							{...register('acceptanceCriteria')}
-							placeholder='Acceptace criteria'
-							className='border-2 border-slate-400 rounded-md w-full font-sm text-slate-600 text-sm indent-2 outline-none'
-						/>
+            {errors.description && (
+              <span className="text-red-500 text-xs">
+                {errors.description.message}
+              </span>
+            )}
+          </div>
+          <div className="mt-4">
+            <div className="flex justify-between items-center w-full">
+              <Label className="mt-4 text-md text-slate-800">
+                Accepted Criteria
+              </Label>
+              {!isAcceptanceCriteriaGenerating ? (
+                <Button
+                  variant={"link"}
+                  type="button"
+                  onClick={fetchAcceptanceCriteria}
+                >
+                  Generate Accepted Criteria
+                </Button>
+              ) : (
+                <LoaderCircle className="w-4 h-4 animate-spin" />
+              )}
+            </div>
+            <Textarea
+              {...register("acceptanceCriteria")}
+              placeholder="Acceptace criteria"
+              className="border-2 border-slate-400 rounded-md w-full font-sm text-slate-600 text-sm indent-2 outline-none"
+            />
 
-						{errors.acceptanceCriteria && (
-							<span className='text-sred-500 text-xs'>
-								{errors.acceptanceCriteria.message}
-							</span>
-						)}
-					</div>
+            {errors.acceptanceCriteria && (
+              <span className="text-sred-500 text-xs">
+                {errors.acceptanceCriteria.message}
+              </span>
+            )}
+          </div>
 
-					<Button
-						type='submit'
-						className='block bg-[#7D6CE2FF] mt-4 w-full text-center'
-						loading={isLoading}>
-						Create
-					</Button>
-				</div>
+          <Button
+            type="submit"
+            className="block bg-[#7D6CE2FF] mt-4 w-full text-center"
+            loading={isLoading}
+          >
+            Create
+          </Button>
+        </div>
 
-				<div>
-					<div className='flex flex-col justify-between items-center gap-4'>
-						<div className='w-full text-slate-900 text-sm uppercase'>
-							<Label className='text-slate-800 text-sm'>
-								{' '}
-								Status
-							</Label>
-							<Controller
-								name='status'
-								control={control}
-								render={({ field }) => (
-									<Select
-										styles={{
-											control: (baseStyles, state) => ({
-												...baseStyles,
-												borderColor: state.isFocused ? 'red' : 'grey',
-												cursor: 'pointer'
-											})
-										}}
-										options={status}
-										defaultValue={status.find(
-											status =>
-												status.value === getStatusNumber(column)
-										)}
-										onChange={selectedOption => {
-											field.onChange(
-												selectedOption ? selectedOption.value : null
-											);
-											clearErrors('status'); // Clear error on change
-										}}
-										components={{
-											Option: customOption,
-											SingleValue: customSingleValue
-										}}
-									/>
-								)}
-							/>
-							{errors.status && (
-								<span className='text-red-500 text-xs'>
-									{errors.status.message}
-								</span>
-							)}
-						</div>
+        <div>
+          <div className="flex flex-col justify-between items-center gap-4">
+            <div className="w-full text-slate-900 text-sm uppercase">
+              <Label className="text-slate-800 text-sm"> Status</Label>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={status}
+                    defaultValue={status.find(
+                      (status) => status.value === getStatusNumber(column)
+                    )}
+                    onChange={(selectedOption) => {
+                      field.onChange(
+                        selectedOption ? selectedOption.value : null
+                      );
+                      clearErrors("status"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customOption,
+                      SingleValue: customSingleValue,
+                    }}
+                  />
+                )}
+              />
+              {errors.status && (
+                <span className="text-red-500 text-xs">
+                  {errors.status.message}
+                </span>
+              )}
+            </div>
 
-						<div className='w-full text-slate-900 text-sm uppercase'>
-							<Label className='text-slate-800 text-sm'>
-								{' '}
-								Assignee
-							</Label>
-							<Controller
-								name='assignee'
-								control={control}
-								render={({ field }) => (
-									<Select
-										styles={{
-											control: (baseStyles, state) => ({
-												...baseStyles,
-												borderColor: state.isFocused ? 'red' : 'grey',
-												cursor: 'pointer'
-											})
-										}}
-										options={Assignee}
-										onChange={selectedOption => {
-											field.onChange(
-												selectedOption ? selectedOption.value : null
-											);
-											clearErrors('assignee'); // Clear error on change
-										}}
-										components={{
-											Option: customOptionAssignee,
-											SingleValue: customSingleValueAssignee
-										}}
-									/>
-								)}
-							/>
-							{errors.assignee && (
-								<span className='text-red-500 text-xs'>
-									{errors.assignee.message}
-								</span>
-							)}
-						</div>
+            <div className="w-full text-slate-900 text-sm uppercase">
+              <Label className="text-slate-800 text-sm"> Assignee</Label>
+              <Controller
+                name="assignee"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={Assignee}
+                    onChange={(selectedOption) => {
+                      field.onChange(
+                        selectedOption ? selectedOption.value : null
+                      );
+                      clearErrors("assignee"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customOptionAssignee,
+                      SingleValue: customSingleValueAssignee,
+                    }}
+                  />
+                )}
+              />
+              {errors.assignee && (
+                <span className="text-red-500 text-xs">
+                  {errors.assignee.message}
+                </span>
+              )}
+            </div>
 
-						<div className='w-full text-slate-900 text-sm uppercase'>
-							<Label className='text-slate-800 text-sm'>
-								{' '}
-								Priority
-							</Label>
-							<Controller
-								name='priority'
-								control={control}
-								render={({ field }) => (
-									<Select
-										styles={{
-											control: (baseStyles, state) => ({
-												...baseStyles,
-												borderColor: state.isFocused ? 'red' : 'grey',
-												cursor: 'pointer'
-											})
-										}}
-										options={Priority}
-										onChange={selectedOption => {
-											field.onChange(
-												selectedOption ? selectedOption.value : null
-											);
-											clearErrors('priority'); // Clear error on change
-										}}
-										components={{
-											Option: customPriorityOption,
-											SingleValue: customPrioritySingleValue
-										}}
-									/>
-								)}
-							/>
-							{errors.priority && (
-								<span className='text-red-500 text-xs'>
-									{errors.priority.message}
-								</span>
-							)}
-						</div>
-					</div>
+            <div className="w-full text-slate-900 text-sm uppercase">
+              <Label className="text-slate-800 text-sm"> Priority</Label>
+              <Controller
+                name="priority"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        borderColor: state.isFocused ? "red" : "grey",
+                        cursor: "pointer",
+                      }),
+                    }}
+                    options={Priority}
+                    onChange={(selectedOption) => {
+                      field.onChange(
+                        selectedOption ? selectedOption.value : null
+                      );
+                      clearErrors("priority"); // Clear error on change
+                    }}
+                    components={{
+                      Option: customPriorityOption,
+                      SingleValue: customPrioritySingleValue,
+                    }}
+                  />
+                )}
+              />
+              {errors.priority && (
+                <span className="text-red-500 text-xs">
+                  {errors.priority.message}
+                </span>
+              )}
+            </div>
+          </div>
 
-					<div className='mt-2 w-full text-slate-900 text-sm uppercase'>
-						<Label className='uppercase'>HBAR-Price</Label>
-						<Input
-							type='text'
-							className='focus-visible:ring-0 focus:ring-0'
-							placeholder='Price'
-							{...register('price')}
-							onChange={e => {
-								clearErrors(['price']);
-							}}
-						/>
-						{errors.price && (
-							<span className='text-red-500 text-xs'>
-								{errors.price.message}
-							</span>
-						)}
-					</div>
+          <div className="mt-2 w-full text-slate-900 text-sm uppercase">
+            <Label className="uppercase">HBAR-Price</Label>
+            <Input
+              type="text"
+              className="focus-visible:ring-0 focus:ring-0"
+              placeholder="Price"
+              {...register("price")}
+              onChange={(e) => {
+                clearErrors(["price"]);
+              }}
+            />
+            {errors.price && (
+              <span className="text-red-500 text-xs">
+                {errors.price.message}
+              </span>
+            )}
+          </div>
 
-					<div className='mt-2 w-full text-slate-900 text-sm uppercase'>
-						<Label className='text-slate-800 text-sm'>
-							{' '}
-							Reviewer
-						</Label>
-						<Controller
-							name='reviewer'
-							control={control}
-							render={({ field }) => (
-								<Select
-									styles={{
-										control: (baseStyles, state) => ({
-											...baseStyles,
-											borderColor: state.isFocused ? 'red' : 'grey',
-											cursor: 'pointer'
-										})
-									}}
-									options={Reviewers}
-									onChange={selectedOption => {
-										field.onChange(
-											selectedOption ? selectedOption.value : null
-										);
-										clearErrors('reviewer'); // Clear error on change
-									}}
-								/>
-							)}
-						/>
-						{errors.reviewer && (
-							<span className='text-red-500 text-xs'>
-								{errors.reviewer.message}
-							</span>
-						)}
-					</div>
-				</div>
-			</div>
-		</form>
-	);
+          <div className="mt-2 w-full text-slate-900 text-sm uppercase">
+            <Label className="text-slate-800 text-sm"> Reviewer</Label>
+            <Controller
+              name="reviewer"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      borderColor: state.isFocused ? "red" : "grey",
+                      cursor: "pointer",
+                    }),
+                  }}
+                  options={Reviewers}
+                  onChange={(selectedOption) => {
+                    field.onChange(
+                      selectedOption ? selectedOption.value : null
+                    );
+                    clearErrors("reviewer"); // Clear error on change
+                  }}
+                />
+              )}
+            />
+            {errors.reviewer && (
+              <span className="text-red-500 text-xs">
+                {errors.reviewer.message}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </form>
+  );
 };
 
 export default CreateTaskForm;
