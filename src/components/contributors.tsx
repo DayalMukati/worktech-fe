@@ -66,17 +66,15 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
   );
 
   if (userLoading) {
-    return <div>Loading user data...</div>;
+    return <SkeletonGrid />;
   }
 
   if (userError) {
-    return <div>Error fetching user data: {userError.message}</div>;
+    return <ErrorDisplay errorMessage={userError?.message || "Unknown error"} />;
   }
 
-  // Find the user object based on contributor's userID._id
-  const user = userData?.users.find(user => user._id === contributor.userID?._id);
-console.log (user?.email)
-  return (
+   const user = userData?.users.find(user => user._id === contributor.userID?._id);
+    return (
     <Card className="hover:bg-secondary border-2 min-w-[350px] max-w-[400px] border-primary/20 transition-colors duration-300 cursor-pointer h-30">
       <CardHeader className="p-2">
         <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center">
@@ -89,11 +87,9 @@ console.log (user?.email)
               height={64}
             />
             <div className="space-y-1">
-              {/* <CardTitle className="text-wrap text-md overflow-hidden text-ellipsis">
-                {user.email?.length > 25
-                  ? contributor.name.substring(0, 25) + "..."
-                  : contributor.name || "Username"}
-              </CardTitle> */}
+              <CardTitle className="text-wrap text-md overflow-hidden text-ellipsis">
+                {user && <p>{user.email}</p>}
+              </CardTitle>
               <span className="flex space-x-2">
                 <p>Reputation:</p>
                 <Badge className="hover:text-white text-center bg-secondary text-primary border border-primary">
@@ -111,9 +107,7 @@ console.log (user?.email)
           </CardDescription>
         </div>
       </CardHeader>
-      <CardFooter>
-        {user && <p>Email: {user.email}</p>}
-      </CardFooter>
+      
     </Card>
   );
 };
