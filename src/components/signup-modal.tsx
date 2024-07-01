@@ -90,8 +90,8 @@ function SignupModal() {
 							walletAddress: walletAddress as string
 						}
 					},
-					onCompleted: data => {
-						login(
+					onCompleted: async data => {
+						await login(
 							{
 								walletAddress: walletAddress,
 								authToken: data.registerUser.token as string,
@@ -106,7 +106,9 @@ function SignupModal() {
 								}
 							}
 						);
-						router.push('/dashboard');
+						if (session.authToken) {
+							router.push('/dashboard');
+						}
 						// localStorage.setItem(
 						// 	'authToken',
 						// 	data.registerUser.token as string
