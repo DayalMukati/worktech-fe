@@ -35,22 +35,16 @@ const OrgOverview = () => {
 	const { loading, error, data } = useQuery(
 		GET_ALL_SPACES_BY_ORG_ID_QUERY,
 		{
-			variables: { _id: orgId }
+			variables: { _id: orgId },
+			onCompleted: () => {
+				dispatch(
+					setSpaces({
+						spaces: data?.getAllSpacesByOrgId
+					})
+				);
+			}
 		}
 	);
-	useEffect(() => {
-		if (loading) return;
-		if (error) return;
-		console.log(
-			'list all spaces by orgiD->',
-			data?.getAllSpacesByOrgId
-		);
-		dispatch(
-			setSpaces({
-				spaces: data?.getAllSpacesByOrgId
-			})
-		);
-	}, [loading, error, data]);
 
 	const {
 		data: orgData,
