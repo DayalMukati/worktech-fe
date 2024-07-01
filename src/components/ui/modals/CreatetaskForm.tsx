@@ -147,165 +147,160 @@ const CreateTaskForm = ({
 	users: any;
 	skillsData: any;
 }) => {
-	const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
+	
 	const {
-		register,
-		handleSubmit,
-		watch,
-		setValue,
-		control,
-		clearErrors,
-		setError,
-		formState: { errors }
-	} = useForm<Schema>({
-		resolver: zodResolver(createTaskSchema)
-	});
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    clearErrors,
+    setError,
+    formState: { errors },
+  } = useForm<Schema>({
+    resolver: zodResolver(createTaskSchema),
+  });
 
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
-	const [description, setDescription] = useState('');
-	const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
-	const [isDescriptionGenerating, setIsDescriptionGenerating] =
-		useState(false);
-	const [
-		isAcceptanceCriteriaGenerating,
-		setIsAcceptanceCriteriaGenerating
-	] = useState(false);
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const [description, setDescription] = useState("");
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
+  const [isDescriptionGenerating, setIsDescriptionGenerating] = useState(false);
+  const [isAcceptanceCriteriaGenerating, setIsAcceptanceCriteriaGenerating] =
+    useState(false);
 
-	const [isLoading, setIsLoading] = useState(false);
-	const { connectToMetaMask, createTask, active } = useWeb3();
-	const Assignee = users?.map((user: any) => ({
-		value: [user._id, user.walletAddress],
-		label: user.email,
-		icon: <Users className='w-4 h-4' />
-	}));
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const [isLoading, setIsLoading] = useState(false);
+  const { connectToMetaMask, createTask, active } = useWeb3();
+  const Assignee = users?.map((user: any) => ({
+    value: [user._id, user.walletAddress],
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
 
-	// const { connectToMetaMask, createTask, active } = useWeb3();
-	// const Assignee = users?.map((user: any) => ({
-	// 	value: user._id,
-	// 	label: user.email,
-	// 	icon: <Users className='w-4 h-4' />
-	// }));
+  // const { connectToMetaMask, createTask, active } = useWeb3();
+  // const Assignee = users?.map((user: any) => ({
+  // 	value: user._id,
+  // 	label: user.email,
+  // 	icon: <Users className='w-4 h-4' />
+  // }));
 
-	const Skills = skillsData?.map((skill: any) => ({
-		value: skill._id,
-		label: skill.title,
-		icon: <DraftingCompass className='w-4 h-4' />
-	}));
+  const Skills = skillsData?.map((skill: any) => ({
+    value: skill._id,
+    label: skill.title,
+    icon: <DraftingCompass className="w-4 h-4" />,
+  }));
 
-	const { web3 } = useAppSelector(selectUserAuth);
+  const { web3 } = useAppSelector(selectUserAuth);
 
-	const { callMethod, account } = useSmartContract();
+  const { callMethod, account } = useSmartContract();
 
-	const title = watch('taskName');
+  const title = watch("taskName");
+  const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
 
-	const fetchDescription = async () => {
-		if (!title && title.length < 1) {
-			setError('taskName', {
-				type: 'manual',
-				message: 'Task Name must be more than one character'
-			});
-			return;
-		}
-		try {
-			clearErrors('taskName');
-			setIsDescriptionGenerating(true);
-			const response = await fetch('/api/generate-description', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ title })
-			});
+  const fetchDescription = async () => {
+    if (!title && title.length < 1) {
+      setError("taskName", {
+        type: "manual",
+        message: "Task Name must be more than one character",
+      });
+      return;
+    }
+    try {
+      clearErrors("taskName");
+      setIsDescriptionGenerating(true);
+      const response = await fetch("/api/generate-description", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
 
-			const data = await response.json();
-			setDescription(data.description);
-			setValue('description', data.description);
-			setIsDescriptionGenerating(false);
-		} catch (error) {
-			console.error('Error fetching description:', error);
-			setIsDescriptionGenerating(false);
-		}
-	};
+      const data = await response.json();
+      setDescription(data.description);
+      setValue("description", data.description);
+      setIsDescriptionGenerating(false);
+    } catch (error) {
+      console.error("Error fetching description:", error);
+      setIsDescriptionGenerating(false);
+    }
+  };
 
-	const fetchAcceptanceCriteria = async () => {
-		if (!title && title.length < 1) {
-			setError('taskName', {
-				type: 'manual',
-				message: 'Task Name must be more than one character'
-			});
-			return;
-		}
-		clearErrors('taskName');
-		setIsAcceptanceCriteriaGenerating(true);
-		try {
-			const response = await fetch(
-				'/api/generate-acceptance-criteria',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ feature: title })
-				}
-			);
+  const fetchAcceptanceCriteria = async () => {
+    if (!title && title.length < 1) {
+      setError("taskName", {
+        type: "manual",
+        message: "Task Name must be more than one character",
+      });
+      return;
+    }
+    clearErrors("taskName");
+    setIsAcceptanceCriteriaGenerating(true);
+    try {
+      const response = await fetch("/api/generate-acceptance-criteria", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ feature: title }),
+      });
 
-			const data = await response.json();
-			setAcceptanceCriteria(data.acceptanceCriteria);
-			setValue('acceptanceCriteria', data.acceptanceCriteria);
-			setIsAcceptanceCriteriaGenerating(false);
-		} catch (error) {
-			console.error('Error fetching acceptance criteria:', error);
-			setIsAcceptanceCriteriaGenerating(false);
-		}
-	};
+      const data = await response.json();
+      setAcceptanceCriteria(data.acceptanceCriteria);
+      setValue("acceptanceCriteria", data.acceptanceCriteria);
+      setIsAcceptanceCriteriaGenerating(false);
+    } catch (error) {
+      console.error("Error fetching acceptance criteria:", error);
+      setIsAcceptanceCriteriaGenerating(false);
+    }
+  };
 
-	const onSubmitFrom = async (data: Schema) => {
-		setIsLoading(true);
-		try {
-			if (!active) {
-				await connectToMetaMask();
-			}
-			const priceInWei = Web3.utils.toWei(data.price, 'ether');
-			let txn = await createTask([
-				data.taskName,
-				priceInWei,
-				'0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd'
-			]);
-			let taskId = Number(txn.events.TaskCreated.returnValues[0]);
-			console.log(
-				'data->',
-				txn,
-				Number(txn.events.TaskCreated.returnValues[0], data);
-			);
-			await createTaskMutaion({
-				variables: {
-					input: {
-						space: spaceId,
-						name: data.taskName,
-						taskId: taskId,
-						description: data.description,
-						priority: data.priority,
-						amount: Number(data.price),
-						activities: [],
-						reviewer: data.reviewer,
-						assinees: [data.assignee[0]],
-						skills: data.skills,
-						acceptanceCriteria: data.acceptanceCriteria,
-						status: data.status
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted: async (res: any) => {
-					handlePostSubmit(res);
-				}
-			});
-		} catch (error) {
-			console.log('error->', error);
-		}
-	};
+  const onSubmitFrom = async (data: Schema) => {
+    setIsLoading(true);
+    try {
+      if (!active) {
+        await connectToMetaMask();
+      }
+      const priceInWei = Web3.utils.toWei(data.price, "ether");
+      let txn = await createTask([
+        data.taskName,
+        priceInWei,
+        "0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd",
+      ]);
+      let taskId = Number(txn.events.TaskCreated.returnValues[0]);
+      // console.log(
+      // 	'data->',
+      // 	txn,
+      // 	Number(txn.events.TaskCreated.returnValues[0], data);
+      // );
+      await createTaskMutaion({
+        variables: {
+          input: {
+            space: spaceId,
+            name: data.taskName,
+            taskId: taskId,
+            description: data.description,
+            priority: data.priority,
+            amount: Number(data.price),
+            activities: [],
+            reviewer: data.reviewer,
+            assinees: [data.assignee[0]],
+            skills: data.skills,
+            acceptanceCriteria: data.acceptanceCriteria,
+            status: data.status,
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          handlePostSubmit(res);
+        },
+      });
+    } catch (error) {
+      console.log("error->", error);
+    }
+  };
 
 	const onerror = (err: any) => {
 		console.log('err->', err);

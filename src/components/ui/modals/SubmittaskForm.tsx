@@ -45,7 +45,7 @@ const SubmitTaskForm = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
-  const { connectToMetaMask, callSCMethod, active } = useWeb3();
+  const { connectToMetaMask, active } = useWeb3();
 
   const { web3 } = useAppSelector(selectUserAuth);
 
