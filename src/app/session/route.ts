@@ -22,12 +22,12 @@ export async function POST(request: NextRequest) {
 		walletAddress: string;
 		_id?: string;
 	};
-
-	session.username = username;
-	session.authToken = authToken;
-	session.walletAddress = walletAddress;
-	session._id = _id;
-
+   console.log("id", _id);
+   session.username = username;
+   session.authToken = authToken;
+   session.walletAddress = walletAddress;
+   session._id = _id;
+   
 	console.log('session:', session);
 
 	await session.save();

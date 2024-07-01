@@ -42,10 +42,14 @@ const Taskdetails: React.FC = () => {
       setLoading(false);
     },
   });
+  const [isSubmited, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     // console.log("data->", dataTask?.getTask);
     setTaskData(dataTask?.getTask as any);
+    if (dataTask?.getTask?.status === 3) {
+      setIsSubmitted(true);
+    }
   }, [loadingTask, errorTask, dataTask]);
 
   const toggleShowAll = () => {
@@ -69,6 +73,7 @@ const Taskdetails: React.FC = () => {
   }
 
   const handleSubmit = () => {
+    setIsSubmitted(true);
     setSubmitFormOpen(false);
   };
 
@@ -173,16 +178,16 @@ const Taskdetails: React.FC = () => {
             <div className="ml-auto flex">
               <button
                 className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
-                  taskData.status !== 1 ? "opacity-70 " : ""
+                  isSubmited ? "opacity-70 " : ""
                 }`}
                 onClick={() => setSubmitFormOpen(true)}
-                disabled={taskData.status !== 1}
+                disabled={isSubmited}
               >
                 <Icon
                   icon="fluent:document-pdf-32-filled"
                   className="h-4 w-4 mr-1"
                 ></Icon>
-                {taskData.status !== 1 ? "Submitted" : "Sumbit Work"}
+                {isSubmited ? "Submitted" : "Sumbit Work"}
               </button>
             </div>
           </div>
