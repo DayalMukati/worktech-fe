@@ -27,6 +27,8 @@ import {
 import { handleLogin, selectUserAuth } from '@/store/authSlice';
 import { LIST_ALL_SKILLS } from '@/graphql/queries';
 import useSession from '@/hooks/use-session';
+import { Router } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 // Define the form schema
 const formSchema = z.object({
@@ -46,6 +48,7 @@ type FormData = z.infer<typeof formSchema>;
 
 function SignupModal() {
 	const { session, isLoading, login } = useSession();
+	const router = useRouter();
 
 	const [skillOptions, setSkillOptions] = useState<
 		{ value: string; label: string }[]
@@ -103,6 +106,7 @@ function SignupModal() {
 								}
 							}
 						);
+						router.push('/dashboard');
 						// localStorage.setItem(
 						// 	'authToken',
 						// 	data.registerUser.token as string
@@ -110,8 +114,6 @@ function SignupModal() {
 						dispatch(setIsSignupModalOpen(false));
 					}
 				});
-
-				// Close the modal
 			}
 		},
 		e => {
