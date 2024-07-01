@@ -27,6 +27,7 @@ function doLogin(
 			username?: string;
 			walletAddress: string;
 			authToken: string;
+			_id?: string;
 		};
 	}
 ) {

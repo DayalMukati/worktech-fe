@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  mutation loginUser($walletAddress: String!) {\n    loginUser(input: { walletAddress: $walletAddress }) {\n      user {\n        _id\n        email\n        userRoles {\n          _id\n        }\n        skills {\n          _id\n          title\n        }\n        firstName\n        lastName\n        status\n      }\n      token\n      isProfileCreated\n    }\n  }\n": types.LoginUserDocument,
-    "\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n": types.RegisterUserDocument,
+    "\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       _id\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n": types.RegisterUserDocument,
     "\n  mutation CreateTask($input:  TasksInput!) {\n    createTask(input: $input) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.CreateTaskDocument,
     "\n  mutation UpdateTask($_id: String!, $input:  UpdateTasksInput!) {\n    updateTask(_id: $_id, input: $input) {\n      _id\n      name\n      description\n      priority\n      amount\n      activities {\n        userId\n        activity\n        createdAt\n      }\n      reviewer {\n        _id\n      }\n      assinees {\n        _id\n      }\n      skills {\n        _id\n      }\n      acceptanceCriteria\n      status\n    }\n  }\n": types.UpdateTaskDocument,
     "\n  query GetUserByToken {\n    getUserByToken {\n      _id\n      firstName\n      lastName\n      email\n      gender\n      mobile\n      signupMode\n      userRoles {\n        _id\n        title\n      }\n      status\n      profilePic\n      walletAddress\n      skills {\n        _id\n        title\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetUserByTokenDocument,
@@ -59,7 +59,7 @@ export function gql(source: "\n  mutation loginUser($walletAddress: String!) {\n
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n"): (typeof documents)["\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n"];
+export function gql(source: "\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       _id\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n"): (typeof documents)["\n  mutation registerUser($input: CreateUserInput!) {\n    registerUser(input: $input) {\n      user {\n       _id\n       email\n      }\n      token\n      isProfileCreated\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

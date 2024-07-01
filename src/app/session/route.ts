@@ -14,16 +14,19 @@ export async function POST(request: NextRequest) {
 	const {
 		username = 'No username',
 		authToken,
-		walletAddress
+		walletAddress,
+		_id
 	} = (await request.json()) as {
 		username: string;
 		authToken: string;
 		walletAddress: string;
+		_id?: string;
 	};
 
 	session.username = username;
 	session.authToken = authToken;
 	session.walletAddress = walletAddress;
+	session._id = _id;
 
 	console.log('session:', session);
 

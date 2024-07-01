@@ -80,6 +80,7 @@ function LoginModal() {
 						console.log({ session, data: data.loginUser });
 						login(
 							{
+								_id: data.loginUser.user?._id,
 								username: data.loginUser?.user?.email as string,
 								walletAddress: account,
 								authToken: data.loginUser.token as string
