@@ -1,15 +1,18 @@
-import WaveLoader from '@/components/loaders/wave-loader';
-import React from 'react';
+import Icons from "@/components/ui/icon";
+import React from "react";
 
-const Loading = () => {
-	return (
-		<main>
-			<div className='flex flex-col justify-center items-center h-screen'>
-				<div className='border-gray-900 border-t-2 border-b-2 rounded-full w-32 h-32 animate-spin'></div>
-				<p className='mt-4 text-gray-900'>Loading...</p>
-			</div>
-		</main>
-	);
-};
+function Loading() {
+  return (
+    <>
+      <div className="app_height  items-center justify-center flex flex-col">
+        <img src="/image.png" alt="" className="h-16 w-16" />
+        <div className="flex justify-center items-center">
+          <Icons icon="gg:spinner"  className="mr-1 w-8 h-8 amimate-spin"></Icons>{" "}
+          <p>Loading...</p>
+        </div>
+      </div>
+    </>
+  );
+}
 
 export default Loading;
