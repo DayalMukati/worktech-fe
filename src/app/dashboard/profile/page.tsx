@@ -83,7 +83,7 @@ const UserProfile = () => {
 								isEditing ? 'hidden' : ''
 							}`}>
 							<h2 className='font-semibold text-lg'>
-								{data?.getUserByToken.firstName}
+								{data?.getUserByToken.email}
 							</h2>
 							<p className='text-muted-foreground'>No bio..</p>
 						</div>
@@ -95,7 +95,7 @@ const UserProfile = () => {
 								<input
 									type='text'
 									defaultValue={
-										data?.getUserByToken.firstName as string
+										data?.getUserByToken.email as string
 									}
 									className='bg-input p-2 border border-border rounded-md w-full text-foreground'
 								/>
