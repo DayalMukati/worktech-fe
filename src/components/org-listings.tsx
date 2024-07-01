@@ -19,6 +19,7 @@ import { Badge } from './ui/badge';
 import { useQuery } from '@apollo/client';
 import { LIST_ALL_ORGS_QUERY } from '@/graphql/queries';
 import SkeletonGrid from './ui/SkeletionGrid';
+import ErrorDisplay from './ui/ErrorDisplay';
 
 export function SearchBar() {
 	return (
@@ -67,8 +68,7 @@ export function OrgListingCard({ org }: any) {
 const OrgList = () => {
 	const { loading, error, data } = useQuery(LIST_ALL_ORGS_QUERY);
 	if (loading) return <SkeletonGrid />;
-	if (error) return <pre>{error.message}</pre>;
-
+	if (error) return <ErrorDisplay errorMessage={error.message}/>
 	return (
 		<div className='flex justify-center w-full'>
 			<div className='flex flex-col items-center space-y-3 p-4'>
