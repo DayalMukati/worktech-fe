@@ -24,15 +24,15 @@ import ErrorDisplay from './ui/ErrorDisplay';
 
 export function SearchBar() {
 	return (
-		<div className='flex items-center space-x-2 bg-secondary px-4 border rounded-full w-full max-w-xl'>
-			<Search className='w-6 h-6' />
-			<Input
-				className='border-0 text-md ring-0 focus-visible:ring-0 focus:ring-0 focus-visible:border-0 bg-secondary w-full focus-visible:ring-offset-0'
-				type='text'
-				placeholder='Search Orgs...'
-			/>
-		</div>
-	);
+    <div className="flex items-center space-x-2 bg-secondary px-4 border-2 border-slate-200 rounded-full w-full max-w-xl">
+      <Search className="w-6 h-6" />
+      <Input
+        className="border-0 text-md ring-0 focus-visible:ring-0 focus:ring-0 focus-visible:border-0 bg-secondary w-full focus-visible:ring-offset-0"
+        type="text"
+        placeholder="Search Orgs..."
+      />
+    </div>
+  );
 }
 
 export function OrgListingCard({ org }: any) {

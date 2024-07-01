@@ -30,6 +30,7 @@ const page = async () => {
 	const session = await getSession();
 
 	if (!session.authToken) {
+		console.log('session in dashboard', { session });
 		redirect('/');
 	}
 	return (

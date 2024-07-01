@@ -55,16 +55,14 @@ const Header = () => {
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 
-	const { user, walletAddress } = useAppSelector(selectUserAuth);
+	// const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
+	// 	onCompleted: data => {
+	// 		dispatch(loadUser(data.getUserByToken as User));
+	// 	}
+	// });
 
-	const { loading: isUserDataLoading } = useQuery(GET_USER_BY_TOKEN, {
-		onCompleted: data => {
-			dispatch(loadUser(data.getUserByToken as User));
-		}
-	});
-
-	const handleLogout = () => {
-		logout();
+	const handleLogout = async () => {
+		await logout();
 		dispatch(logoutUser());
 		router.push('/');
 	};
@@ -131,7 +129,7 @@ const Header = () => {
 						className='bg-background pl-8 w-full md:w-[200px] lg:w-[336px] focus-visible:ring-0 focus:ring-0 rounded-full'
 					/>
 				</div>
-				{user?._id ? (
+				{session.authToken ? (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button

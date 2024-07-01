@@ -28,6 +28,7 @@ const page = async () => {
 	const session = await getSession();
 
 	if (session.authToken) {
+		console.log('session in root', { session });
 		redirect('/dashboard');
 	}
 	return (

@@ -128,14 +128,14 @@ const Taskdetails: React.FC = () => {
             </div>
           </div>
           <div className="ml-auto flex">
-            <button className=" mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white">
+            {/* <button className=" mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white">
               {" "}
               <Icon
                 icon="fluent:document-pdf-32-filled"
                 className="h-4 w-4 mr-1"
               ></Icon>
               Sumbit Work
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="border-t border-border pt-4">
