@@ -95,7 +95,8 @@ function SignupModal() {
 							{
 								walletAddress: walletAddress,
 								authToken: data.registerUser.token as string,
-								username: data.registerUser?.user?.email as string
+								username: data.registerUser?.user?.email as string,
+								_id: data.registerUser.user?._id
 							},
 							{
 								optimisticData: {
@@ -106,9 +107,9 @@ function SignupModal() {
 								}
 							}
 						);
-						if (session.authToken) {
-							router.push('/dashboard');
-						}
+
+						router.push('/dashboard');
+
 						// localStorage.setItem(
 						// 	'authToken',
 						// 	data.registerUser.token as string

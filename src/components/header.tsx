@@ -149,14 +149,18 @@ const Header = () => {
 							<DropdownMenuLabel
 								className='cursor-pointer'
 								onClick={() => router.push('/dashboard/profile')}>
-								My Account
+								{session.username}
 							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Settings</DropdownMenuItem>
-							<DropdownMenuItem>Support</DropdownMenuItem>
+							<DropdownMenuItem className='hover:bg-secondary'>
+								<Link href={'/dashboard'}>Dashboard</Link>
+							</DropdownMenuItem>
+
 							<DropdownMenuSeparator />
-							<DropdownMenuItem onClick={handleLogout}>
-								Logout
+							<DropdownMenuItem
+								onClick={handleLogout}
+								className='hover:bg-red-500/10 text-red-500'>
+								<p className=''>Logout</p>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>

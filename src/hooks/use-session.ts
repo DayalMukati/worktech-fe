@@ -19,25 +19,27 @@ async function fetchJson<JSON = unknown>(
 }
 
 function doLogin(
-	url: string,
-	{
-		arg
-	}: {
-		arg: {
-			username?: string;
-			walletAddress: string;
-			authToken: string;
-		};
-	}
+  url: string,
+  {
+    arg,
+  }: {
+    arg: {
+      username?: string;
+      walletAddress: string;
+      authToken: string;
+      _id?: string;
+    };
+  }
 ) {
-	return fetchJson<SessionData>(url, {
-		method: 'POST',
-		body: JSON.stringify({
-			username: arg.username,
-			walletAddress: arg.walletAddress,
-			authToken: arg.authToken
-		})
-	});
+  return fetchJson<SessionData>(url, {
+    method: "POST",
+    body: JSON.stringify({
+      username: arg.username,
+      walletAddress: arg.walletAddress,
+      authToken: arg.authToken,
+      _id: arg._id,
+    }),
+  });
 }
 
 function doLogout(url: string) {

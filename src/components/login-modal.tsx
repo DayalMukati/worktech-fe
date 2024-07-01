@@ -76,61 +76,67 @@ function LoginModal() {
 					walletAddress: account
 				},
 				onCompleted: async data => {
+					
 					if (data?.loginUser) {
-						console.log({ session, data: data.loginUser });
-						login(
-							{
-								username: data.loginUser?.user?.email as string,
-								walletAddress: account,
-								authToken: data.loginUser.token as string
-							},
-							{
-								optimisticData: {
-									...session,
-									walletAddress: account,
-									authToken: data.loginUser.token as string,
-									username: data.loginUser?.user?.email as string
-								}
-							}
-						);
+            console.log("After login session", {
+              session,
+              data: data.loginUser,
+            });
+            // console.log("id from ", data.loginUser?.user?._id);
+            login(
+              {
+                _id: data.loginUser?.user?._id as string,
+                username: data.loginUser?.user?.email as string,
+                walletAddress: account,
+                authToken: data.loginUser.token as string,
+              },
+              {
+                optimisticData: {
+                  ...session,
+                  walletAddress: account,
+                  authToken: data.loginUser.token as string,
+                  username: data.loginUser?.user?.email as string,
+                },
+              }
+            );
 
-						if (!data.loginUser.isProfileCreated) {
-							dispatch(
-								setWeb3({
-									walletAddress: account,
-									web3: null
-								})
-							);
+            if (!data.loginUser.isProfileCreated) {
+              dispatch(
+                setWeb3({
+                  walletAddress: account,
+                  web3: null,
+                })
+              );
 
-							dispatch(setIsLoginModalOpen(false));
-							dispatch(setIsSignupModalOpen(true));
-							localStorage.setItem('address', account);
-							localStorage.setItem(
-								'authToken',
-								data.loginUser?.token as string
-							);
-						} else {
-							localStorage.setItem('address', account);
-							localStorage.setItem(
-								'authToken',
-								data.loginUser?.token as string
-							);
-							dispatch(
-								setWeb3({
-									walletAddress: account,
-									web3: null
-								})
-							);
-							router.push('/dashboard');
-							// dispatch(
-							// 	setWeb3({
-							// 		web3: web3Instance
-							// 	})
-							// );
-							dispatch(setIsLoginModalOpen(false));
-							dispatch(setIsSignupModalOpen(false));
-						}
-					}
+              dispatch(setIsLoginModalOpen(false));
+              dispatch(setIsSignupModalOpen(true));
+              localStorage.setItem("address", account);
+              localStorage.setItem(
+                "authToken",
+                data.loginUser?.token as string
+              );
+            } else {
+              localStorage.setItem("address", account);
+              localStorage.setItem(
+                "authToken",
+                data.loginUser?.token as string
+              );
+              dispatch(
+                setWeb3({
+                  walletAddress: account,
+                  web3: null,
+                })
+              );
+              router.push("/dashboard");
+              // dispatch(
+              // 	setWeb3({
+              // 		web3: web3Instance
+              // 	})
+              // );
+              dispatch(setIsLoginModalOpen(false));
+              dispatch(setIsSignupModalOpen(false));
+            }
+          }
 				},
 
 				onError: error => {

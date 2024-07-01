@@ -4,6 +4,7 @@ export interface SessionData {
 	username: string;
 	walletAddress: string;
 	authToken?: string;
+	_id?: string;
 }
 
 export const defaultSession: SessionData = {

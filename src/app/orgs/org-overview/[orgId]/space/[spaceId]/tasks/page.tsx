@@ -5,10 +5,10 @@ import React from 'react';
 
 const ProjectPage = () => {
 	return (
-		<div className='pt-2'>
-			<TaskBoard isContributer={false} />
-		</div>
-	);
+    <div className="pt-2">
+      <TaskBoard isContributer={false} assigneeId="" />
+    </div>
+  );
 };
 
 export default ProjectPage;

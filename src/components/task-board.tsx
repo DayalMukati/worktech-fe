@@ -66,6 +66,7 @@ const TaskBoard = ({
   assigneeId: string;
 }) => {
   const params = useParams<{ spaceId: string }>();
+  console.log("assigneeId->", assigneeId);
   return (
     <div className="w-full h-[90vh]">
       <Board

@@ -8,17 +8,15 @@ type WaveLoaderProps = {
 };
 
 const WaveLoader = ({
-	color = 'white',
-	cssOverride = {
-		display: 'block',
-		margin: '0 auto',
-		borderColor: 'red'
-	},
-	size = 10
+  color = "white",
+  cssOverride = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+  },
+  size = 10,
 }: WaveLoaderProps) => {
-	return (
-		<SyncLoader color={color} cssOverride={cssOverride} size={size} />
-	);
+  return <SyncLoader color={color} cssOverride={cssOverride} size={size} />;
 };
 
 export default WaveLoader;

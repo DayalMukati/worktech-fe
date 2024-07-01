@@ -28,6 +28,7 @@ export const REGISTER_USER = gql(`
   mutation registerUser($input: CreateUserInput!) {
     registerUser(input: $input) {
       user {
+       _id
        email
       }
       token
@@ -199,4 +200,3 @@ export const UPDATE_ORG_MUTATION = gql(`
     }
   }
 `);
-
