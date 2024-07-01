@@ -27,12 +27,12 @@ async function getSession() {
 }
 
 const page = async () => {
-	const session = await getSession();
+	// 	const session = await getSession();
 
-	if (!session.authToken) {
-    console.log("session in dashboard", { session });
-    // redirect('/');
-  }
+	// 	if (!session.authToken) {
+	//     console.log("session in dashboard", { session });
+	//     // redirect('/');
+	//   }
 	return (
 		<Tabs
 			defaultValue='orgs'

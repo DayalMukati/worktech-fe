@@ -26,8 +26,10 @@ import { useMutation, useQuery } from '@apollo/client';
 import { LIST_ALL_ORGS_BY_USER_QUERY } from '@/graphql/queries';
 import { Orgs } from '@/graphql/__generated__/graphql';
 import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
+import useSession from '@/hooks/use-session';
 
 const Sidebar = () => {
+	const { session } = useSession();
 	const pathname = usePathname();
 	let orgUriId = '';
 
@@ -68,7 +70,7 @@ const Sidebar = () => {
 		}
 	];
 
-	return (
+	return session.authToken ? (
 		<>
 			<aside className='left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20'>
 				<nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
@@ -135,7 +137,7 @@ const Sidebar = () => {
 			</aside>
 			<OrgCreationModal />
 		</>
-	);
+	) : null;
 };
 
 export default Sidebar;

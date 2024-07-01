@@ -49,14 +49,6 @@ const OrgOverviewLayout = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const currentURI = usePathname();
-	const isPathMatch = (
-		currentPath: string,
-		menuItemHref: string
-	): boolean => {
-		return currentPath === menuItemHref;
-	};
-
 	const Icons: { [key: string]: JSX.Element } = {
 		Home: <Home className='w-5 h-5' />,
 		FolderKanban: <FolderKanban className='w-5 h-5' />

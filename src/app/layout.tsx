@@ -33,7 +33,7 @@ export default async function RootLayout({
 		<html lang='en'>
 			<body className={''}>
 				<Providers>
-					{session.authToken ? <Sidebar /> : null}
+					<Sidebar />
 					{children}
 				</Providers>
 			</body>
