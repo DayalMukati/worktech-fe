@@ -45,12 +45,12 @@ const createTaskSchema = z.object({
 type Schema = z.infer<typeof createTaskSchema>;
 
 const status = [
-	{ value: 0, label: 'open', icon: <CircleCheck /> },
-	{ value: 1, label: 'to-do', icon: <CircleCheck /> },
-	{ value: 2, label: 'in-progress', icon: <CircleCheck /> },
-	{ value: 3, label: 'in-review', icon: <CircleCheck /> },
-	{ value: 4, label: 'done', icon: <CircleCheck /> },
-	{ value: 5, label: 'backlog', icon: <CircleCheck /> }
+  // { value: 0, label: 'open', icon: <CircleCheck /> },
+  { value: 1, label: "to-do", icon: <CircleCheck /> },
+  // { value: 2, label: 'in-progress', icon: <CircleCheck /> },
+  // { value: 3, label: 'in-review', icon: <CircleCheck /> },
+  // { value: 4, label: 'done', icon: <CircleCheck /> },
+  { value: 5, label: "backlog", icon: <CircleCheck /> },
 ];
 
 const customOption = (props: any) => {
