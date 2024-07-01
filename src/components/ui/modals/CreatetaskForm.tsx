@@ -276,7 +276,7 @@ const CreateTaskForm = ({
 			console.log(
 				'data->',
 				txn,
-				Number(txn.events.TaskCreated.returnValues[0])
+				Number(txn.events.TaskCreated.returnValues[0], data);
 			);
 			await createTaskMutaion({
 				variables: {
@@ -289,7 +289,7 @@ const CreateTaskForm = ({
 						amount: Number(data.price),
 						activities: [],
 						reviewer: data.reviewer,
-						assinees: data.assignee,
+						assinees: [data.assignee[0]],
 						skills: data.skills,
 						acceptanceCriteria: data.acceptanceCriteria,
 						status: data.status

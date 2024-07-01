@@ -12,7 +12,10 @@ interface UseWeb3 {
   account: string | null | undefined;
   library: Web3Provider | undefined;
   signMessage: (message: string) => Promise<string | null>;
-  callSCMethod: (args: any[]) => Promise<any>;
+  createTask: (args: any[]) => Promise<any>;
+  submitTask: (args: any[]) => Promise<any>;
+  completeTask: (args: any[]) => Promise<any>;
+
 }
 
 const injected = new InjectedConnector({
@@ -145,7 +148,7 @@ const useWeb3 = (): UseWeb3 => {
     }
   };
 
-  return { connectToMetaMask, active, account, library, signMessage, createTask,submitTask, completeTask };
+  return { connectToMetaMask, active, account, library, signMessage, createTask, submitTask, completeTask };
 };
 
 export default useWeb3;
