@@ -252,6 +252,7 @@ export const GET_TASK_QUERY = gql(`
       taskId
       description
       priority
+      docUrl
       amount
       activities {
         userId
