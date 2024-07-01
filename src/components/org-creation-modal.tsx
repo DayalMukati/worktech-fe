@@ -23,6 +23,7 @@ import { createOrg } from '@/store/orgSlice';
 import { useMutation } from '@apollo/client';
 import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
 import { Orgs } from '@/graphql/__generated__/graphql';
+import { gql } from '@/graphql/__generated__';
 
 // Define the schema using Zod
 const orgSchema = z.object({

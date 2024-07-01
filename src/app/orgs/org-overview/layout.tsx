@@ -76,8 +76,6 @@ const OrgOverviewLayout = ({
 	const params = useParams<{ orgId: string }>();
 	return (
 		<div className='flex flex-col bg-muted/40 w-full h-screen'>
-			<Sidebar />
-
 			<main className='grid grid-cols-4 lg:grid-cols-6 sm:py-0 sm:pl-20 h-full overflow-y-hidden'>
 				<OrgSidebar
 					Title='Ten (Formaly known as Org) Overview)'

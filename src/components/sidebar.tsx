@@ -7,7 +7,7 @@ import {
 	Plus
 } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { cache } from 'react';
 import {
 	Tooltip,
 	TooltipContent,
@@ -46,8 +46,11 @@ const Sidebar = () => {
 
 	const { loading: isLoadingOrgs } = useQuery(
 		LIST_ALL_ORGS_BY_USER_QUERY,
+
 		{
+			fetchPolicy: 'no-cache',
 			onCompleted: data => {
+				console.log({ listOrgs: data.listAllOrgsByUser });
 				dispatch(loadOrgs(data.listAllOrgsByUser as Orgs[]));
 			}
 		}

@@ -3,10 +3,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import Providers from '@/components/providers';
+import Sidebar from '@/components/sidebar';
 
 export const metadata: Metadata = {
-  title: "OneWork",
-  description: "A project management tool for teams",
+	title: 'OneWork',
+	description: 'A project management tool for teams'
 };
 
 export default function RootLayout({
@@ -17,7 +18,10 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={''}>
-				<Providers>{children}</Providers>
+				<Providers>
+					<Sidebar />
+					{children}
+				</Providers>
 			</body>
 		</html>
 	);
