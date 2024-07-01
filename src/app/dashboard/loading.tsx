@@ -1,14 +1,15 @@
 import Icons from "@/components/ui/icon";
 import React from "react";
-
-const Loading = () => {
-	return (
-    <main>
-      <div className="flex flex-col justify-center items-center h-screen">
-        <p className="mt-4 text-gray-900">Loading...</p>
+import "@/components/loaders/loading.css";
+function Loading() {
+  return (
+    <>
+      <div className="app_height  items-center justify-center flex flex-col ">
+        <span className="loader"></span>
+        <p>Loading...</p>
       </div>
-    </main>
+    </>
   );
-};
+}
 
 export default Loading;
