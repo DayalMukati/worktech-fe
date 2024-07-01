@@ -38,7 +38,7 @@ export function SearchBar() {
 export function OrgListingCard({ org }: any) {
 	return (
 		<Link href={`/orgs/org-overview/${org._id}`}>
-			<Card className='border-2 border-primary/20 hover:bg-secondary mt-2 min-w-[350px] max-w-[400px] transition-colors duration-300 cursor-pointer'>
+			<Card className='border-2 border-primary/20 hover:bg-secondary mt-2 min-w-[350px] max-w-[400px] h-full transition-colors duration-300 cursor-pointer'>
 				<CardHeader className='p-2'>
 					<div className='flex sm:flex-row flex-col justify-between items-end sm:items-center'>
 						<div className='flex items-center gap-4 w-full'>
