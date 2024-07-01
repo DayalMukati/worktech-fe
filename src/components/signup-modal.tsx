@@ -72,10 +72,12 @@ function SignupModal() {
 
 	const onSubmit = methods.handleSubmit(
 		async data => {
-			if (typeof walletAddress === 'undefined') {
+			if (!walletAddress) {
 				// Handle the undefined case, maybe show an error or use a default value
 				console.log('Wallet address is undefined');
 			} else {
+				console.log('Wallet address is ', walletAddress);
+
 				await updateUserProfile({
 					variables: {
 						input: {
@@ -86,11 +88,21 @@ function SignupModal() {
 						}
 					},
 					onCompleted: data => {
-						login({
-							username: data.registerUser?.user?.email as string,
-							walletAddress: walletAddress as string,
-							authToken: data.registerUser.token as string
-						});
+						login(
+							{
+								walletAddress: walletAddress,
+								authToken: data.registerUser.token as string,
+								username: data.registerUser?.user?.email as string
+							},
+							{
+								optimisticData: {
+									...session,
+									walletAddress: walletAddress,
+									authToken: data.registerUser.token as string,
+									username: data.registerUser?.user?.email as string
+								}
+							}
+						);
 						// localStorage.setItem(
 						// 	'authToken',
 						// 	data.registerUser.token as string

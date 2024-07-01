@@ -1,19 +1,35 @@
 import OpenTaskList from '@/components/open-task-list';
 import OrgList from '@/components/org-listings';
-import TaskCardItem from '@/components/task-card-item';
 import Contributors from '@/components/contributors';
-import Image from 'next/image';
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger
 } from '@/components/ui/tabs';
-import Icons from '@/components/ui/icon';
 import React from 'react';
 import Header from '@/components/header';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getIronSession } from 'iron-session';
+import { SessionData, sessionOptions } from '@/lib/session';
+
+async function getSession() {
+	const session = await getIronSession<SessionData>(
+		cookies(),
+		sessionOptions
+	);
+
+	return session;
+}
+
 const page = async () => {
+	const session = await getSession();
+
+	if (session.authToken) {
+		redirect('/dashboard');
+	}
 	return (
 		<>
 			<Header />
