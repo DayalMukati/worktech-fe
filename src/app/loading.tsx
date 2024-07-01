@@ -3,10 +3,8 @@
 function Loading() {
   return (
     <>
-      <div className="app_height  items-center justify-center flex flex-col">
-           <img src="/image.png" alt="" className="h-12 w-12 animate-spin" />
-          <p>Loading...</p>
-         
+      <div className="app_height  items-center justify-center flex flex-col ">
+        <p>Loading...</p>
       </div>
     </>
   );
