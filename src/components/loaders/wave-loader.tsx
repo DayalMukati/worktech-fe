@@ -14,7 +14,7 @@ const WaveLoader = ({
     margin: "0 auto",
     borderColor: "red",
   },
-  size = 5,
+  size = 10,
 }: WaveLoaderProps) => {
   return <SyncLoader color={color} cssOverride={cssOverride} size={size} />;
 };
