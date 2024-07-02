@@ -198,15 +198,15 @@ const Taskdetails: React.FC = () => {
 							</div>
 							<div className='flex items-center space-x-14 text-muted-foreground'>
 								<div className='text-sm'>Skills</div>
-								<button className='bg-primary px-3 py-1 rounded-md text-primary-foreground text-sm'>
+								<div className='flex gap-2'>
 									{taskData.skills.map(skill => (
 										<span
 											key={skill._id}
-											className='flex text-muted-foreground text-sm text-white'>
+											className='flex bg-primary px-3 py-1 rounded text-muted-foreground text-sm text-white'>
 											{skill.title}
 										</span>
 									))}
-								</button>
+								</div>
 							</div>
 							<div className='flex items-center space-x-10'>
 								<div className='text-muted-foreground text-sm'>
