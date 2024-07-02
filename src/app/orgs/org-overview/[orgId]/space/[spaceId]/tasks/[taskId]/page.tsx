@@ -214,7 +214,7 @@ const Taskdetails: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="w-full lg:w-1/3 bg-popover border text-popover-foreground p-2 rounded-lg shadow-md">
+        <div className=" flex flex-col  justify-between w-full lg:w-1/3 bg-popover border text-popover-foreground p-2 rounded-lg shadow-md ">
           <span className="font-medium mb-2 p-2 border-2 rounded-lg flex">
             {" "}
             <h3 className="mx-2 font-medium">Activity</h3>{" "}
@@ -224,7 +224,7 @@ const Taskdetails: React.FC = () => {
             ></Icon>
           </span>
           <div
-            className="text-sm text-muted-foreground mb-2 p-2 cursor-pointer"
+            className="text-sm text-muted-foreground mb-2 p-2 cursor-pointer h-full "
             onClick={toggleShowAll}
           >
             {showAllActivity ? (
