@@ -183,16 +183,18 @@ const Taskdetails: React.FC = () => {
             <div className="ml-auto flex">
               <button
                 className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
-                  isSubmited ? "opacity-70 " : ""
+                  isSubmited || taskData.status !== 1 ? "opacity-70 " : ""
                 }`}
                 onClick={() => setSubmitFormOpen(true)}
-                disabled={isSubmited}
+                disabled={isSubmited || taskData.status !== 1}
               >
                 <Icon
                   icon="fluent:document-pdf-32-filled"
                   className="h-4 w-4 mr-1"
                 ></Icon>
-                {isSubmited ? "Submitted" : "Sumbit Work"}
+                {isSubmited || taskData.status !== 1
+                  ? "Submitted"
+                  : "Sumbit Work"}
               </button>
             </div>
           </div>

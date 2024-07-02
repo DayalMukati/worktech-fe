@@ -103,10 +103,12 @@ function SignupModal() {
 									...session,
 									walletAddress: walletAddress,
 									authToken: data.registerUser.token as string,
-									username: data.registerUser?.user?.email as string
+									username: data.registerUser?.user?.email as string,
+									_id: data.registerUser.user?._id
 								}
 							}
 						);
+						console.log('session state signup', { session });
 
 						router.push('/dashboard');
 
