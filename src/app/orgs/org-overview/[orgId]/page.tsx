@@ -19,6 +19,7 @@ import { useParams } from 'next/navigation';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
 import SkeletonGrid from '@/components/ui/SkeletionGrid';
 import { useRouter } from "next/navigation";
+import PageGrid from '@/components/ui/pageGrid';
 
 const OrgOverview = () => {
   const params = useParams();
@@ -59,7 +60,7 @@ const OrgOverview = () => {
     },
   });
 
-  if (taskloading || loading || orgloading) return <SkeletonGrid />;
+  if (taskloading || loading || orgloading) return <PageGrid/>;
   if (error)
     return (
       <ErrorDisplay
@@ -177,7 +178,7 @@ const OrgOverview = () => {
             <div className="flex flex-col gap-4 py-4 pr-20">
               <div className="flex flex-col gap-4">
                 <h1 className="mb-2 text-slate-700 text-xl">About</h1>
-                <p className="text-left text-slate-400">No Description</p>
+                <p className="text-left text-slate-400">This organization contributes to open tasks</p>
               </div>
 
               <div className="flex flex-col gap-4 mt-4">
