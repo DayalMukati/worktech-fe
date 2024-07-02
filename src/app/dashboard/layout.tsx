@@ -1,60 +1,21 @@
 'use client';
-import Image from 'next/image';
-import Link from 'next/link';
-import {
-	FolderKanban,
-	Home,
-	LineChart,
-	Package,
-	Package2,
-	PanelLeft,
-	PlusCircle,
-	Search,
-	Settings,
-	ShoppingCart,
-	Users2
-} from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import {
-	Sheet,
-	SheetContent,
-	SheetTrigger
-} from '@/components/ui/sheet';
+import { FolderKanban, Home } from 'lucide-react';
 
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { usePathname } from 'next/navigation';
-import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
 import DashboardSidebar from '@/components/dashboard-sidebar';
+import useSession from '@/hooks/use-session';
 
 const DashboardLayout = ({
 	children
 }: {
 	children: React.ReactNode;
 }) => {
-	const currentURI = usePathname();
-	const isPathMatch = (
-		currentPath: string,
-		menuItemHref: string
-	): boolean => {
-		return currentPath === menuItemHref;
-	};
+	const { session } = useSession();
+
+	const router = useRouter();
 
 	const Icons: { [key: string]: JSX.Element } = {
 		Home: <Home className='w-5 h-5' />,
@@ -72,9 +33,13 @@ const DashboardLayout = ({
 			label: 'Projects'
 		}
 	];
+
+	if (!session.authToken) {
+		router.push('/');
+		return null;
+	}
 	return (
 		<div className='flex flex-col bg-muted/40 w-full h-screen'>
-			<Sidebar />
 			<main className='gap-0 grid grid-cols-7 bg-background sm:py-0 sm:pl-20 h-full overflow-y-hidden'>
 				<DashboardSidebar />
 				<div className='col-span-6 h-full overflow-auto'>

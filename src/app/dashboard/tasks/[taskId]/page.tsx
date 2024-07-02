@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 
 
 const Taskdetails: React.FC = () => {
-  const params = useParams<{ taskId: string }>();
+  const params = useParams();
 
   const [taskData, setTaskData] = useState({
     name: "No task name",
@@ -26,6 +26,7 @@ const Taskdetails: React.FC = () => {
     reviewer: "Rahul",
     acceptanceCriteria: "No task acceptance criteria",
     status: 0,
+    taskId: 0
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +53,8 @@ const Taskdetails: React.FC = () => {
     }
   }, [loadingTask, errorTask, dataTask]);
 
+  console.log('dataTask+++++', dataTask);
+
   const toggleShowAll = () => {
     setShowAllActivity((prev) => !prev);
   };
@@ -75,6 +78,7 @@ const Taskdetails: React.FC = () => {
   const handleSubmit = () => {
     setIsSubmitted(true);
     setSubmitFormOpen(false);
+
   };
 
   return (
@@ -96,13 +100,14 @@ const Taskdetails: React.FC = () => {
 
             <SubmitTaskForm
               taskId={params.taskId}
+              taskOnchainID = {taskData.taskId}
               handlePostSubmit={() => {
                 handleSubmit();
               }}
             />
           </DialogContent>
         </Dialog>
-      )}{" "}
+      )}
       <div className="flex flex-col lg:flex-row gap-2 p-2 pb-4  border bg-card text-card-foreground ">
         <div className="flex-1 border p-4 rounded-lg shadow-lg">
           <div className="text-sm text-muted-foreground mb-2">
@@ -178,16 +183,18 @@ const Taskdetails: React.FC = () => {
             <div className="ml-auto flex">
               <button
                 className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
-                  isSubmited ? "opacity-70 " : ""
+                  isSubmited || taskData.status !== 1 ? "opacity-70 " : ""
                 }`}
                 onClick={() => setSubmitFormOpen(true)}
-                disabled={isSubmited}
+                disabled={isSubmited || taskData.status !== 1}
               >
                 <Icon
                   icon="fluent:document-pdf-32-filled"
                   className="h-4 w-4 mr-1"
                 ></Icon>
-                {isSubmited ? "Submitted" : "Sumbit Work"}
+                {isSubmited || taskData.status !== 1
+                  ? "Submitted"
+                  : "Sumbit Work"}
               </button>
             </div>
           </div>
