@@ -16,6 +16,7 @@ import { selectUserAuth } from '@/store/authSlice';
 import Web3, { AbiItem } from 'web3';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
 import useWeb3 from '@/hooks/useWeb3';
+import { TASK_STATUS } from '@/conf/data';
 
 // Define the schema using Zod
 const updateTaskSchema = z.object({
@@ -41,9 +42,9 @@ const SubmitTaskForm = ({
 		handleSubmit,
 		control,
 		clearErrors,
-		formState: { errors },
+		formState: { errors }
 	} = useForm<Schema>({
-		resolver: zodResolver(updateTaskSchema),
+		resolver: zodResolver(updateTaskSchema)
 	});
 
 	const [loading, setLoading] = useState<boolean>(false);
@@ -63,18 +64,16 @@ const SubmitTaskForm = ({
 				await connectToMetaMask();
 			}
 
-			let txn = await submitTask([
-				taskOnchainID
-			]);
+			let txn = await submitTask([taskOnchainID]);
 			console.log('Txn>>>>>::', txn);
-
+			
 			await submitTaskMutaion({
 				variables: {
 					_id: taskId,
 					input: {
 						docUrl: data.docUrl,
-						status: 3, // in review
-					},
+						status: TASK_STATUS.REVIEW // in review
+					}
 				},
 				onError(error: any): never {
 					throw new Error(error);
@@ -83,8 +82,7 @@ const SubmitTaskForm = ({
 					handlePostSubmit(res);
 
 					// blockchain code
-
-				},
+				}
 			});
 		} catch (error) {
 			console.log('error->', error);

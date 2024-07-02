@@ -270,6 +270,7 @@ export const GET_TASK_QUERY = gql(`
       }
       skills {
         _id
+        title
       }
       acceptanceCriteria
       status
@@ -283,6 +284,7 @@ export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
       description
       userID{
           _id
+          email
       }
       taskID{
           _id
@@ -319,47 +321,51 @@ export const GET_USERS_QUERY = gql(`
   }
 `);
 
-
 export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
   query GetAllTasksByAssineeId($_id: String!) {
     getAllTasksByAssineeId(_id: $_id) {
-      _id
-      name
-      description
-      priority
-      amount
-      activities {
+       _id
+    name
+    description
+    priority
+    amount
+    activities{
         userId
         activity
         createdAt
-      }
-      reviewer {
+    }
+    reviewer{
         _id
-      }
-      assinees {
+        firstName
+        lastName
+    }
+    assinees{
         _id
-      }
-      skills {
+        firstName
+        lastName
+    }
+    skills{
         _id
-      }
-      acceptanceCriteria
-      status
+        title
+    }
+    acceptanceCriteria
+    status
     }
   }
 `);
 
-  export const GET_LEADERBOARD_DATA = gql(`
+export const GET_LEADERBOARD_DATA = gql(`
     query GetLeaderboard {
   getLeaderboard {
     contributionData {
-      name
-      taskCount
-      taskPoints
-      amountEarned
+       username
+       taskCount
+       taskPoints
+       amountEarned
     }
     reviewData {
-      name
-      taskCount
+       username
+       taskCount
       taskPoints
       amountEarned
     }

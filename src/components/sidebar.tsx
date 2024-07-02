@@ -26,6 +26,8 @@ import { useMutation, useQuery } from '@apollo/client';
 import { LIST_ALL_ORGS_BY_USER_QUERY } from '@/graphql/queries';
 import { Orgs } from '@/graphql/__generated__/graphql';
 import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
+import { Separator } from '@/components/ui/separator';
+
 import useSession from '@/hooks/use-session';
 
 const Sidebar = () => {
@@ -50,7 +52,7 @@ const Sidebar = () => {
 		LIST_ALL_ORGS_BY_USER_QUERY,
 
 		{
-			fetchPolicy: 'no-cache',
+			fetchPolicy: 'cache-and-network',
 			onCompleted: data => {
 				console.log({ listOrgs: data.listAllOrgsByUser });
 				dispatch(loadOrgs(data.listAllOrgsByUser as Orgs[]));
@@ -93,6 +95,21 @@ const Sidebar = () => {
 							<TooltipContent side='right'>{label}</TooltipContent>
 						</Tooltip>
 					))}
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								onClick={() => dispatch(setOrgCreationModal(true))}
+								variant='outline'
+								size={'icon'}>
+								<Plus className='w-5 h-5' />
+								<span className='sr-only'>{'Create Org'}</span>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent side='right'>
+							{'Create Org'}
+						</TooltipContent>
+					</Tooltip>
+					<Separator />
 					{orgs.map(({ name, _id }) => (
 						<Tooltip key={name}>
 							<TooltipTrigger asChild>
@@ -119,20 +136,6 @@ const Sidebar = () => {
 							<TooltipContent side='right'>{name}</TooltipContent>
 						</Tooltip>
 					))}
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<Button
-								onClick={() => dispatch(setOrgCreationModal(true))}
-								variant='outline'
-								size={'icon'}>
-								<Plus className='w-5 h-5' />
-								<span className='sr-only'>{'Create Org'}</span>
-							</Button>
-						</TooltipTrigger>
-						<TooltipContent side='right'>
-							{'Create Org'}
-						</TooltipContent>
-					</Tooltip>
 				</nav>
 			</aside>
 			<OrgCreationModal />

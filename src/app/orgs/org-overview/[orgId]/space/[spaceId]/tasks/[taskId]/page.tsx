@@ -1,142 +1,147 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import Icon from "@/components/ui/icon";
-import { useParams } from "next/navigation";
-import { GET_TASK_QUERY } from "@/graphql/queries";
-import { useQuery } from "@apollo/client";
-import { Button } from "@/components/ui/button";
+'use client';
+import React, { useEffect, useState } from 'react';
+import Icon from '@/components/ui/icon';
+import { useParams } from 'next/navigation';
+import { GET_TASK_QUERY } from '@/graphql/queries';
+import { useQuery } from '@apollo/client';
+import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTitle,
-} from "@radix-ui/react-dialog";
-import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
-import { CrossIcon } from "lucide-react";
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogTitle
+} from '@radix-ui/react-dialog';
+import CompleteTaskForm from '@/components/ui/modals/ComplettaskForm';
+import { CrossIcon } from 'lucide-react';
 
 const Taskdetails: React.FC = () => {
   const params = useParams();
 
-  const [taskData, setTaskData] = useState({
-    name: "No task name",
-    description: "No task description",
-    skills: ["No task skills"],
-    docUrl: "No task docUrl",
-    assignee: "Pawan Kumar",
-    reviewer: "Rahul",
-    acceptanceCriteria: "No task acceptance criteria",
-    status: 1,
-    taskId: 0
-  });
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
-  const [openFromReview, setopenFromReview] = useState<boolean>(false);
+	const [taskData, setTaskData] = useState({
+		name: 'No task name',
+		description: 'No task description',
+		skills: [] as { _id: string; title: string }[],
+		docUrl: 'No task docUrl',
+		assignee: 'Pawan Kumar',
+		reviewer: 'Rahul',
+		acceptanceCriteria: 'No task acceptance criteria',
+		status: 1,
+		taskId: 0
+	});
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	const [showAllActivity, setShowAllActivity] =useState<boolean>(false);
+	const [openFromReview, setopenFromReview] =useState<boolean>(false);
 
-  const {
+	const {
     loading: loadingTask,
     error: errorTask,
     data: dataTask,
   } = useQuery(GET_TASK_QUERY, {
-    variables: { _id: params.taskId },
+    variables: { _id: params.taskId as string },
     onCompleted: () => {
       setLoading(false);
     },
   });
 
-  useEffect(() => {
-    console.log("data->", dataTask?.getTask);
-    setTaskData(dataTask?.getTask as any);
-  }, [loadingTask, errorTask, dataTask]);
+	useEffect(() => {
+		console.log('data->', dataTask?.getTask);
+		setTaskData(dataTask?.getTask as any);
+	}, [loadingTask, errorTask, dataTask]);
 
-  const toggleShowAll = () => {
-    setShowAllActivity((prev) => !prev);
+	const toggleShowAll = () => {
+		setShowAllActivity(prev => !prev);
+	};
+
+	if (loading) {
+		return (
+			<div className='flex justify-center items-center w-full h-screen'>
+				Loading...
+			</div>
+		);
+	}
+
+	if (error) {
+		return <div>{error}</div>;
+	}
+
+	if (!taskData) {
+		return null;
+	}
+
+	const handleSubmit = () => {
+    setopenFromReview(false);
   };
 
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        Loading...
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!taskData) {
-    return null;
-  }
-
-  const handleSubmit = () => {
-    // setopenFromReview(false);
+  const handleReject = () => {
+   console.log("rejected");
+   
   };
 
   return (
     <>
       {openFromReview && (
         <Dialog open={true}>
-          <div className="fixed inset-0 bg-black opacity-30 z-10"></div>
-          <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform p-4 lg:w-full w-[80vw] max-w-3xl rounded-lg  bg-background shadow-lg z-20">
+          <div className="z-10 fixed inset-0 bg-black opacity-30"></div>
+          <DialogContent className="top-1/2 left-1/2 z-20 fixed bg-background shadow-lg p-4 rounded-lg w-[80vw] lg:w-full max-w-3xl transform -translate-x-1/2 -translate-y-1/2">
             <DialogTitle className="text-center">Review work</DialogTitle>
             <DialogClose asChild>
               <Button
                 variant={"ghost"}
-                className="absolute right-4 top-2 text-muted-foreground text-xs"
+                className="top-2 right-4 absolute text-muted-foreground text-xs"
                 onClick={() => setopenFromReview(false)}
               >
-                <CrossIcon className="w-4 h-4 rotate-45 hover:text-red-500" />
+                <CrossIcon className="w-4 h-4 hover:text-red-500 rotate-45" />
               </Button>
             </DialogClose>
 
             <CompleteTaskForm
-              taskId={params.taskId}
+              taskId={params.taskId as string}
               docUrl={taskData.docUrl}
-              taskOnchainID= {taskData.taskId}
+              taskOnchainID={taskData.taskId}
               handlePostSubmit={() => handleSubmit()}
             />
           </DialogContent>
         </Dialog>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-2 p-2 pb-4  border bg-card text-card-foreground ">
-        <div className="flex-1 border p-4 rounded-lg shadow-lg">
-          <div className="text-sm text-muted-foreground mb-2">
-            Ten (formerly Obscuro) / Community Contributions /
-          </div>
-          <h2 className="text-2xl font-bold mb-4">
+      <div className="flex lg:flex-row flex-col gap-2 bg-card p-2 pb-4 border text-card-foreground">
+        <div className="flex-1 shadow-lg p-4 border rounded-lg">
+          {/* <div className='mb-2 text-muted-foreground text-sm'>
+						Ten (formerly Obscuro) / Community Contributions /
+					</div> */}
+          <h2 className="mb-4 font-bold text-2xl">
             {/* Post about Ten in your community */}
             {taskData.name}
           </h2>
           <div className="flex flex-wrap gap-2 mb-4">
-            <button className="bg-primary flex items-center justify-center text-primary-foreground text-sm px-3 py-1 rounded-md">
+            <button className="flex justify-center items-center bg-primary px-3 py-1 rounded-md text-primary-foreground text-sm">
               <Icon
                 icon="mdi:trophy-outline"
-                className="text-white mr-2 h-4 w-4"
+                className="mr-2 w-4 h-4 text-white"
               ></Icon>
               Open to Submissions
             </button>
-            <button className="bg-primary text-white px-3 text-sm py-1 rounded-md flex items-center gap-1 justify-center">
+            <button className="flex justify-center items-center gap-1 bg-primary px-3 py-1 rounded-md text-sm text-white">
               <Icon
                 icon="mdi:crown-outline"
-                className="text-white h-5 w-4"
+                className="w-4 h-5 text-white"
               ></Icon>
               10
             </button>
-            <button className="text-accent-foreground text-sm flex items-center justify-center border px-3 py-1 rounded-md border-primary">
+            <button className="flex justify-center items-center border-primary px-3 py-1 border rounded-md text-accent-foreground text-sm">
               <Icon
                 icon="mdi:home"
-                className="text-primary h-5 mr-1 w-4"
+                className="mr-1 w-4 h-5 text-primary"
               ></Icon>
               Community
             </button>
           </div>
           <div className="flex flex-wrap border-t">
-            <div className="flex flex-col  space-y-3 pt-4 justify-between   mb-4">
-              <div className="flex space-x-12 text-muted-foreground  items-center">
-                <div className="text-sm ">Status</div>
-                <div className="text-sm ">
+            <div className="flex flex-col justify-between space-y-3 mb-4 pt-4">
+              <div className="flex items-center space-x-12 text-muted-foreground">
+                <div className="text-sm">Status</div>
+                <div className="border-2 bg-secondary px-2 py-0.5 rounded text-sm">
                   {taskData.status == 1
                     ? "To Do"
                     : taskData.status == 2
@@ -148,53 +153,72 @@ const Taskdetails: React.FC = () => {
                     : "No task status"}
                 </div>
               </div>
-              <div className="flex space-x-8 text-muted-foreground items-center">
-                <div className="text-sm  ">Assignee</div>
-                <div className="text-sm ">
+              <div className="flex items-center space-x-8 text-muted-foreground">
+                <div className="text-sm">Assignee</div>
+                <div className="text-sm">
                   {taskData.assignee || "No task assignee."}
                 </div>
               </div>
-              <div className="flex space-x-14 text-muted-foreground items-center">
-                <div className="text-sm  ">Skills</div>
-                <button className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-md">
-                  {taskData.skills.join(", ")}
-                </button>
+              <div className="flex items-center space-x-14 text-muted-foreground">
+                <div className="text-sm">Skills</div>
+                <div className="flex gap-2">
+                  {taskData.skills.map((skill) => (
+                    <span
+                      key={skill._id}
+                      className="flex bg-primary px-3 py-1 rounded text-muted-foreground text-sm text-white"
+                    >
+                      {skill.title}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div className="flex space-x-10 items-center">
-                <div className="text-sm text-muted-foreground">Reviewer</div>
+              <div className="flex items-center space-x-10">
+                <div className="text-muted-foreground text-sm">Reviewer</div>
                 <div className="flex items-center gap-2">
                   <img
-                    className="w-8 h-8 rounded-full border border-primary"
+                    className="border-primary border rounded-full w-8 h-8"
                     src={"/av-7.png"}
                     alt="reviewer profile picture"
                   />
-                  <span className="text-sm ">{"No task reviewer"}</span>
+                  <span className="text-sm">{"No task reviewer"}</span>
                 </div>
               </div>
             </div>
-            <div className="ml-auto flex">
+            <div className="flex ml-auto">
               {taskData.status == 3 ? (
-                <Button
-                  className=" mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white"
-                  onClick={() => setopenFromReview(true)}
-                >
-                  <Icon
-                    icon="fluent:document-pdf-32-filled"
-                    className="h-4 w-4 mr-1"
-                  ></Icon>
-                  Review Work
-                </Button>
+                <div className="flex flex-col w-full gap-2">
+                  <Button
+                    className="flex justify-center items-center bg-primary mt-3 mr-auto px-3 py-1 rounded-md h-8 text-white w-full"
+                    onClick={() => setopenFromReview(true)}
+                  >
+                    <Icon
+                      icon="fluent:document-pdf-32-filled"
+                      className="mr-auto w-4 h-4"
+                    ></Icon>
+                    Review Work
+                  </Button>
+                  <Button
+                    className="flex  bg-red-500 text-center mt-3 mr-auto px-3 py-1 rounded-md h-8 text-white w-full hover:bg-red-600"
+                    onClick={() => handleReject()}
+                  >
+                    <Icon
+                      icon="fluent:document-pdf-32-filled"
+                      className=" mr-1 w-4 h-4"
+                    ></Icon>
+                    Reject
+                  </Button>
+                </div>
               ) : (
                 ""
               )}
             </div>
           </div>
-          <div className="border-t border-border pt-4">
-            <h3 className="font-medium mb-2">Description</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+          <div className="pt-4 border-t border-border">
+            <h3 className="mb-2 font-medium">Description</h3>
+            <p className="mb-4 text-muted-foreground text-sm">
               {taskData.description}
             </p>
-            <ul className="list-decimal list-inside text-sm text-muted-foreground mb-4">
+            <ul className="mb-4 text-muted-foreground text-sm list-decimal list-inside">
               <li>coverage,</li>
               <li>number of subs,</li>
               <li>platform,</li>
@@ -202,12 +226,12 @@ const Taskdetails: React.FC = () => {
               <li>post quality.</li>
             </ul>
           </div>
-          <div className="border-t border-border pt-4">
-            <h3 className="font-medium mb-2">Acceptance Criteria</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+          <div className="pt-4 border-t border-border">
+            <h3 className="mb-2 font-medium">Acceptance Criteria</h3>
+            <p className="mb-4 text-muted-foreground text-sm">
               {taskData.acceptanceCriteria}
             </p>
-            <ul className="list-decimal list-inside text-sm text-muted-foreground mb-4">
+            <ul className="mb-4 text-muted-foreground text-sm list-decimal list-inside">
               {/* <li>coverage,</li>
             <li>number of subs,</li>
             <li>platform,</li>
@@ -216,17 +240,17 @@ const Taskdetails: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="w-full lg:w-1/3 bg-popover border text-popover-foreground p-2 rounded-lg shadow-md">
-          <span className="font-medium mb-2 p-2 border-2 rounded-lg flex">
+        <div className="flex flex-col justify-between bg-popover shadow-md p-2 border rounded-lg w-full lg:w-1/3 text-popover-foreground">
+          <span className="flex border-2 mb-2 p-2 rounded-lg font-medium">
             {" "}
             <h3 className="mx-2 font-medium">Activity</h3>{" "}
             <Icon
               icon="mdi:filter"
-              className="ml-auto flex items-center"
+              className="flex items-center ml-auto"
             ></Icon>
           </span>
           <div
-            className="text-sm text-muted-foreground mb-2 p-2 cursor-pointer"
+            className="mb-2 p-2 h-full text-muted-foreground text-sm cursor-pointer"
             onClick={toggleShowAll}
           >
             {showAllActivity ? (
@@ -247,28 +271,28 @@ const Taskdetails: React.FC = () => {
 
           {/* {showAllActivity
           ? taskData.activity.slice(0, 1).map((activity, index) => (
-              <div key={index} className="text-sm m-2 text-muted-foreground">
+              <div key={index} className="m-2 text-muted-foreground text-sm">
                 {activity.user} changed status from {activity.statusChange}
-                <div className="text-xs text-muted-foreground">
+                <div className="text-muted-foreground text-xs">
                   {activity.date}
                 </div>
               </div>
             ))
           : taskData.activity.map((activity, index) => (
-              <div key={index} className="text-sm m-2 text-muted-foreground">
+              <div key={index} className="m-2 text-muted-foreground text-sm">
                 {activity.user} changed status from {activity.statusChange}
-                <div className="text-xs text-muted-foreground">
+                <div className="text-muted-foreground text-xs">
                   {activity.date}
                 </div>
               </div>
             ))} */}
-          <div className="flex mt-[35rem] p-2 ">
+          <div className="flex mt-[35rem] p-2">
             <input
               type="text"
-              className="flex-1 bg-input text-foreground p-2 rounded-l-lg border border-border focus:outline-none"
+              className="flex-1 bg-input p-2 border border-border rounded-l-lg text-foreground focus:outline-none"
               placeholder="Write a comment"
             />
-            <button className="bg-primary text-primary-foreground px-4 py-2 rounded-r-lg">
+            <button className="bg-primary px-4 py-2 rounded-r-lg text-primary-foreground">
               Send
             </button>
           </div>

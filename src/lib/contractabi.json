@@ -2,62 +2,32 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_taskId",
-				"type": "uint256"
-			}
-		],
-		"name": "completeTask",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_description",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_reward",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address payable",
-				"name": "_assignee",
-				"type": "address"
-			},
-			{
-				"internalType": "address payable",
-				"name": "_reviewer",
+				"internalType": "address",
+				"name": "_hbarServiceAddress",
 				"type": "address"
 			}
 		],
-		"name": "createTask",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
+		"stateMutability": "nonpayable",
+		"type": "constructor"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
 				"internalType": "uint256",
-				"name": "_taskId",
+				"name": "valueReceived",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "reward",
 				"type": "uint256"
 			}
 		],
-		"name": "submitTask",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "LogReceivedEther",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -148,6 +118,73 @@
 				"type": "uint256"
 			}
 		],
+		"name": "completeTask",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_description",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_reward",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address payable",
+				"name": "_assignee",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_reviewer",
+				"type": "address"
+			}
+		],
+		"name": "createTask",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "depositHbar",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getContractHbarBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_taskId",
+				"type": "uint256"
+			}
+		],
 		"name": "getTask",
 		"outputs": [
 			{
@@ -186,6 +223,32 @@
 	},
 	{
 		"inputs": [],
+		"name": "hbarServiceAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_taskId",
+				"type": "uint256"
+			}
+		],
+		"name": "submitTask",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "taskCount",
 		"outputs": [
 			{
@@ -218,7 +281,7 @@
 				"type": "address"
 			},
 			{
-				"internalType": "address payable",
+				"internalType": "address",
 				"name": "reviewer",
 				"type": "address"
 			},
@@ -240,5 +303,9 @@
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]

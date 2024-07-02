@@ -17,74 +17,41 @@ import Web3, { AbiItem } from "web3";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
 import useWeb3 from "@/hooks/useWeb3";
 
-// Define the schema using Zod
-
-
-
-
-const CompleteTaskForm = ({
+const AcceptTaskForm = ({
   taskId,
-  docUrl,
   handlePostSubmit,
-  taskOnchainID
 }: {
   taskId: string;
-  docUrl: string;
   handlePostSubmit: Function;
-  taskOnchainID: any
 }) => {
-  const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
-
+  const [submitTaskMutation] = useMutation(UPDATE_TASK_MUTATION);
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const { connectToMetaMask, active } = useWeb3();
 
   const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, account } = useSmartContract();
-  const { connectToMetaMask, completeTask, active, convertHbarToTinybars } = useWeb3();
 
   const onSubmitFrom = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
-
-      
-      if (!active) {
-        await connectToMetaMask();
-      }
-
-      // let taskData = await getTaskData([taskOnchainID]);
-      // const rewardAmount = Web3.utils.toWei(taskData.reward.toString(), 'ether')
-      // const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
-
-      // console.log('taskData++++', {rewardAmount}, taskData.reward);
-      let txn = await completeTask([
-        taskOnchainID
-      ]);
-      console.log('txn++++++', txn);
-      setLoading(false);
-
-      await updateTaskMutaion({
+      await submitTaskMutation({
         variables: {
           _id: taskId,
           input: {
-            status: 4, // completed
+            status: 2, // task accepted
           },
         },
         onError(error: any): never {
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
-          console.log("task makred as completed", res);
           handlePostSubmit(res);
         },
       });
-
-      //   if (!active) {
-      //     await connectToMetaMask();
-      //   }
     } catch (error) {
       console.log("error->", error);
     } finally {
@@ -97,22 +64,20 @@ const CompleteTaskForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={(e)=>onSubmitFrom(e)}>
-      <div className="flex flex-col gap-6  p-4">
+    <form
+      autoComplete="off"
+      onSubmit={(e) => {
+        onSubmitFrom(e);
+      }}
+    >
+      <div className="flex flex-col gap-6 p-4">
         <div className="flex flex-col">
-          <Input
-            type="text"
-            placeholder="submited task link ...."
-            className="w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
-            value={docUrl}
-          
-          />
           <Button
             type="submit"
             className="block bg-[#7D6CE2FF] mt-4 w-full text-center"
             loading={loading}
           >
-            Mark as Completed
+            Accpet Task
           </Button>
         </div>
       </div>
@@ -120,4 +85,4 @@ const CompleteTaskForm = ({
   );
 };
 
-export default CompleteTaskForm;
+export default AcceptTaskForm;
