@@ -16,6 +16,7 @@ interface UseWeb3 {
   submitTask: (args: any[]) => Promise<any>;
   completeTask: (args: any[]) => Promise<any>;
   getTaskData: (args: any)=>Promise<any>;
+  convertHbarToTinybars: (args: any)=>string;
 }
 
 const injected = new InjectedConnector({
@@ -61,6 +62,15 @@ const useWeb3 = (): UseWeb3 => {
       return null;
     }
   };
+
+  // Function to convert HBAR to tinybars
+  function convertHbarToTinybars(hbarAmount: number): string {
+    const tinybarsPerHbar = 100_000_000; // 1 HBAR = 100_000_000 tinybars
+    // const hbar = Web3.utils.toWei(hbarAmount.toString(), 'ether'); // Convert HBAR to wei
+    const tinybars = (Number(hbarAmount)*(tinybarsPerHbar)).toString(); // Multiply to get tinybars
+    console.log('tinybars++++', tinybars);
+    return tinybars.toString();
+}
 
 
   const getTaskData = async (args: any): Promise<any> => {
@@ -112,8 +122,8 @@ const useWeb3 = (): UseWeb3 => {
       }
 
       const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
-
-      const receipt = await contract.methods.createTask(...args).send({ from: account });
+      console.log('args+++++', ...args)
+      const receipt = await contract.methods.createTask(...args).send({ from: account, value: args[1]});
       return receipt;
     } catch (error) {
       console.error('Error calling smart contract method:', error);
@@ -171,7 +181,7 @@ const useWeb3 = (): UseWeb3 => {
 
       const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
 
-      const receipt = await contract.methods.completeTask(args[0]).send({ from: account, value: args[1] });
+      const receipt = await contract.methods.completeTask(args[0]).send({ from: account});
       return receipt;
     } catch (error) {
       console.error('Error calling smart contract method:', error);
@@ -179,7 +189,7 @@ const useWeb3 = (): UseWeb3 => {
     }
   };
 
-  return { connectToMetaMask, active, account, library, signMessage, createTask, submitTask, completeTask, getTaskData };
+  return { connectToMetaMask, active, account, library, signMessage, createTask, submitTask, completeTask, getTaskData, convertHbarToTinybars };
 };
 
 export default useWeb3;
