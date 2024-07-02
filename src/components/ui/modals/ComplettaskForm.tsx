@@ -26,25 +26,49 @@ const CompleteTaskForm = ({
   taskId,
   docUrl,
   handlePostSubmit,
+  taskOnchainID
 }: {
   taskId: string;
   docUrl: string;
   handlePostSubmit: Function;
+  taskOnchainID: any
 }) => {
   const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
 
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
-  const { connectToMetaMask, active } = useWeb3();
 
   const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, account } = useSmartContract();
+  const { connectToMetaMask, completeTask, active, getTaskData } = useWeb3();
 
-  const onSubmitFrom = async () => {
+  const onSubmitFrom = async (e: any) => {
+    e.preventDefault();
     setLoading(true);
     try {
+      // console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
+
+      
+      // if (!active) {
+      //   await connectToMetaMask();
+      // }
+
+      // let taskData = await getTaskData([taskOnchainID]);
+      // const rewardAmount = Web3.utils.toWei(taskData.reward.toString(), 'ether')
+      // // const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
+
+      // console.log('taskData++++', {rewardAmount}, taskData.reward);
+      // let txn = await completeTask([
+      //   taskOnchainID, taskData.reward
+      // ]);
+      // console.log('txn++++++', txn);
+      // setLoading(false);
+
+      // return;
+
+
       await updateTaskMutaion({
         variables: {
           _id: taskId,
@@ -76,7 +100,7 @@ const CompleteTaskForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={()=>onSubmitFrom()}>
+    <form autoComplete="off" onSubmit={(e)=>onSubmitFrom(e)}>
       <div className="flex flex-col gap-6  p-4">
         <div className="flex flex-col">
           <Input

@@ -26,26 +26,29 @@ type Schema = z.infer<typeof updateTaskSchema>;
 
 const SubmitTaskForm = ({
 	taskId,
-	handlePostSubmit
+	handlePostSubmit,
+	taskOnchainID
 }: {
 	taskId: string;
 	handlePostSubmit: Function;
+	taskOnchainID: any;
 }) => {
-	const [submitTaskMutation] = useMutation(UPDATE_TASK_MUTATION);
-
+	const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+	const { connectToMetaMask, submitTask, active } = useWeb3();
+	console.log('taskOnchainID+++', taskOnchainID);
 	const {
 		register,
 		handleSubmit,
 		control,
 		clearErrors,
-		formState: { errors }
+		formState: { errors },
 	} = useForm<Schema>({
-		resolver: zodResolver(updateTaskSchema)
+		resolver: zodResolver(updateTaskSchema),
 	});
 
 	const [loading, setLoading] = useState<boolean>(false);
 	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
-	const { connectToMetaMask, active } = useWeb3();
+	// const { connectToMetaMask, active } = useWeb3();
 
 	const { web3 } = useAppSelector(selectUserAuth);
 
@@ -54,25 +57,35 @@ const SubmitTaskForm = ({
 	const onSubmitFrom = async (data: Schema) => {
 		setLoading(true);
 		try {
-			await submitTaskMutation({
+			console.log('taskOnchainID>>>>>>>>::', taskOnchainID);
+
+			if (!active) {
+				await connectToMetaMask();
+			}
+
+			let txn = await submitTask([
+				taskOnchainID
+			]);
+			console.log('Txn>>>>>::', txn);
+
+			await submitTaskMutaion({
 				variables: {
 					_id: taskId,
 					input: {
 						docUrl: data.docUrl,
-						status: 3 // in review
-					}
+						status: 3, // in review
+					},
 				},
 				onError(error: any): never {
 					throw new Error(error);
 				},
 				onCompleted: async (res: any) => {
 					handlePostSubmit(res);
-				}
-			});
 
-			//   if (!active) {
-			//     await connectToMetaMask();
-			//   }
+					// blockchain code
+
+				},
+			});
 		} catch (error) {
 			console.log('error->', error);
 		} finally {

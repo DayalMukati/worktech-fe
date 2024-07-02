@@ -15,7 +15,7 @@ interface UseWeb3 {
   createTask: (args: any[]) => Promise<any>;
   submitTask: (args: any[]) => Promise<any>;
   completeTask: (args: any[]) => Promise<any>;
-
+  getTaskData: (args: any)=>Promise<any>;
 }
 
 const injected = new InjectedConnector({
@@ -61,6 +61,37 @@ const useWeb3 = (): UseWeb3 => {
       return null;
     }
   };
+
+
+  const getTaskData = async (args: any): Promise<any> => {
+    try {
+      if (!web3Instance) {
+        const web3 = library ? new Web3(library.provider) : getWeb3NoAccount();
+        setWeb3Instance(web3);
+        console.warn('Web3 instance was not initialized, initializing now');
+      }
+
+      if (!web3Instance) {
+        throw new Error('Failed to initialize Web3 instance');
+      }
+
+      const accounts = await web3Instance.eth.getAccounts();
+      const account = accounts[0];
+      if (!account) {
+        throw new Error('No account found');
+      }
+
+      const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
+
+      const taskData = await contract.methods.tasks(...args).call();
+      console.log('taskData+++++', taskData)
+      return taskData;
+    } catch (error) {
+      console.error('Error calling smart contract method:', error);
+      throw error;
+    }
+  };
+
 
   const createTask = async (args: any): Promise<any> => {
     try {
@@ -140,7 +171,7 @@ const useWeb3 = (): UseWeb3 => {
 
       const contract = new web3Instance.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
 
-      const receipt = await contract.methods.completeTask(...args).send({ from: account });
+      const receipt = await contract.methods.completeTask(args[0]).send({ from: account, value: args[1] });
       return receipt;
     } catch (error) {
       console.error('Error calling smart contract method:', error);
@@ -148,7 +179,7 @@ const useWeb3 = (): UseWeb3 => {
     }
   };
 
-  return { connectToMetaMask, active, account, library, signMessage, createTask, submitTask, completeTask };
+  return { connectToMetaMask, active, account, library, signMessage, createTask, submitTask, completeTask, getTaskData };
 };
 
 export default useWeb3;

@@ -260,52 +260,47 @@ const CreateTaskForm = ({
 		}
 	};
 
-	const onSubmitFrom = async (data: Schema) => {
-		setIsLoading(true);
-		try {
-			if (!active) {
-				await connectToMetaMask();
-			}
-			const priceInWei = Web3.utils.toWei(data.price, 'ether');
-			let txn = await createTask([
-				data.taskName,
-				priceInWei,
-				'0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd'
-			]);
-			let taskId = Number(txn.events.TaskCreated.returnValues[0]);
-			// console.log(
-			// 	'data->',
-			// 	txn,
-			// 	Number(txn.events.TaskCreated.returnValues[0], data);
-			// );
-			await createTaskMutaion({
-				variables: {
-					input: {
-						space: spaceId,
-						name: data.taskName,
-						taskId: taskId,
-						description: data.description,
-						priority: data.priority,
-						amount: Number(data.price),
-						activities: [],
-						reviewer: data.reviewer,
-						assinees: [data.assignee[0]],
-						skills: data.skills,
-						acceptanceCriteria: data.acceptanceCriteria,
-						status: data.status
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted: async (res: any) => {
-					handlePostSubmit(res);
-				}
-			});
-		} catch (error) {
-			console.log('error->', error);
-		}
-	};
+  const onSubmitFrom = async (data: Schema) => {
+    setIsLoading(true);
+    try {
+      if (!active) {
+        await connectToMetaMask();
+      }
+      const priceInWei = Web3.utils.toWei(data.price, "ether");
+      let txn = await createTask([
+        data.taskName,
+        priceInWei,
+        data.assignee[1],
+      ]);
+      let taskId = Number(txn.events.TaskCreated.returnValues[0]);
+      await createTaskMutaion({
+        variables: {
+          input: {
+            space: spaceId,
+            name: data.taskName,
+            taskId: taskId,
+            description: data.description,
+            priority: data.priority,
+            amount: Number(data.price),
+            activities: [],
+            reviewer: data.reviewer,
+            assinees: [data.assignee[0]],
+            skills: data.skills,
+            acceptanceCriteria: data.acceptanceCriteria,
+            status: data.status,
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          handlePostSubmit(res);
+        },
+      });
+    } catch (error) {
+      console.log("error->", error);
+    }
+  };
 
 	const onerror = (err: any) => {
 		console.log('err->', err);
