@@ -29,17 +29,15 @@ import { Textarea } from '../textarea';
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
-	taskName: z.string().min(2, 'Task Name is required'),
-	description: z.string().min(2, 'Description is required'),
-	acceptanceCriteria: z
-		.string()
-		.min(2, 'Acceptance Criteria is required'),
-	status: z.number().min(1, 'Status is required'),
-	assignee: z.array(z.string()).min(1, 'Assignee is required'),
-	priority: z.string().min(1, 'Priority is required'),
-	reviewer: z.string().min(1, 'Reviewers is required'),
-	price: z.string().min(1, 'Price is required'),
-	skills: z.array(z.string()).min(1, 'Skills is required')
+  taskName: z.string().min(2, "Task Name is required"),
+  description: z.string().min(2, "Description is required"),
+  acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
+  status: z.number().min(1, "Status is required"),
+  assignee: z.array(z.string()).min(1, "Assignee is required"),
+  priority: z.string().min(1, "Priority is required"),
+  reviewer: z.array(z.string()).min(1, "Reviewers is required"),
+  price: z.string().min(1, "Price is required"),
+  skills: z.array(z.string()).min(1, "Skills is required"),
 });
 
 type Schema = z.infer<typeof createTaskSchema>;
@@ -54,101 +52,94 @@ const status = [
 ];
 
 const customOption = (props: any) => {
-	return (
-		<components.Option {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.Option>
+  );
 };
 
 const customSingleValue = (props: any) => {
-	return (
-		<components.SingleValue {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.SingleValue>
-	);
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.SingleValue>
+  );
 };
 
 const customOptionAssignee = (props: any) => {
-	return (
-		<components.Option {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.Option>
+  );
 };
 const customSingleValueAssignee = (props: any) => {
-	return (
-		<components.SingleValue {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.SingleValue>
-	);
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.SingleValue>
+  );
 };
 
 const Priority = [
-	{ value: 'high', label: 'high', color: 'red' },
-	{ value: 'medium', label: 'medium', color: 'yellow' },
-	{ value: 'low', label: 'low', color: 'green' }
+  { value: "high", label: "high", color: "red" },
+  { value: "medium", label: "medium", color: "yellow" },
+  { value: "low", label: "low", color: "green" },
 ];
 
 const customPriorityOption = (props: any) => {
-	return (
-		<components.Option {...props}>
-			<div className='flex items-center'>
-				<span
-					className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
-				/>
-				<span>{props.data.label}</span>
-			</div>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        <span
+          className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
+        />
+        <span>{props.data.label}</span>
+      </div>
+    </components.Option>
+  );
 };
 
 const customPrioritySingleValue = (props: any) => {
-	return (
-		<components.SingleValue {...props}>
-			<div className='flex items-center'>
-				<span
-					className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
-				/>
-				<span>{props.data.label}</span>
-			</div>
-		</components.SingleValue>
-	);
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center">
+        <span
+          className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
+        />
+        <span>{props.data.label}</span>
+      </div>
+    </components.SingleValue>
+  );
 };
 
-const Reviewers = [
-	{ value: 'ak@gmail.com', label: 'Ak-8968' },
-	{ value: 'dn@gmail.com', label: 'DM-477' },
-	{ value: 'vineet@gmail.com', label: 'Vk-123' }
-];
-
 const CreateTaskForm = ({
-	spaceId,
-	handlePostSubmit,
-	column,
-	users,
-	skillsData
+  spaceId,
+  handlePostSubmit,
+  column,
+  users,
+  skillsData,
 }: {
-	spaceId: string;
-	handlePostSubmit: Function;
-	column: string;
-	users: any;
-	skillsData: any;
+  spaceId: string;
+  handlePostSubmit: Function;
+  column: string;
+  users: any;
+  skillsData: any;
 }) => {
-	
-	const {
+  const {
     register,
     handleSubmit,
     watch,
@@ -175,6 +166,13 @@ const CreateTaskForm = ({
     label: user.email,
     icon: <Users className="w-4 h-4" />,
   }));
+  const Reviewers = users?.map((user: any) => ({
+    value: [user._id, user.walletAddress],
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+    
+  }));
+
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
 
   // const { connectToMetaMask, createTask, active } = useWeb3();
@@ -283,7 +281,7 @@ const CreateTaskForm = ({
             priority: data.priority,
             amount: Number(data.price),
             activities: [],
-            reviewer: data.reviewer,
+            reviewer: data.reviewer[0],
             assinees: [data.assignee[0]],
             skills: data.skills,
             acceptanceCriteria: data.acceptanceCriteria,
@@ -302,11 +300,11 @@ const CreateTaskForm = ({
     }
   };
 
-	const onerror = (err: any) => {
-		console.log('err->', err);
-	};
+  const onerror = (err: any) => {
+    console.log("err->", err);
+  };
 
-	return (
+  return (
     <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
       <div className="gap-6 grid grid-cols-3 p-4">
         <div className="col-span-2">

@@ -53,12 +53,12 @@ const Taskdetails: React.FC = () => {
 	const [isAccepted, setIsAccepted] = useState(false);
 
 	useEffect(() => {
-		// console.log("data->", dataTask?.getTask);
-		setTaskData(dataTask?.getTask as any);
-		if (dataTask?.getTask?.status === 3) {
-			setIsSubmitted(true);
-		}
-	}, [loadingTask, errorTask, dataTask]);
+    // console.log("data->", dataTask?.getTask);
+    setTaskData(dataTask?.getTask as any);
+    if (dataTask?.getTask?.status === 3) {
+      setIsSubmitted(true);
+    }
+  }, [loadingTask, errorTask, dataTask, isAccepted, isSubmited]);
 
 	const toggleShowAll = () => {
 		setShowAllActivity(prev => !prev);
