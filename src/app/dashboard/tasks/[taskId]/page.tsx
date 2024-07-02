@@ -29,32 +29,34 @@ const Taskdetails: React.FC = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [isSubmited, setIsSubmitted] = useState(false);
 	const [showAllActivity, setShowAllActivity] =
 		useState<boolean>(false);
 	const [submitFormOpen, setSubmitFormOpen] =
 		useState<boolean>(false);
 
-	const {
-		loading: loadingTask,
-		error: errorTask,
-		data: dataTask
-	} = useQuery(GET_TASK_QUERY, {
-		variables: { _id: params.taskId as string },
-		onCompleted: () => {
-			setLoading(false);
+	const { loading: loadingTask, error: errorTask } = useQuery(
+		GET_TASK_QUERY,
+		{
+			variables: { _id: params.taskId as string },
+			onCompleted: data => {
+				setLoading(false);
+				setTaskData(data?.getTask as any);
+				if (data?.getTask?.status === 3) {
+					setIsSubmitted(true);
+				}
+				console.log('dataTask+++++', data);
+			}
 		}
-	});
-	const [isSubmited, setIsSubmitted] = useState(false);
+	);
 
-	useEffect(() => {
-		// console.log("data->", dataTask?.getTask);
-		setTaskData(dataTask?.getTask as any);
-		if (dataTask?.getTask?.status === 3) {
-			setIsSubmitted(true);
-		}
-	}, [loadingTask, errorTask, dataTask]);
-
-	console.log('dataTask+++++', dataTask);
+	// useEffect(() => {
+	// 	// console.log("data->", dataTask?.getTask);
+	// 	setTaskData(dataTask?.getTask as any);
+	// 	if (dataTask?.getTask?.status === 3) {
+	// 		setIsSubmitted(true);
+	// 	}
+	// }, [loadingTask, errorTask, dataTask]);
 
 	const toggleShowAll = () => {
 		setShowAllActivity(prev => !prev);
