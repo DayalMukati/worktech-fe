@@ -16,6 +16,7 @@ import { selectUserAuth } from '@/store/authSlice';
 import Web3, { AbiItem } from 'web3';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
 import useWeb3 from '@/hooks/useWeb3';
+import { TASK_STATUS } from '@/conf/data';
 
 // Define the schema using Zod
 const updateTaskSchema = z.object({
@@ -26,13 +27,16 @@ type Schema = z.infer<typeof updateTaskSchema>;
 
 const SubmitTaskForm = ({
 	taskId,
-	handlePostSubmit
+	handlePostSubmit,
+	taskOnchainID
 }: {
 	taskId: string;
 	handlePostSubmit: Function;
+	taskOnchainID: any;
 }) => {
-	const [submitTaskMutation] = useMutation(UPDATE_TASK_MUTATION);
-
+	const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+	const { connectToMetaMask, submitTask, active } = useWeb3();
+	console.log('taskOnchainID+++', taskOnchainID);
 	const {
 		register,
 		handleSubmit,
@@ -45,7 +49,7 @@ const SubmitTaskForm = ({
 
 	const [loading, setLoading] = useState<boolean>(false);
 	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
-	const { connectToMetaMask, active } = useWeb3();
+	// const { connectToMetaMask, active } = useWeb3();
 
 	const { web3 } = useAppSelector(selectUserAuth);
 
@@ -54,12 +58,21 @@ const SubmitTaskForm = ({
 	const onSubmitFrom = async (data: Schema) => {
 		setLoading(true);
 		try {
-			await submitTaskMutation({
+			console.log('taskOnchainID>>>>>>>>::', taskOnchainID);
+
+			if (!active) {
+				await connectToMetaMask();
+			}
+
+			let txn = await submitTask([taskOnchainID]);
+			console.log('Txn>>>>>::', txn);
+
+			await submitTaskMutaion({
 				variables: {
 					_id: taskId,
 					input: {
 						docUrl: data.docUrl,
-						status: 3 // in review
+						status: TASK_STATUS.REVIEW // in review
 					}
 				},
 				onError(error: any): never {
@@ -67,12 +80,10 @@ const SubmitTaskForm = ({
 				},
 				onCompleted: async (res: any) => {
 					handlePostSubmit(res);
+
+					// blockchain code
 				}
 			});
-
-			//   if (!active) {
-			//     await connectToMetaMask();
-			//   }
 		} catch (error) {
 			console.log('error->', error);
 		} finally {

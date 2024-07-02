@@ -15,7 +15,7 @@ import CompleteTaskForm from '@/components/ui/modals/ComplettaskForm';
 import { CrossIcon } from 'lucide-react';
 
 const Taskdetails: React.FC = () => {
-	const params = useParams<{ taskId: string }>();
+  const params = useParams();
 
 	const [taskData, setTaskData] = useState({
 		name: 'No task name',
@@ -25,7 +25,8 @@ const Taskdetails: React.FC = () => {
 		assignee: 'Pawan Kumar',
 		reviewer: 'Rahul',
 		acceptanceCriteria: 'No task acceptance criteria',
-		status: 1
+		status: 1,
+		taskId: 0
 	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
@@ -35,15 +36,15 @@ const Taskdetails: React.FC = () => {
 		useState<boolean>(false);
 
 	const {
-		loading: loadingTask,
-		error: errorTask,
-		data: dataTask
-	} = useQuery(GET_TASK_QUERY, {
-		variables: { _id: params.taskId },
-		onCompleted: () => {
-			setLoading(false);
-		}
-	});
+    loading: loadingTask,
+    error: errorTask,
+    data: dataTask,
+  } = useQuery(GET_TASK_QUERY, {
+    variables: { _id: params.taskId as string },
+    onCompleted: () => {
+      setLoading(false);
+    },
+  });
 
 	useEffect(() => {
 		console.log('data->', dataTask?.getTask);
@@ -92,14 +93,15 @@ const Taskdetails: React.FC = () => {
 							</Button>
 						</DialogClose>
 
-						<CompleteTaskForm
-							taskId={params.taskId}
-							docUrl={taskData.docUrl}
-							handlePostSubmit={() => handleSubmit()}
-						/>
-					</DialogContent>
-				</Dialog>
-			)}
+            <CompleteTaskForm
+              taskId={params.taskId as string}
+              docUrl={taskData.docUrl}
+              taskOnchainID= {taskData.taskId}
+              handlePostSubmit={() => handleSubmit()}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
 
 			<div className='flex lg:flex-row flex-col gap-2 bg-card p-2 pb-4 border text-card-foreground'>
 				<div className='flex-1 shadow-lg p-4 border rounded-lg'>

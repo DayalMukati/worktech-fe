@@ -68,9 +68,9 @@ const Header = () => {
 	};
 	return (
     <>
-      <header className="top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14">
+      <header className="top-0 z-30 sm:static sticky flex items-center gap-4 bg-background px-4 sm:px-6 border-b h-14 ">
         <Image
-          src="/svg/logo-color.svg"
+          src="/png/image.png"
           width={200}
           height={200}
           alt="logo"
