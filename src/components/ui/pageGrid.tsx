@@ -2,7 +2,7 @@ import React from "react";
 
 const PageGrid = () => {
   return (
-    <div className="p-4 animate-pulse ">
+    <div className="px-12 py-8 animate-pulse ">
     <div className="p-4 max-w-8xl mx-auto  border shadow-lg rounded-lg ">
       <div className="flex justify-between items-start ">
         <div className="flex items-center space-x-4 ">
