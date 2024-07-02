@@ -41,30 +41,26 @@ export const CREATE_TASK_MUTATION = gql(`
   mutation CreateTask($input:  TasksInput!) {
     createTask(input: $input) {
       _id
-    name
-    description
-    priority
-    amount
-    activities{
+      name
+      description
+      priority
+      amount
+      activities {
         userId
         activity
         createdAt
-    }
-    space{
+      }
+      reviewer {
         _id
-    }
-    reviewer{
+      }
+      assinees {
         _id
-    }
-    assinees{
+      }
+      skills {
         _id
-    }
-    skills{
-        _id
-    }
-    acceptanceCriteria
-    status
-    docUrl
+      }
+      acceptanceCriteria
+      status
     }
   }
 `);
@@ -72,31 +68,27 @@ export const CREATE_TASK_MUTATION = gql(`
 export const UPDATE_TASK_MUTATION = gql(`
   mutation UpdateTask($_id: String!, $input:  UpdateTasksInput!) {
     updateTask(_id: $_id, input: $input) {
-     _id
-    name
-    description
-    priority
-    amount
-    activities{
+      _id
+      name
+      description
+      priority
+      amount
+      activities {
         userId
         activity
         createdAt
-    }
-    space{
+      }
+      reviewer {
         _id
-    }
-    reviewer{
+      }
+      assinees {
         _id
-    }
-    assinees{
+      }
+      skills {
         _id
-    }
-    skills{
-        _id
-        title
-    }
-    acceptanceCriteria
-    status
+      }
+      acceptanceCriteria
+      status
     }
   }
 `);
@@ -131,28 +123,29 @@ export const GET_USER_BY_TOKEN = gql(`
 export const CREATE_SPACE_MUTATION = gql(`
   mutation CreateSpace($input: SpacesInput!) {
     createSpace(input: $input) {
-     _id
-    name
-    description
-    visibility
-    org{
+      _id
+      name
+      description
+      visibility
+      tasks {
         _id
+      }
+      status
     }
-    status
   }
 `);
 
 export const UPDATE_SPACE_MUTATION = gql(`
   mutation UpdateSpace($_id: String!, $input: UpdateSpacesInput!) {
     updateSpace(_id: $_id, input: $input) {
-     _id
-    name
-    description
-    visibility
-    org{
+      _id
+      name
+      description
+      visibility
+      tasks {
         _id
-    }
-    status
+      }
+      status
     }
   }
 `);
@@ -160,50 +153,50 @@ export const UPDATE_SPACE_MUTATION = gql(`
 export const CREATE_ORG_MUTATION = gql(`
   mutation CreateOrg($input: OrgsInput!) {
     createOrg(input: $input) {
-     _id
-    name
-    description
-    reviewers{
+      _id
+      name
+      description
+      reviewers {
         _id
-    }
-    contributors{
+      }
+      contributors {
         _id
-    }
-    roles{
+      }
+      spaces {
         _id
-    }
-    createdBy{
+      }
+      roles {
         _id
-    }
-    status
+      }
+      createdBy {
+        _id
+      }
+      status
     }
   }
 `);
 export const UPDATE_ORG_MUTATION = gql(`
   mutation UpdateOrg($_id: String!, $input: UpdateOrgsInput!) {
     updateOrg(_id: $_id, input: $input) {
-       _id
-    name
-    description
-    reviewers{
+      _id
+      name
+      description
+      reviewers {
         _id
-    }
-    contributors{
+      }
+      contributors {
         _id
-    }
-    spaces{
+      }
+      spaces {
         _id
-        name
-        description
-    }
-    roles{
+      }
+      roles {
         _id
-        title
-    }
-    createdBy{
+      }
+      createdBy {
         _id
-    }
-    status
+      }
+      status
     }
   }
 `);

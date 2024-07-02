@@ -9,16 +9,18 @@ import { z } from "zod";
 import { Label } from "@radix-ui/react-label";
 import { components } from "react-select";
 import { useMutation } from "@apollo/client";
-
+import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import useSmartContract from "@/hooks/useSmartContract";
 import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
 import useWeb3 from "@/hooks/useWeb3";
-import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
 
 // Define the schema using Zod
+
+
+
 
 const CompleteTaskForm = ({
   taskId,
@@ -29,7 +31,8 @@ const CompleteTaskForm = ({
   docUrl: string;
   handlePostSubmit: Function;
 }) => {
-  const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION as any);
+  const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
@@ -73,7 +76,7 @@ const CompleteTaskForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={() => onSubmitFrom()}>
+    <form autoComplete="off" onSubmit={()=>onSubmitFrom()}>
       <div className="flex flex-col gap-6  p-4">
         <div className="flex flex-col">
           <Input
@@ -81,6 +84,7 @@ const CompleteTaskForm = ({
             placeholder="submited task link ...."
             className="w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
             value={docUrl}
+          
           />
           <Button
             type="submit"
