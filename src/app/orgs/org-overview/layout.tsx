@@ -49,14 +49,6 @@ const OrgOverviewLayout = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const currentURI = usePathname();
-	const isPathMatch = (
-		currentPath: string,
-		menuItemHref: string
-	): boolean => {
-		return currentPath === menuItemHref;
-	};
-
 	const Icons: { [key: string]: JSX.Element } = {
 		Home: <Home className='w-5 h-5' />,
 		FolderKanban: <FolderKanban className='w-5 h-5' />
@@ -76,8 +68,6 @@ const OrgOverviewLayout = ({
 	const params = useParams<{ orgId: string }>();
 	return (
 		<div className='flex flex-col bg-muted/40 w-full h-screen'>
-			<Sidebar />
-
 			<main className='grid grid-cols-4 lg:grid-cols-6 sm:py-0 sm:pl-20 h-full overflow-y-hidden'>
 				<OrgSidebar
 					Title='Ten (Formaly known as Org) Overview)'
