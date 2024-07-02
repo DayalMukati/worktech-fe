@@ -19,105 +19,96 @@ import { useSelector } from 'react-redux';
 import { selectSpaces, setSpaces } from '@/store/spacesSlice';
 import { GET_ALL_SPACES_BY_ORG_ID_QUERY } from '@/graphql/queries';
 import { useQuery } from '@apollo/client';
+import Image from "next/image";
 
-const isPathMatch = (
-	currentPath: string,
-	menuItemHref: string
-): boolean => {
-	return currentPath === menuItemHref;
+const isPathMatch = (currentPath: string, menuItemHref: string): boolean => {
+  return currentPath === menuItemHref;
 };
-var currentURl = '';
+var currentURl = "";
 
-const OrgSidebar = ({
-	Title,
-	orgId
-}: {
-	Title: string;
-	orgId: string;
-}) => {
-	const { spaces } = useSelector(selectSpaces);
-	const dispatch = useAppDispatch();
+const OrgSidebar = ({ Title, orgId }: { Title: string; orgId: string }) => {
+  const { spaces } = useSelector(selectSpaces);
+  const dispatch = useAppDispatch();
 
-	const { loading, error, data } = useQuery(
-		GET_ALL_SPACES_BY_ORG_ID_QUERY,
-		{
-			variables: { _id: orgId }
-		}
-	);
-	useEffect(() => {
-		if (loading) return;
-		if (error) return;
-		console.log('data->', data?.getAllSpacesByOrgId);
-		dispatch(
-			setSpaces({
-				spaces: data?.getAllSpacesByOrgId
-			})
-		);
-	}, [loading, error, data]);
+  const { loading, error, data } = useQuery(GET_ALL_SPACES_BY_ORG_ID_QUERY, {
+    variables: { _id: orgId },
+  });
+  useEffect(() => {
+    if (loading) return;
+    if (error) return;
+    console.log("data->", data?.getAllSpacesByOrgId);
+    dispatch(
+      setSpaces({
+        spaces: data?.getAllSpacesByOrgId,
+      })
+    );
+  }, [loading, error, data]);
 
-	//   console.log("spaces->", spaces);
+  //   console.log("spaces->", spaces);
 
-	const currentURI = usePathname();
+  const currentURI = usePathname();
 
-	currentURl = currentURI;
-	const menuItems = [
-		{
-			href: `/orgs/org-overview/${orgId}`,
-			icon: <LayoutDashboard className='w-6 h-6' />,
-			label: 'Overview'
-		},
-		// {
-		//   href: "/orgs/org-overview/tasks",
-		//   icon: "FolderKanban",
-		//   label: "Tasks",
-		// },
-		{
-			href: `/orgs/org-overview/${orgId}/leaderboard`,
-			icon: <Trophy className='w-4 h-4' />,
-			label: 'Leadership Boards'
-		}
-	];
+  currentURl = currentURI;
+  const menuItems = [
+    {
+      href: `/orgs/org-overview/${orgId}`,
+      icon: <LayoutDashboard className="w-6 h-6" />,
+      label: "Overview",
+    },
+    // {
+    //   href: "/orgs/org-overview/tasks",
+    //   icon: "FolderKanban",
+    //   label: "Tasks",
+    // },
+    {
+      href: `/orgs/org-overview/${orgId}/leaderboard`,
+      icon: <Trophy className="w-4 h-4" />,
+      label: "Leadership Boards",
+    },
+  ];
 
-	const childItem = [
-		{
-			href: '/dashboard/leadership',
-			icon: <Trophy className='w-4 h-4' />,
-			label: 'Leadership Boards'
-		},
-		{
-			href: '/dashboard/users',
-			icon: <BarChart4 className='w-4 h-4' />,
-			label: 'Combined Boards'
-		}
-	];
+  const childItem = [
+    {
+      href: "/dashboard/leadership",
+      icon: <Trophy className="w-4 h-4" />,
+      label: "Leadership Boards",
+    },
+    {
+      href: "/dashboard/users",
+      icon: <BarChart4 className="w-4 h-4" />,
+      label: "Combined Boards",
+    },
+  ];
 
-	return (
-		<aside className='col-span-1 bg-background border-r h-screen'>
-			<div className='p-3.5 border-b-2'>
-				<h2 className='text-xl'>Dashboard</h2>
-			</div>
-			<nav className='p-4 border-b-2 h-1/2'>
-				<ul className='space-y-2'>
-					{menuItems.map(({ href, icon, label }, index) => (
-						<li key={index}>
-							<Button
-								className={cn(
-									'flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors border-b-[2px]',
-									isPathMatch(currentURI, href)
-										? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
-										: ''
-								)}
-								asChild>
-								<Link href={href}>{label}</Link>
-							</Button>
-						</li>
-					))}
-				</ul>
-			</nav>
-			<Spaces spacesItem={spaces as any} orgId={orgId as string} />
-			<SpacesAddModal orgId={orgId} />
-		</aside>
-	);
+  return (
+    <aside className="col-span-1 bg-background border-r h-screen">
+      <div className="p-3.5 border-b-2">
+    
+        <h2 className="text-xl">Dashboard</h2>
+      </div>
+      <nav className="p-4 border-b-2 h-1/2">
+        <ul className="space-y-2">
+          {menuItems.map(({ href, icon, label }, index) => (
+            <li key={index}>
+              <Button
+                className={cn(
+                  "flex justify-start bg-transparent hover:bg-primary/10 w-full text-foreground transition-colors border-b-[2px]",
+                  isPathMatch(currentURI, href)
+                    ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                    : ""
+                )}
+                asChild
+              >
+                <Link href={href}>{label}</Link>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <Spaces spacesItem={spaces as any} orgId={orgId as string} />
+      <SpacesAddModal orgId={orgId} />
+    </aside>
+  );
 };
 
 export default OrgSidebar;
