@@ -29,7 +29,7 @@ const Taskdetails: React.FC = () => {
 	});
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
-	const [isSubmited, setIsSubmitted] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [showAllActivity, setShowAllActivity] =
 		useState<boolean>(false);
 	const [submitFormOpen, setSubmitFormOpen] =
@@ -187,16 +187,16 @@ const Taskdetails: React.FC = () => {
 						<div className='flex ml-auto'>
 							<button
 								className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
-									isSubmited || taskData.status !== 1
+									isSubmitted || taskData.status !== 1
 										? 'opacity-70 '
 										: ''
 								}`}
 								onClick={() => setSubmitFormOpen(true)}
-								disabled={isSubmited || taskData.status !== 1}>
+								disabled={isSubmitted || taskData.status !== 1}>
 								<Icon
 									icon='fluent:document-pdf-32-filled'
 									className='mr-1 w-4 h-4'></Icon>
-								{isSubmited || taskData.status !== 1
+								{isSubmitted || taskData.status !== 1
 									? 'Submitted'
 									: 'Sumbit Work'}
 							</button>
