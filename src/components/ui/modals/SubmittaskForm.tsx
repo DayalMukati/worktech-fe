@@ -27,12 +27,15 @@ type Schema = z.infer<typeof updateTaskSchema>;
 const SubmitTaskForm = ({
   taskId,
   handlePostSubmit,
+  taskOnchainID
 }: {
   taskId: string;
   handlePostSubmit: Function;
+  taskOnchainID: any;
 }) => {
   const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
-
+  const { connectToMetaMask, submitTask, active } = useWeb3();
+  console.log('taskOnchainID+++', taskOnchainID);
   const {
     register,
     handleSubmit,
@@ -45,7 +48,7 @@ const SubmitTaskForm = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
-  const { connectToMetaMask, active } = useWeb3();
+  // const { connectToMetaMask, active } = useWeb3();
 
   const { web3 } = useAppSelector(selectUserAuth);
 
@@ -54,6 +57,17 @@ const SubmitTaskForm = ({
   const onSubmitFrom = async (data: Schema) => {
     setLoading(true);
     try {
+      console.log('taskOnchainID>>>>>>>>::', taskOnchainID);
+
+      if (!active) {
+        await connectToMetaMask();
+      }
+
+      let txn = await submitTask([
+        taskOnchainID
+      ]);
+      console.log('Txn>>>>>::', txn);
+
       await submitTaskMutaion({
         variables: {
           _id: taskId,
@@ -67,6 +81,9 @@ const SubmitTaskForm = ({
         },
         onCompleted: async (res: any) => {
           handlePostSubmit(res);
+
+          // blockchain code
+
         },
       });
 

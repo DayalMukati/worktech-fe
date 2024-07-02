@@ -265,7 +265,7 @@ const CreateTaskForm = ({
       let txn = await createTask([
         data.taskName,
         priceInWei,
-        "0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd",
+        data.assignee[1],
       ]);
       let taskId = Number(txn.events.TaskCreated.returnValues[0]);
       // console.log(
