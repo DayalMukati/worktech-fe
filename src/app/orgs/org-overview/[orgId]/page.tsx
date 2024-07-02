@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { CircleCheck, Users, UserPlus } from 'lucide-react';
 import { GET_ALL_SPACES_BY_ORG_ID_QUERY } from '@/graphql/queries';
 import { selectSpaces, setSpaces } from '@/store/spacesSlice';
