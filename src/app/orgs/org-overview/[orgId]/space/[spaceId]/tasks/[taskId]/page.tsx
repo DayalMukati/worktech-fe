@@ -39,9 +39,12 @@ const Taskdetails: React.FC = () => {
 		error: errorTask,
 		data: dataTask
 	} = useQuery(GET_TASK_QUERY, {
+		fetchPolicy: 'no-cache',
 		variables: { _id: params.taskId },
 		onCompleted: () => {
 			setLoading(false);
+			console.log('data->', dataTask?.getTask);
+			setTaskData(dataTask?.getTask as any);
 		}
 	});
 
