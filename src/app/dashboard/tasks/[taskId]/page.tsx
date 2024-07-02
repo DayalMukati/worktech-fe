@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 
 
 const Taskdetails: React.FC = () => {
-  const params = useParams<{ taskId: string }>();
+  const params = useParams();
 
   const [taskData, setTaskData] = useState({
     name: "No task name",
@@ -26,6 +26,7 @@ const Taskdetails: React.FC = () => {
     reviewer: "Rahul",
     acceptanceCriteria: "No task acceptance criteria",
     status: 0,
+    taskId: 0
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +53,8 @@ const Taskdetails: React.FC = () => {
     }
   }, [loadingTask, errorTask, dataTask]);
 
+  console.log('dataTask+++++', dataTask);
+
   const toggleShowAll = () => {
     setShowAllActivity((prev) => !prev);
   };
@@ -75,6 +78,7 @@ const Taskdetails: React.FC = () => {
   const handleSubmit = () => {
     setIsSubmitted(true);
     setSubmitFormOpen(false);
+
   };
 
   return (
@@ -96,6 +100,7 @@ const Taskdetails: React.FC = () => {
 
             <SubmitTaskForm
               taskId={params.taskId}
+              taskOnchainID = {taskData.taskId}
               handlePostSubmit={() => {
                 handleSubmit();
               }}

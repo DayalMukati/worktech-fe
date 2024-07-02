@@ -15,7 +15,7 @@ import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
 import { CrossIcon } from "lucide-react";
 
 const Taskdetails: React.FC = () => {
-  const params = useParams<{ taskId: string }>();
+  const params = useParams();
 
   const [taskData, setTaskData] = useState({
     name: "No task name",
@@ -26,6 +26,7 @@ const Taskdetails: React.FC = () => {
     reviewer: "Rahul",
     acceptanceCriteria: "No task acceptance criteria",
     status: 1,
+    taskId: 0
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +93,7 @@ const Taskdetails: React.FC = () => {
             <CompleteTaskForm
               taskId={params.taskId}
               docUrl={taskData.docUrl}
+              taskOnchainID= {taskData.taskId}
               handlePostSubmit={() => handleSubmit()}
             />
           </DialogContent>
