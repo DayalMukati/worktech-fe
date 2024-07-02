@@ -13,7 +13,8 @@ import {
 } from "@radix-ui/react-dialog";
 import { CrossIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import AcceptTaskForm from "@/components/ui/modals/AcceptTaskfrom";
+import { space } from "postcss/lib/list";
 
 const Taskdetails: React.FC = () => {
   const params = useParams<{ taskId: string }>();
@@ -22,6 +23,7 @@ const Taskdetails: React.FC = () => {
     name: "No task name",
     description: "No task description",
     skills: ["No task skills"],
+
     assignee: "Pawan Kumar",
     reviewer: "Rahul",
     acceptanceCriteria: "No task acceptance criteria",
@@ -31,6 +33,8 @@ const Taskdetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
   const [submitFormOpen, setSubmitFormOpen] = useState<boolean>(false);
+  const [accpetFormOpen, setAcceptFormOpen] = useState<boolean>(false);
+  const [isRejected, setIsRejected] = useState(false);
 
   const {
     loading: loadingTask,
@@ -43,6 +47,7 @@ const Taskdetails: React.FC = () => {
     },
   });
   const [isSubmited, setIsSubmitted] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
 
   useEffect(() => {
     // console.log("data->", dataTask?.getTask);
@@ -76,9 +81,41 @@ const Taskdetails: React.FC = () => {
     setIsSubmitted(true);
     setSubmitFormOpen(false);
   };
+  const handleAccept = () => {
+    setIsAccepted(true);
+    setAcceptFormOpen(false);
+  };
+
+  const handleRejectTask = () => {
+    setIsRejected(true);
+  };
 
   return (
     <>
+      {accpetFormOpen && (
+        <Dialog open={true}>
+          <div className="fixed inset-0 bg-black opacity-30 z-10"></div>
+          <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform p-4 lg:w-full w-[80vw] max-w-3xl rounded-lg  bg-background shadow-lg z-20">
+            <DialogTitle className="text-center">Accept task</DialogTitle>
+            <DialogClose asChild>
+              <Button
+                variant={"ghost"}
+                className="absolute right-4 top-2 text-muted-foreground text-xs"
+                onClick={() => setAcceptFormOpen(false)}
+              >
+                <CrossIcon className="w-4 h-4 rotate-45 hover:text-red-500" />
+              </Button>
+            </DialogClose>
+
+            <AcceptTaskForm
+              taskId={params.taskId}
+              handlePostSubmit={() => {
+                handleAccept();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
       {submitFormOpen && (
         <Dialog open={true}>
           <div className="fixed inset-0 bg-black opacity-30 z-10"></div>
@@ -106,7 +143,7 @@ const Taskdetails: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-2 p-2 pb-4  border bg-card text-card-foreground ">
         <div className="flex-1 border p-4 rounded-lg shadow-lg">
           <div className="text-sm text-muted-foreground mb-2">
-            Ten (formerly Obscuro) / Community Contributions /
+            org/{taskData.space.name} / Community Contributions /
           </div>
           <h2 className="text-2xl font-bold mb-4">
             {/* Post about Ten in your community */}
@@ -154,13 +191,22 @@ const Taskdetails: React.FC = () => {
               <div className="flex space-x-8 text-muted-foreground items-center">
                 <div className="text-sm  ">Assignee</div>
                 <div className="text-sm ">
-                  {taskData.assignee || "No task assignee."}
+                  {taskData.assignee || "Vk@gmail.com"}
                 </div>
               </div>
               <div className="flex space-x-14 text-muted-foreground items-center">
                 <div className="text-sm  ">Skills</div>
                 <button className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-md">
-                  {taskData.skills.join(", ")}
+                  {taskData.skills.map((skill: any, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-white px-3 py-1 rounded-md"
+                    >
+                      <span className="text-sm flex text-muted-foreground">
+                        {skill.title}
+                      </span>
+                    </div>
+                  ))}
                 </button>
               </div>
               <div className="flex space-x-10 items-center">
@@ -176,21 +222,56 @@ const Taskdetails: React.FC = () => {
               </div>
             </div>
             <div className="ml-auto flex">
-              <button
-                className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
-                  isSubmited || taskData.status !== 1 ? "opacity-70 " : ""
-                }`}
-                onClick={() => setSubmitFormOpen(true)}
-                disabled={isSubmited || taskData.status !== 1}
-              >
-                <Icon
-                  icon="fluent:document-pdf-32-filled"
-                  className="h-4 w-4 mr-1"
-                ></Icon>
-                {isSubmited || taskData.status !== 1
-                  ? "Submitted"
-                  : "Sumbit Work"}
-              </button>
+              {taskData.status === 1 ? (
+                <div className="flex flex-col gap-2 w-full">
+                  <button
+                    className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
+                      isAccepted || taskData.status !== 1 ? "opacity-70 " : ""
+                    }`}
+                    onClick={() => setAcceptFormOpen(true)}
+                    disabled={isSubmited || taskData.status !== 1 || isRejected}
+                  >
+                    <Icon
+                      icon="fluent:document-pdf-32-filled"
+                      className="h-4 w-4 mr-1"
+                    ></Icon>
+                    {isAccepted || taskData.status !== 1
+                      ? "Accepted"
+                      : "Accept Task"}
+                  </button>
+                  <button
+                    className={` mt-3 bg-red-500 h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white w-full ${
+                      isAccepted || taskData.status !== 1 ? "opacity-70 " : ""
+                    }`}
+                    onClick={() => handleRejectTask()}
+                    disabled={isRejected}
+                  >
+                    <Icon
+                      icon="fluent:document-pdf-32-filled"
+                      className="h-4 w-4 mr-1"
+                    ></Icon>
+                    {taskData.status !== 1 || isRejected
+                      ? "Rejected"
+                      : "Reject Task"}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className={` mt-3 bg-primary h-8 rounded-md flex mr-auto justify-center items-center px-3 py-1 text-white ${
+                    isSubmited || taskData.status !== 2 ? "opacity-70 " : ""
+                  }`}
+                  onClick={() => setSubmitFormOpen(true)}
+                  disabled={isSubmited || taskData.status !== 2}
+                >
+                  <Icon
+                    icon="fluent:document-pdf-32-filled"
+                    className="h-4 w-4 mr-1"
+                  ></Icon>
+                  {isSubmited || taskData.status !== 2
+                    ? "Submitted"
+                    : "Sumbit Work"}
+                </button>
+              )}
             </div>
           </div>
           <div className="border-t border-border pt-4">
@@ -220,7 +301,7 @@ const Taskdetails: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="w-full lg:w-1/3 bg-popover border text-popover-foreground p-2 rounded-lg shadow-md">
+        <div className=" flex flex-col  justify-between w-full lg:w-1/3 bg-popover border text-popover-foreground p-2 rounded-lg shadow-md">
           <span className="font-medium mb-2 p-2 border-2 rounded-lg flex">
             {" "}
             <h3 className="mx-2 font-medium">Activity</h3>{" "}
