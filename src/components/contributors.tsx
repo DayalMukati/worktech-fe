@@ -93,7 +93,7 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
               <span className="flex space-x-2">
                 <p>Reputation:</p>
                 <Badge className="hover:text-white text-center bg-secondary text-primary border border-primary">
-                  {contributor.reputation}
+                  {contributor.reputation || 1001}
                 </Badge>
               </span>
             </div>
