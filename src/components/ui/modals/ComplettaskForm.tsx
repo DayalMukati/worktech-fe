@@ -71,13 +71,10 @@ const CompleteTaskForm = ({
 
       await updateTaskMutaion({
         variables: {
-          _id: taskId,
+          _id: taskId as string,
           input: {
             status: 4, // completed
           },
-        },
-        onError(error: any): never {
-          throw new Error(error);
         },
         onCompleted: async (res: any) => {
           console.log("task makred as completed", res);

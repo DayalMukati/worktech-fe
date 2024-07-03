@@ -49,7 +49,7 @@ const AcceptTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
-          handlePostSubmit(res);
+          handlePostSubmit(res as any);
         },
       });
     } catch (error) {

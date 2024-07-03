@@ -24,19 +24,22 @@ import {
 import { stat } from "fs";
 import { useMutation, useQuery } from "@apollo/client";
 import {
-  GET_SPACE_QUERY,
+  GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
   GET_ALL_TASKS_BY_SPACE_ID_QUERY,
   GET_USERS_QUERY,
   LIST_ALL_SKILLS,
-  GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
 } from "@/graphql/queries";
 import { useParams, useRouter } from "next/navigation";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
-import { string } from "zod";
+import { set, string } from "zod";
 
 import { getStatusNumber } from "@/lib/getStatusNumber";
-import BoardGrid from './ui/boardGrid';
-import ErrorDisplay from './ui/ErrorDisplay';
+
+import { selectTasks, setPrivateTasks, setTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
+import BoardGrid from "./ui/boardGrid";
+import ErrorDisplay from "./ui/ErrorDisplay";
+import useSession from "@/hooks/use-session";
 
 interface ColumnProps {
   title: string;
@@ -60,36 +63,56 @@ interface DropIndicatorProps {
   column: string;
 }
 
-const TaskBoard = ({
-  isContributer,
-  assigneeId,
-}: {
-  isContributer: boolean;
-  assigneeId: string;
-}) => {
+const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
+  const dispatch = useDispatch();
   const params = useParams<{ spaceId: string }>();
-  console.log("assigneeId->", assigneeId);
+  const { session, login, isLoading: isSessionLoading } = useSession();
+  const { loading: loadingTasksBySpace, error: errorTasksBySpace } = useQuery(
+    GET_ALL_TASKS_BY_SPACE_ID_QUERY,
+    {
+      skip: isContributer,
+      variables: { _id: params.spaceId },
+      onCompleted: (data) => {
+        dispatch(setPrivateTasks(data.getAllTasksBySpaceId as any));
+      },
+    }
+  );
+
+  //for contributer
+  const { loading: loadingTasksByAssignee, error: errorTasksByAssignee } =
+    useQuery(GET_ALL_TASKS_BY_ASSINEE_ID_QUERY, {
+      skip: !isContributer,
+      variables: { _id: session?._id as string },
+      onCompleted: (data) => {
+        dispatch(setTasks(data.getAllTasksByAssineeId as any));
+      },
+    });
+
+  if (loadingTasksBySpace || loadingTasksByAssignee) return <BoardGrid />;
+  if (errorTasksBySpace || errorTasksByAssignee)
+    return (
+      <ErrorDisplay
+        errorMessage={
+          errorTasksBySpace?.message ||
+          errorTasksByAssignee?.message ||
+          "unkonwnerror"
+        }
+      />
+    );
+
   return (
     <div className="w-full h-[90vh]">
-      <Board
-        spaceId={params.spaceId}
-        isContributer={isContributer}
-        assigneeId={assigneeId}
-      />
+      <Board isContributer={isContributer} />
     </div>
   );
 };
 
-const Board = ({
-  spaceId,
-  isContributer,
-  assigneeId,
-}: {
-  spaceId: string;
-  isContributer: boolean;
-  assigneeId: string;
-}) => {
+const Board = ({ isContributer }: { isContributer: boolean }) => {
+  const { tasks, pirvateTasks } = useSelector(selectTasks);
+  console.log("tasks state->", tasks, pirvateTasks);
+
   const [cards, setCards] = useState([]);
+
   const getColumn = (status: number) => {
     switch (status) {
       case 1:
@@ -106,42 +129,29 @@ const Board = ({
         return "todo";
     }
   };
+  useEffect(() => {
+    const taskData = tasks.map((task) => ({
+      id: task._id,
+      title: task.name,
+      description: task.description,
+      column: getColumn(task.status),
+      createdAt: Math.floor(Math.random()),
+      tags: task.skills?.map((skill: any) => skill.name),
+    }));
 
-  // console.log("spaceId->", spaceId);
-  const { loading: loadingTasksBySpace, error: errorTasksBySpace } = useQuery(GET_ALL_TASKS_BY_SPACE_ID_QUERY, {
-    variables: { _id: spaceId },
-    skip: isContributer,
-    onCompleted: (data) => {
-      const tasks = data.getAllTasksBySpaceId?.map((task: any) => ({
-        id: task._id,
-        title: task.name,
-        description: task.description,
-        column: getColumn(task.status),
-        createdAt: Math.floor(Math.random()),
-        tags: task.skills.map((skill: any) => skill.name),
-      }));
-      setCards(tasks as any);
-    },
-  });
+    const taskDataPrivate = pirvateTasks.map((task) => ({
+      id: task._id,
+      title: task.name,
+      description: task.description,
+      column: getColumn(task.status),
+      createdAt: Math.floor(Math.random()),
+      tags: task.skills?.map((skill: any) => skill.name),
+    }));
 
-  const { loading: loadingTasksByAssignee, error: errorTasksByAssignee } = useQuery(GET_ALL_TASKS_BY_ASSINEE_ID_QUERY, {
-    variables: { _id: assigneeId },
-    skip: !isContributer,
-    onCompleted: (data) => {
-      const tasks = data.getAllTasksByAssineeId?.map((task: any) => ({
-        id: task._id,
-        title: task.name,
-        description: task.description,
-        column: getColumn(task.status),
-        createdAt: Math.floor(Math.random()),
-        tags: task.skills.map((skill: any) => skill.name),
-      }));
-      setCards(tasks as any);
-    },
-  });
-
-  if (loadingTasksBySpace || loadingTasksByAssignee) return <BoardGrid />;
-   if (errorTasksBySpace || errorTasksByAssignee) return <ErrorDisplay errorMessage={errorTasksBySpace?.message || errorTasksByAssignee?.message || "unkonwnerror"}/>
+    isContributer
+      ? setCards(taskData as any)
+      : setCards(taskDataPrivate as any);
+  }, [tasks, pirvateTasks]);
 
   return (
     <div className="flex gap-3 p-12  w-full h-full overflow-scroll">
