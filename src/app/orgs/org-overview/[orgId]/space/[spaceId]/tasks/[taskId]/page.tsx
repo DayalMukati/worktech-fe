@@ -13,6 +13,7 @@ import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
 import { CrossIcon } from "lucide-react";
 import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "@/components/ui/use-toast";
 
 const Taskdetails: React.FC = () => {
   const dispatch = useDispatch();
@@ -66,6 +67,11 @@ const Taskdetails: React.FC = () => {
               handlePostSubmit={(res: any) => {
                 setopenFromReview(false);
                 dispatch(updatePrivateTasks(res.updateTask));
+                toast({
+                  variant: "default",
+                  title: "Success!",
+                  description: "Task Completed successfully",
+                });
               }}
             />
           </DialogContent>

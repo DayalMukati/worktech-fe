@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import AcceptTaskForm from "@/components/ui/modals/AcceptTaskfrom";
 import { selectTasks, updateTasks } from "@/store/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "@/components/ui/use-toast";
 
 const Taskdetails: React.FC = () => {
   const params = useParams<{ taskId: string }>();
@@ -47,16 +48,31 @@ const Taskdetails: React.FC = () => {
     setIsSubmitted(true);
     setSubmitFormOpen(false);
     dispatch(updateTasks(res.updateTask));
+    toast({
+      variant: "default",
+      title: "Success!",
+      description: "Task updated successfully",
+    });
   };
   const handleAccept = (res: any) => {
     console.log("res->", res.updateTask);
     dispatch(updateTasks(res.updateTask));
     setIsAccepted(true);
     setAcceptFormOpen(false);
+    toast({
+      variant: "default",
+      title: "Accepted!",
+      description: "Task Accepted successfully",
+    });
   };
 
   const handleRejectTask = () => {
     setIsRejected(true);
+    toast({
+      variant: "destructive",
+      title: "Rejected!",
+      description: "Task Rejected successfully",
+    });
   };
 
   return (
