@@ -3,13 +3,11 @@ import layoutSlice from './layoutSlice';
 import orgSlice from './orgSlice';
 import spacesSlice from "./spacesSlice";
 import leaderboardSlice from './leaderboardSlice';
-import taskSlice from "./taskSlice";
 const rootReducer = {
   layoutSlice,
   authSlice,
   orgSlice,
   spacesSlice,
   leaderboardSlice,
-  taskSlice,
 };
 export default rootReducer;
