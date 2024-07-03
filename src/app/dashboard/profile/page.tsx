@@ -4,18 +4,65 @@ import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { GET_USER_BY_TOKEN } from "@/graphql/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { CircleHelp, CirclePlus, Coffee } from "lucide-react";
+import { CircleHelp, CirclePlus, Coffee, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icon";
 import useSession from "@/hooks/use-session";
 import ErrorDisplay from "@/components/ui/ErrorDisplay";
 import PageGrid from "@/components/ui/pageGrid";
-
+import Addfeature from "./Addfeature";
+import AddEducation from "./Addeducation";
 import { usePathname } from "next/navigation";
 import { getInitials } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import { loadOrgs, selectOrg } from "@/store/orgSlice";
 import { LIST_ALL_ORGS_BY_USER_QUERY } from "@/graphql/queries";
+import EditEducation from "./Editeducation";
+import EditFeature from "./Editfeature";
+
+const educationData = [
+  {
+    degree: "Bachelor of Science in Computer Science",
+    startDate: "September 2015",
+    endDate: "June 2019",
+  },
+  {
+    degree: "Master of Science in Software Engineering",
+    startDate: "September 2019",
+    endDate: "June 2021",
+  },
+  {
+    degree: "PhD in Artificial Intelligence",
+    startDate: "September 2021",
+    endDate: "Present",
+  },
+];
+const cardData = [
+  {
+    companyName: "Company One NAME tech",
+    description: "A brief description of Company One and its core mission.",
+    skills: ["javascript", "blockchain", "Skill C"],
+    startDate: "Jan 2018",
+    endDate: "Dec 2020",
+    responsibilities: ["Managed team projects.", ,],
+  },
+  {
+    companyName: "Company Two",
+    description: "A brief description of Company Two and its core mission.",
+    skills: ["Skill D", "Skill E", "Skill F"],
+    startDate: "Feb 2021",
+    endDate: "Nov 2022",
+    responsibilities: ["Led product development."],
+  },
+  {
+    companyName: "Company Three",
+    description: "A brief description of Company Three and its core mission.",
+    skills: ["Skill G", "Skill H", "Skill I"],
+    startDate: "Mar 2023",
+    endDate: "Present",
+    responsibilities: ["Directed strategic projects."],
+  },
+];
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -78,13 +125,13 @@ const UserProfile = () => {
       setIsEditing(false);
     }
   };
-  // if (loading) return <PageGrid />;
+  // if (loading) return <PageGrid  />;
   // if (error) return <ErrorDisplay errorMessage={error.message}/>
   return (
     <div className="flex mt-12 mb-6 px-36">
       <div className="flex flex-col gap-4 w-1/3">
         <div className="flex flex-col justify-between items-center gap-1 h-full">
-          <div className="flex flex-col justify-center items-center gap-1 border-slate-300 bg-card shadow-lg mx-auto p-6 border rounded-md w-full max-w-md text-card-foreground">
+          <div className="flex flex-col justify-center items-center gap-1 border-slate-300 bg-card shadow-md mx-auto p-6 border rounded-md w-full max-w-md text-card-foreground">
             <div className="relative">
               <Avatar>
                 <AvatarImage
@@ -166,7 +213,7 @@ const UserProfile = () => {
                 <input
                   type="text"
                   defaultValue="https://www.linkedin.com/in/harsh"
-				    placeholder="Enter Linkedin"
+                  placeholder="Enter Linkedin"
                   className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
                 />
               </div>
@@ -179,7 +226,7 @@ const UserProfile = () => {
                 <input
                   type="text"
                   defaultValue="#"
-				  placeholder="Enter Twitter ID"
+                  placeholder="Enter Twitter ID"
                   className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
                 />
               </div>
@@ -223,6 +270,7 @@ const UserProfile = () => {
                 Edit Profile
               </Button>
             )}
+            
             <Button
               id="settings-button"
               className="bg-primary mt-1 px-4 py-1 rounded-md w-full text-primary-foreground"
@@ -231,7 +279,7 @@ const UserProfile = () => {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-6 border-slate-300 shadow-lg p-4 border rounded-md w-full h-fit text-slate-400">
+          <div className="flex flex-col gap-6 border-slate-300 shadow-md p-4 border rounded-md w-full h-fit text-slate-400">
             <div className="flex items-center gap-2 text-md">
               <h1 className="font-semibold text-slate-400 text-sm">
                 REPUTATION SCORE
@@ -256,7 +304,7 @@ const UserProfile = () => {
               </h1>
               {orgs.map(({ name, _id }) => (
                 <Link
-                  className="flex space-x-4 m-2 w-full"
+                  className="flex space-x-4 my-2 w-full"
                   href={`/orgs/org-overview/${_id}`}
                 >
                   <div className="flex gap-2 border-2  shadow-lg p-2 rounded-md w-full">
@@ -274,7 +322,7 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-1 mx-2 w-2/3">
-        <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
+        {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
           <h1 className="font-semibold text-lg text-slate-600">
             Featured work
           </h1>
@@ -283,6 +331,106 @@ const UserProfile = () => {
             <span className="mt-4 font-semibold text-slate-500 text-sm">
               Feature work to show your experience
             </span>
+          </div>
+        </div> */}
+
+        <div className="flex flex-col justify-center border-slate-300 shadow-md px-2 py-2  border rounded-md">
+          <h1 className="font-semibold text-lg text-slate-600">
+            Expierience And Skills
+          </h1>
+          <div className="flex space-x-2 overflow-hidden mt-1">
+            {cardData.map((item, index) => (
+              <div
+                key={index}
+                className="bg-card flex-col w-1/3 text-card-foreground rounded-lg border "
+              >
+                {" "}
+                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-card text-card-foreground p-4">
+                  <div className="px-1 py-1 flex justify-between">
+                    <span className=" mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
+                      {item.companyName?.length > 12
+                        ? item.companyName.substring(0, 12) + "..."
+                        : item.companyName}
+                    </span>
+                    <EditFeature />
+                  </div>
+                  <div className=" pt-2 pb-1">
+                    {item.skills.slice(0, 1).map((skill, index) => (
+                      <span
+                        key={index}
+                        className="inline-block border border-primary/60  rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                  <div className=" pt-2 text-slate-500">
+                    <h3 className="font-medium text-sm text-slate-400 ">
+                      Duration
+                    </h3>
+                    <p className="text-sm">
+                      Start Date:{" "}
+                      <span className="font-semibold">{item.startDate}</span>
+                    </p>
+                    <p className="text-sm">
+                      End Date:{" "}
+                      <span className="font-semibold">{item.endDate}</span>
+                    </p>
+                  </div>
+                  <div className=" pt-2 ">
+                    <h3 className="font-medium text-sm text-slate-400 ">
+                      Responsibilities
+                    </h3>
+                    <span className="text-sm">{item.responsibilities}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {cardData.length < 3 ? (
+              <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3 h-full text-center">
+                <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer" />
+                <span className="mt-4 font-semibold text-slate-500 text-sm">
+                  Feature work to show your experience
+                </span>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <div className="flex flex-col border-slate-300 shadow-md p-4 border rounded-md max-h-[280px] min-h-[100px]">
+          <span className="font-semibold justify-between flex text-lg text-slate-600">
+            Education <AddEducation />
+          </span>
+
+          <div className="space-y-2 max-h-[250px] min-h-[100px] overflow-x-auto scrollbar-hide">
+            <div className="flex space-x-2 min-w-max">
+              {educationData.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-card flex-col text-card-foreground p-2 rounded-lg border min-w-[200px]"
+                >
+                  <div className="flex justify-between space-x-4 items-center mb-4">
+                    <div>
+                      <p className="text-md font-semibold text-slate-700">
+                        {item.degree?.length > 25
+                          ? item.degree.substring(0, 25) + "..."
+                          : item.degree}
+                      </p>
+                    </div>
+                    <EditEducation />
+                  </div>
+                  <div className="space-y-2 text-slate-500">
+                    <div>
+                      <h3 className="text-sm">Start Date:</h3>
+                      <p className="text-sm">{item.startDate}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-sm">End Date:</h3>
+                      <p className="text-sm">{item.endDate}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="flex flex-col border-slate-300 bg-white shadow-lg p-2 border rounded-md">

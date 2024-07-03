@@ -7,10 +7,14 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Select from "react-select";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, Pencil } from "lucide-react";
 
-const addFeatureSchema = z.object({
+const EditFeatureSchema = z.object({
+  type: z.string().min(1, "Type is required"),
+  title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
+  expedite: z.boolean().optional(),
+  deposit: z.number().min(1, "Deposit is required"),
   company: z.string().min(1, "Company is required"),
   position: z.string().min(1, "Position is required"),
   startDate: z.string().refine((date) => {
@@ -25,7 +29,7 @@ const addFeatureSchema = z.object({
   skills: z.array(z.string()).min(1, "Skills are required"),
 });
 
-type FormValues = z.infer<typeof addFeatureSchema>;
+type FormValues = z.infer<typeof EditFeatureSchema>;
 
 const skillsOptions = [
   { value: "MERN", label: "MERN" },
@@ -33,7 +37,7 @@ const skillsOptions = [
   { value: "Blockchain", label: "Blockchain" },
 ];
 
-const AddFeature = () => {
+const EditFeature = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
@@ -42,7 +46,7 @@ const AddFeature = () => {
     clearErrors,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(addFeatureSchema),
+    resolver: zodResolver(EditFeatureSchema),
     mode: "all",
   });
 
@@ -62,16 +66,16 @@ const AddFeature = () => {
     <div>
       <button
         onClick={toggleModal}
-        aria-label="Add Experience"
-        title="Add Experience"
+        aria-label="Edit Experience"
+        title="Edit Experience"
       >
-        <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer" />
+        <Pencil className="w-4 h-4 text-slate-400 cursor-pointer" />
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
           <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[600px]">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="text-xl font-bold">Add Experience</h1>
+              <h1 className="text-xl font-bold">Edit Experience</h1>
               <button
                 className="text-slate-400 hover:text-slate-800 text-2xl"
                 onClick={toggleModal}
@@ -272,4 +276,4 @@ const AddFeature = () => {
   );
 };
 
-export default AddFeature;
+export default EditFeature;

@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 
-const addFeatureSchema = z.object({
+const EditFeatureSchema = z.object({
   degree: z.string().min(1, "Degree is required"),
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
@@ -19,9 +19,9 @@ const addFeatureSchema = z.object({
   }, "End Date must be in the future"),
 });
 
-type FormValues = z.infer<typeof addFeatureSchema>;
+type FormValues = z.infer<typeof EditFeatureSchema>;
 
-const AddEducation = () => {
+const EditEducation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
@@ -29,7 +29,7 @@ const AddEducation = () => {
     clearErrors,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(addFeatureSchema),
+    resolver: zodResolver(EditFeatureSchema),
     mode: "all",
   });
 
@@ -49,16 +49,16 @@ const AddEducation = () => {
     <div>
       <button
         onClick={toggleModal}
-        aria-label="Add Education"
-        title="Add Education"
+        aria-label="Edit Education"
+        title="Edit Education"
       >
-        <Plus className="w-6 h-6 text-slate-900 cursor-pointer" />
+        <Pencil className="w-4 h-4 text-slate-400 cursor-pointer" />
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
           <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[400px]">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="text-xl font-bold">Add Education</h1>
+              <h1 className="text-xl font-bold">Edit Education</h1>
               <button
                 className="text-slate-400 hover:text-slate-800 text-2xl"
                 onClick={toggleModal}
@@ -148,4 +148,4 @@ const AddEducation = () => {
   );
 };
 
-export default AddEducation;
+export default EditEducation;
