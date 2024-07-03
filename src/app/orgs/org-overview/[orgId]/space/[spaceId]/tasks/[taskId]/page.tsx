@@ -2,80 +2,54 @@
 import React, { useEffect, useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { useParams } from 'next/navigation';
-import { GET_TASK_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogTitle
-} from '@radix-ui/react-dialog';
-import CompleteTaskForm from '@/components/ui/modals/ComplettaskForm';
-import { CrossIcon } from 'lucide-react';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
+import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
+import { CrossIcon } from "lucide-react";
+import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Taskdetails: React.FC = () => {
-  const params = useParams();
+  const dispatch = useDispatch();
+  const params = useParams<{ taskId: string }>();
 
-	const [taskData, setTaskData] = useState({
-		name: 'No task name',
-		description: 'No task description',
-		skills: [] as { _id: string; title: string }[],
-		docUrl: 'No task docUrl',
-		assignee: 'Pawan Kumar',
-		reviewer: 'Rahul',
-		acceptanceCriteria: 'No task acceptance criteria',
-		status: 1,
-		taskId: 0
-	});
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
-	const [showAllActivity, setShowAllActivity] =useState<boolean>(false);
-	const [openFromReview, setopenFromReview] =useState<boolean>(false);
-
-	const {
-    loading: loadingTask,
-    error: errorTask,
-    data: dataTask,
-  } = useQuery(GET_TASK_QUERY, {
-    variables: { _id: params.taskId as string },
-    onCompleted: () => {
-      setLoading(false);
-    },
+  const [taskData, setTaskData] = useState({
+    name: "No task name",
+    description: "No task description",
+    skills: [] as { _id: string; title: string }[],
+    docUrl: "No task docUrl",
+    assignee: "Pawan Kumar",
+    reviewer: "Rahul",
+    acceptanceCriteria: "No task acceptance criteria",
+    status: 1,
+    taskId: 0,
   });
 
-	useEffect(() => {
-		console.log('data->', dataTask?.getTask);
-		setTaskData(dataTask?.getTask as any);
-	}, [loadingTask, errorTask, dataTask]);
+  const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
+  const [openFromReview, setopenFromReview] = useState<boolean>(false);
 
-	const toggleShowAll = () => {
-		setShowAllActivity(prev => !prev);
-	};
+  const { pirvateTasks } = useSelector(selectTasks);
+  console.log("pirvateTasks->", pirvateTasks);
 
-	if (loading) {
-		return (
-			<div className='flex justify-center items-center w-full h-screen'>
-				Loading...
-			</div>
-		);
-	}
+  useEffect(() => {
+    setTaskData(pirvateTasks.find((task) => task._id === params.taskId) as any);
+  }, []);
 
-	if (error) {
-		return <div>{error}</div>;
-	}
-
-	if (!taskData) {
-		return null;
-	}
-
-	const handleSubmit = () => {
-    setopenFromReview(false);
+  const toggleShowAll = () => {
+    setShowAllActivity((prev) => !prev);
   };
 
+  if (!taskData) {
+    return null;
+  }
+
   const handleReject = () => {
-   console.log("rejected");
-   
+    console.log("rejected");
   };
 
   return (
@@ -99,7 +73,10 @@ const Taskdetails: React.FC = () => {
               taskId={params.taskId as string}
               docUrl={taskData.docUrl}
               taskOnchainID={taskData.taskId}
-              handlePostSubmit={() => handleSubmit()}
+              handlePostSubmit={(res: any) => {
+                setopenFromReview(false);
+                dispatch(updatePrivateTasks(res.updateTask));
+              }}
             />
           </DialogContent>
         </Dialog>

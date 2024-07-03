@@ -72,6 +72,7 @@ export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
       description
       priority
       amount
+      docUrl
       activities {
         userId
         activity
@@ -370,4 +371,4 @@ export const GET_LEADERBOARD_DATA = gql(`
       amountEarned
     }
   }
-}`)
+}`);

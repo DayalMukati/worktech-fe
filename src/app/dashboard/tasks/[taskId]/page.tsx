@@ -1,25 +1,25 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import Icon from '@/components/ui/icon';
-import { useParams } from 'next/navigation';
-import { GET_TASK_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
-import SubmitTaskForm from '@/components/ui/modals/SubmittaskForm';
+import React, { use, useEffect, useState } from "react";
+import Icon from "@/components/ui/icon";
+import { useParams, useRouter } from "next/navigation";
+import SubmitTaskForm from "@/components/ui/modals/SubmittaskForm";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogTitle
-} from '@radix-ui/react-dialog';
-import { CrossIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import AcceptTaskForm from '@/components/ui/modals/AcceptTaskfrom';
-import { space } from 'postcss/lib/list';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
+import { CrossIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import AcceptTaskForm from "@/components/ui/modals/AcceptTaskfrom";
+import { selectTasks, updateTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Taskdetails: React.FC = () => {
-	const params = useParams<{ taskId: string }>();
+  const params = useParams<{ taskId: string }>();
+  const dispatch = useDispatch();
 
-	const [taskData, setTaskData] = useState({
+  const [taskData, setTaskData] = useState({
     name: "No task name",
     description: "No task description",
     skills: [] as { _id: string; title: string }[],
@@ -30,49 +30,23 @@ const Taskdetails: React.FC = () => {
     status: 0,
     taskId: 0,
   });
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
   const [submitFormOpen, setSubmitFormOpen] = useState<boolean>(false);
   const [accpetFormOpen, setAcceptFormOpen] = useState<boolean>(false);
   const [isRejected, setIsRejected] = useState(false);
 
-  const {
-    loading: loadingTask,
-    error: errorTask,
-    data: dataTask,
-  } = useQuery(GET_TASK_QUERY, {
-    variables: { _id: params.taskId },
-    onCompleted: () => {
-      setLoading(false);
-    },
-  });
+  const { tasks } = useSelector(selectTasks);
+  useEffect(() => {
+    setTaskData(tasks.find((task) => task._id === params.taskId) as any);
+  }, []);
+
   const [isSubmited, setIsSubmitted] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
-
-  useEffect(() => {
-    console.log("data->", dataTask?.getTask);
-    setTaskData(dataTask?.getTask as any);
-    if (dataTask?.getTask?.status === 3) {
-      setIsSubmitted(true);
-    }
-  }, [loadingTask, errorTask, dataTask, isAccepted, isSubmited]);
 
   const toggleShowAll = () => {
     setShowAllActivity((prev) => !prev);
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center w-full h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   if (!taskData) {
     return null;
@@ -82,7 +56,9 @@ const Taskdetails: React.FC = () => {
     setIsSubmitted(true);
     setSubmitFormOpen(false);
   };
-  const handleAccept = () => {
+  const handleAccept = (res: any) => {
+    console.log("res->", res.updateTask);
+    dispatch(updateTasks(res.updateTask));
     setIsAccepted(true);
     setAcceptFormOpen(false);
   };
@@ -110,8 +86,8 @@ const Taskdetails: React.FC = () => {
 
             <AcceptTaskForm
               taskId={params.taskId}
-              handlePostSubmit={() => {
-                handleAccept();
+              handlePostSubmit={(res: any) => {
+                handleAccept(res);
               }}
             />
           </DialogContent>
