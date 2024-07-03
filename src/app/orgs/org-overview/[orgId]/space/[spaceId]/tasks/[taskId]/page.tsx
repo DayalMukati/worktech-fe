@@ -18,17 +18,7 @@ const Taskdetails: React.FC = () => {
   const dispatch = useDispatch();
   const params = useParams<{ taskId: string }>();
 
-  const [taskData, setTaskData] = useState({
-    name: "No task name",
-    description: "No task description",
-    skills: [] as { _id: string; title: string }[],
-    docUrl: "No task docUrl",
-    assignee: "Pawan Kumar",
-    reviewer: "Rahul",
-    acceptanceCriteria: "No task acceptance criteria",
-    status: 1,
-    taskId: 0,
-  });
+  const [taskData, setTaskData] = useState<any>();
 
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
   const [openFromReview, setopenFromReview] = useState<boolean>(false);
@@ -38,7 +28,7 @@ const Taskdetails: React.FC = () => {
 
   useEffect(() => {
     setTaskData(pirvateTasks.find((task) => task._id === params.taskId) as any);
-  }, []);
+  }, [pirvateTasks]);
 
   const toggleShowAll = () => {
     setShowAllActivity((prev) => !prev);
@@ -99,12 +89,12 @@ const Taskdetails: React.FC = () => {
               ></Icon>
               Open to Submissions
             </button>
-            <button className="flex justify-center items-center gap-1 bg-primary px-3 py-1 rounded-md text-sm text-white">
+            <button className="flex justify-center items-center gap-1 bg-green-600 px-3 py-1 rounded-md text-sm text-white">
               <Icon
                 icon="mdi:crown-outline"
                 className="w-4 h-5 text-white"
               ></Icon>
-              10
+              Ammount {taskData.amount}
             </button>
             <button className="flex justify-center items-center border-primary px-3 py-1 border rounded-md text-accent-foreground text-sm">
               <Icon
@@ -139,7 +129,7 @@ const Taskdetails: React.FC = () => {
               <div className="flex items-center space-x-14 text-muted-foreground">
                 <div className="text-sm">Skills</div>
                 <div className="flex gap-2">
-                  {taskData.skills.map((skill) => (
+                  {taskData.skills.map((skill: any) => (
                     <span
                       key={skill._id}
                       className="flex bg-primary px-3 py-1 rounded text-muted-foreground text-sm text-white"

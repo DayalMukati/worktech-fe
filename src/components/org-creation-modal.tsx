@@ -22,7 +22,7 @@ import { Building2 } from 'lucide-react';
 import { createOrg } from '@/store/orgSlice';
 import { useMutation } from '@apollo/client';
 import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
-import { Orgs } from '@/graphql/__generated__/graphql';
+
 import { gql } from '@/graphql/__generated__';
 
 // Define the schema using Zod
@@ -57,7 +57,7 @@ function OrgCreationModal() {
 				}
 			},
 			onCompleted: data => {
-				dispatch(createOrg(data.createOrg as Orgs));
+				dispatch(createOrg(data.createOrg as any));
 			}
 		});
 		dispatch(setOrgCreationModal(false));

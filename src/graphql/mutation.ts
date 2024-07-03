@@ -71,6 +71,7 @@ export const UPDATE_TASK_MUTATION = gql(`
       _id
       name
       description
+      taskId
       priority
       amount
       activities {

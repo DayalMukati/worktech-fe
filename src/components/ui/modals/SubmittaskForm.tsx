@@ -80,7 +80,6 @@ const SubmitTaskForm = ({
 				},
 				onCompleted: async (res: any) => {
 					handlePostSubmit(res);
-
 					// blockchain code
 				}
 			});

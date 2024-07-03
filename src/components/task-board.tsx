@@ -70,6 +70,7 @@ const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
   const { loading: loadingTasksBySpace, error: errorTasksBySpace } = useQuery(
     GET_ALL_TASKS_BY_SPACE_ID_QUERY,
     {
+      fetchPolicy: "no-cache",
       skip: isContributer,
       variables: { _id: params.spaceId },
       onCompleted: (data) => {
@@ -81,6 +82,7 @@ const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
   //for contributer
   const { loading: loadingTasksByAssignee, error: errorTasksByAssignee } =
     useQuery(GET_ALL_TASKS_BY_ASSINEE_ID_QUERY, {
+      fetchPolicy: "no-cache",
       skip: !isContributer,
       variables: { _id: session?._id as string },
       onCompleted: (data) => {

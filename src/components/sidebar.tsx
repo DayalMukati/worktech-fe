@@ -21,126 +21,120 @@ import { setOrgCreationModal } from '@/store/layoutSlice';
 import OrgCreationModal from './org-creation-modal';
 import { loadOrgs, selectOrg } from '@/store/orgSlice';
 import { Avatar, AvatarFallback } from '@radix-ui/react-avatar';
-import { AvatarImage } from './ui/avatar';
-import { useMutation, useQuery } from '@apollo/client';
-import { LIST_ALL_ORGS_BY_USER_QUERY } from '@/graphql/queries';
-import { Orgs } from '@/graphql/__generated__/graphql';
-import { CREATE_ORG_MUTATION } from '@/graphql/mutation';
-import { Separator } from '@/components/ui/separator';
 
-import useSession from '@/hooks/use-session';
+import { LIST_ALL_ORGS_BY_USER_QUERY } from "@/graphql/queries";
+
+import { Separator } from "@/components/ui/separator";
+
+import useSession from "@/hooks/use-session";
+import { useQuery } from "@apollo/client";
 
 const Sidebar = () => {
-	const { session } = useSession();
-	const pathname = usePathname();
-	let orgUriId = '';
+  const { session } = useSession();
+  const pathname = usePathname();
+  let orgUriId = "";
 
-	if (
-		pathname.startsWith('/orgs/') &&
-		pathname.split('/').length > 2
-	) {
-		const segments = pathname.split('/');
-		orgUriId = segments[segments.length - 1];
-	}
+  if (pathname.startsWith("/orgs/") && pathname.split("/").length > 2) {
+    const segments = pathname.split("/");
+    orgUriId = segments[segments.length - 1];
+  }
 
-	const dispatch = useAppDispatch();
-	const currentURI = usePathname();
+  const dispatch = useAppDispatch();
+  const currentURI = usePathname();
 
-	const { orgs } = useAppSelector(selectOrg);
+  const { orgs } = useAppSelector(selectOrg);
 
-	const { loading: isLoadingOrgs } = useQuery(
-		LIST_ALL_ORGS_BY_USER_QUERY,
+  const { loading: isLoadingOrgs } = useQuery(
+    LIST_ALL_ORGS_BY_USER_QUERY,
 
-		{
-			fetchPolicy: 'cache-and-network',
-			onCompleted: data => {
-				console.log({ listOrgs: data.listAllOrgsByUser });
-				dispatch(loadOrgs(data.listAllOrgsByUser as Orgs[]));
-			}
-		}
-	);
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) => {
+        console.log({ listOrgs: data.listAllOrgsByUser });
+        dispatch(loadOrgs(data.listAllOrgsByUser as any));
+      },
+    }
+  );
 
-	const Icons: { [key: string]: JSX.Element } = {
-		Home: <Home className='w-5 h-5' />,
-		FolderKanban: <FolderKanban className='w-5 h-5' />
-	};
-	const menuItems = [
-		{
-			href: '/dashboard',
-			icon: 'Home',
-			label: 'Dashboard'
-		}
-	];
+  const Icons: { [key: string]: JSX.Element } = {
+    Home: <Home className="w-5 h-5" />,
+    FolderKanban: <FolderKanban className="w-5 h-5" />,
+  };
+  const menuItems = [
+    {
+      href: "/dashboard",
+      icon: "Home",
+      label: "Dashboard",
+    },
+  ];
 
-	return session.authToken ? (
-		<>
-			<aside className='left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20'>
-				<nav className='flex flex-col items-center gap-4 px-2 sm:py-5'>
-					{menuItems.map(({ href, icon, label }) => (
-						<Tooltip key={href}>
-							<TooltipTrigger asChild>
-								<Link
-									href={href}
-									className={cn(
-										'flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors',
-										'text-accent-foreground bg-accent',
-										checkPathMatch(currentURI, href)
-											? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
-											: 'text-muted-foreground rounded-full'
-									)}>
-									{Icons[icon]}
-									<span className='sr-only'>{label}</span>
-								</Link>
-							</TooltipTrigger>
-							<TooltipContent side='right'>{label}</TooltipContent>
-						</Tooltip>
-					))}
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<Button
-								onClick={() => dispatch(setOrgCreationModal(true))}
-								variant='outline'
-								size={'icon'}>
-								<Plus className='w-5 h-5' />
-								<span className='sr-only'>{'Create Org'}</span>
-							</Button>
-						</TooltipTrigger>
-						<TooltipContent side='right'>
-							{'Create Org'}
-						</TooltipContent>
-					</Tooltip>
-					<Separator />
-					{orgs.map(({ name, _id }) => (
-						<Tooltip key={name}>
-							<TooltipTrigger asChild>
-								<Button
-									asChild
-									variant='outline'
-									size={'icon'}
-									className={`bg-primary/20 ${
-										checkPathMatch(
-											currentURI,
-											`/orgs/org-overview/${_id}`
-										)
-											? 'text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary'
-											: 'text-muted-foreground'
-									}`}>
-									<Link href={`/orgs/org-overview/${_id}`}>
-										<Avatar className='font-bold text-lg cursor-pointer'>
-											{name.slice(0, 2).toUpperCase()}
-										</Avatar>
-										<span className='sr-only'>{name}</span>
-									</Link>
-								</Button>
-							</TooltipTrigger>
-							<TooltipContent side='right'>{name}</TooltipContent>
-						</Tooltip>
-					))}
-				</nav>
-			</aside>
-			<OrgCreationModal />
-		</>
-	) : null;
+  return session.authToken ? (
+    <>
+      <aside className="left-0 z-10 fixed inset-y-0 sm:flex flex-col hidden bg-background border-r w-20">
+        <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          {menuItems.map(({ href, icon, label }) => (
+            <Tooltip key={href}>
+              <TooltipTrigger asChild>
+                <Link
+                  href={href}
+                  className={cn(
+                    "flex justify-center items-center  rounded-lg w-10 h-10 hover:text-foreground transition-colors",
+                    "text-accent-foreground bg-accent",
+                    checkPathMatch(currentURI, href)
+                      ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                      : "text-muted-foreground rounded-full"
+                  )}
+                >
+                  {Icons[icon]}
+                  <span className="sr-only">{label}</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">{label}</TooltipContent>
+            </Tooltip>
+          ))}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => dispatch(setOrgCreationModal(true))}
+                variant="outline"
+                size={"icon"}
+              >
+                <Plus className="w-5 h-5" />
+                <span className="sr-only">{"Create Org"}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">{"Create Org"}</TooltipContent>
+          </Tooltip>
+          <Separator />
+          {orgs.map(({ name, _id }) => (
+            <Tooltip key={name}>
+              <TooltipTrigger asChild>
+                <Button
+                  asChild
+                  variant="outline"
+                  size={"icon"}
+                  className={`bg-primary/20 ${
+                    checkPathMatch(currentURI, `/orgs/org-overview/${_id}`)
+                      ? "text-primary-foreground bg-primary hover:text-primary-foreground hover:bg-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <Link href={`/orgs/org-overview/${_id}`}>
+                    <Avatar className="font-bold text-lg cursor-pointer">
+                      {name.slice(0, 2).toUpperCase()}
+                    </Avatar>
+                    <span className="sr-only">{name}</span>
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">{name}</TooltipContent>
+            </Tooltip>
+          ))}
+        </nav>
+      </aside>
+      <OrgCreationModal />
+    </>
+  ) : null;
 };
 
 export default Sidebar;

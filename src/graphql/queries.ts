@@ -73,6 +73,7 @@ export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
       priority
       amount
       docUrl
+      taskId
       activities {
         userId
         activity
@@ -330,6 +331,7 @@ export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
     description
     priority
     amount
+    taskId
     activities{
         userId
         activity
