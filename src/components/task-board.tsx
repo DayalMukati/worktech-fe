@@ -37,6 +37,7 @@ import { string } from 'zod';
 import { getStatusNumber } from '@/lib/getStatusNumber';
 import BoardGrid from './ui/boardGrid';
 import ErrorDisplay from './ui/ErrorDisplay';
+import { GetAllTasksByAssineeIdQuery } from '@/graphql/__generated__/graphql';
 
 interface ColumnProps {
 	title: string;

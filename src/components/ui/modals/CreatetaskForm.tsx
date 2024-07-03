@@ -162,21 +162,19 @@ const CreateTaskForm = ({
 		setIsAcceptanceCriteriaGenerating
 	] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const { connectToMetaMask, createTask, active } = useWeb3();
-  const Assignee = users?.map((user: any) => ({
-    value: [user._id, user.walletAddress],
-    label: user.email,
-    icon: <Users className="w-4 h-4" />,
-  }));
+	const [isLoading, setIsLoading] = useState(false);
+	const { connectToMetaMask, createTask, active, convertHbarToTinybars } = useWeb3();
+	const Assignee = users?.map((user: any) => ({
+		value: [user._id, user.walletAddress],
+		label: user.email,
+		icon: <Users className='w-4 h-4' />
+	}));
   const Reviewers = users?.map((user: any) => ({
-    value: [user._id, user.walletAddress],
-    label: user.email,
-    icon: <Users className="w-4 h-4" />,
-    
-  }));
-
-  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+		value: [user._id, user.walletAddress],
+		label: user.email,
+		icon: <Users className='w-4 h-4' />
+	}));
+	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
 
 	// const { connectToMetaMask, createTask, active } = useWeb3();
 	// const Assignee = users?.map((user: any) => ({
@@ -265,8 +263,18 @@ const CreateTaskForm = ({
       if (!active) {
         await connectToMetaMask();
       }
-      const priceInWei = Web3.utils.toWei(data.price, "ether");
-      let txn = await createTask([data.taskName, priceInWei, data.assignee[1]]);
+      const priceInTinyHbar = await convertHbarToTinybars(data.price);
+      // const priceInWei = Web3.utils.toWei(data.price, "ether");
+		  // const weiAmount = Math.floor(Number(data.price) * hbarToWeiFactor);
+
+
+	  console.log('priceInWei++++', priceInTinyHbar)
+      let txn = await createTask([
+        data.taskName,
+        priceInTinyHbar,
+        data.assignee[1],
+		    data.reviewer[1],
+      ]);
       let taskId = Number(txn.events.TaskCreated.returnValues[0]);
       await createTaskMutaion({
         variables: {
