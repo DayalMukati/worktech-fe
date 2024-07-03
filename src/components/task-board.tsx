@@ -268,54 +268,54 @@ const Column = ({
 		cardId: string;
 		status: string;
 	}) => {
-		console.log('task status->', status);
-		try {
-			await updateTaskMutaion({
-				variables: {
-					_id: cardId,
-					input: {
-						status: getStatusNumber(status)
-					}
-				},
-				update(cache, { data }) {
-					// Type guard to ensure 'updateTask' exists in the data
-					if (data && 'updateTask' in data) {
-						const updateTask = data.updateTask;
-						const existingTasksData = cache.readQuery({
-							query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
-							variables: { _id: 'assineeIdHere' } // Use the actual assignee ID
-						});
+    console.log("task status->", status);
+    // try {
+    // 	await updateTaskMutaion({
+    // 		variables: {
+    // 			_id: cardId,
+    // 			input: {
+    // 				status: getStatusNumber(status)
+    // 			}
+    // 		},
+    // 		update(cache, { data }) {
+    // 			// Type guard to ensure 'updateTask' exists in the data
+    // 			if (data && 'updateTask' in data) {
+    // 				const updateTask = data.updateTask;
+    // 				const existingTasksData = cache.readQuery({
+    // 					query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
+    // 					variables: { _id: 'assineeIdHere' } // Use the actual assignee ID
+    // 				});
 
-						if (existingTasksData) {
-							// Here you would find the task in the existingTasksData.getAllTasksByAssineeId array and update it
-							// This is a simple example that assumes you're replacing the entire list for demonstration purposes
-							const updatedTasks =
-								existingTasksData.getAllTasksByAssineeId.map(task =>
-									task._id === updateTask._id
-										? { ...task, ...updateTask }
-										: task
-								);
+    // 				if (existingTasksData) {
+    // 					// Here you would find the task in the existingTasksData.getAllTasksByAssineeId array and update it
+    // 					// This is a simple example that assumes you're replacing the entire list for demonstration purposes
+    // 					const updatedTasks =
+    // 						existingTasksData.getAllTasksByAssineeId.map(task =>
+    // 							task._id === updateTask._id
+    // 								? { ...task, ...updateTask }
+    // 								: task
+    // 						);
 
-							// Write the updated data back into the cache
-							cache.writeQuery({
-								query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
-								variables: { _id: 'assineeIdHere' }, // Use the actual assignee ID
-								data: {
-									getAllTasksByAssineeId:
-										updatedTasks as unknown as GetAllTasksByAssineeIdQuery['getAllTasksByAssineeId']
-								}
-							});
-						}
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				}
-			});
-		} catch (error) {
-			console.log('error->', error);
-		}
-	};
+    // 					// Write the updated data back into the cache
+    // 					cache.writeQuery({
+    // 						query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
+    // 						variables: { _id: 'assineeIdHere' }, // Use the actual assignee ID
+    // 						data: {
+    // 							getAllTasksByAssineeId:
+    // 								updatedTasks as unknown as GetAllTasksByAssineeIdQuery['getAllTasksByAssineeId']
+    // 						}
+    // 					});
+    // 				}
+    // 			}
+    // 		},
+    // 		onError(error: any): never {
+    // 			throw new Error(error);
+    // 		}
+    // 	});
+    // } catch (error) {
+    // 	console.log('error->', error);
+    // }
+  };
 
 	const highlightIndicator = (e: React.DragEvent<HTMLDivElement>) => {
 		const indicators = getIndicators();
