@@ -285,6 +285,7 @@ export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
       description
       userID{
           _id
+          email
       }
       taskID{
           _id
@@ -358,12 +359,14 @@ export const GET_LEADERBOARD_DATA = gql(`
     query GetLeaderboard {
   getLeaderboard {
     contributionData {
-      taskCount
-      taskPoints
-      amountEarned
+       username
+       taskCount
+       taskPoints
+       amountEarned
     }
     reviewData {
-      taskCount
+       username
+       taskCount
       taskPoints
       amountEarned
     }

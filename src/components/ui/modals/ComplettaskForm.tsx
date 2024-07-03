@@ -42,32 +42,29 @@ const CompleteTaskForm = ({
   const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, account } = useSmartContract();
-  const { connectToMetaMask, completeTask, active, getTaskData } = useWeb3();
+  const { connectToMetaMask, completeTask, active, convertHbarToTinybars } = useWeb3();
 
   const onSubmitFrom = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
+      console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
 
       
-      // if (!active) {
-      //   await connectToMetaMask();
-      // }
+      if (!active) {
+        await connectToMetaMask();
+      }
 
       // let taskData = await getTaskData([taskOnchainID]);
       // const rewardAmount = Web3.utils.toWei(taskData.reward.toString(), 'ether')
-      // // const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
+      // const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
 
       // console.log('taskData++++', {rewardAmount}, taskData.reward);
-      // let txn = await completeTask([
-      //   taskOnchainID, taskData.reward
-      // ]);
-      // console.log('txn++++++', txn);
-      // setLoading(false);
-
-      // return;
-
+      let txn = await completeTask([
+        taskOnchainID
+      ]);
+      console.log('txn++++++', txn);
+      setLoading(false);
 
       await updateTaskMutaion({
         variables: {

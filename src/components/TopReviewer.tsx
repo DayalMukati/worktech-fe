@@ -19,11 +19,12 @@ import { useAppDispatch } from "@/hooks/toolKitTyped";
 import { setLeaderboards } from "@/store/leaderboardSlice";
 import SkeletionTable from '@/components/ui/SkeletionTable'
 import ErrorDisplay from "./ui/ErrorDisplay";
+
 interface Reviewer {
-  name: string;
+  username: string;
   taskCount: number;
   taskPoints: number;
-  amountEarned: string;
+  amountEarned: string | number; // Adjusted to accept both strings and numbers
 }
 
 interface LeaderboardData {
@@ -56,8 +57,7 @@ const COLUMNS = [
 const TopReviewer: React.FC<{}> = () => {
   const dispatch = useAppDispatch();
 
-  const { data, loading, error } =
-    useQuery<LeaderboardData>(GET_LEADERBOARD_DATA);
+  const { data, loading, error } = useQuery<LeaderboardData>(GET_LEADERBOARD_DATA);
 
   useEffect(() => {
     if (loading) return;
@@ -67,46 +67,44 @@ const TopReviewer: React.FC<{}> = () => {
         leaderboards: data?.getLeaderboard,
       })
     );
-  }, [loading, error, data]);
+  }, [loading, error, data, dispatch]);
 
   if (loading) return <SkeletionTable items={undefined} count={1}/>;
-	if (error) return <ErrorDisplay errorMessage={error.message}/>
+  if (error) return <ErrorDisplay errorMessage={error.message}/>;
+
   const allReviewer = data?.getLeaderboard.reviewData ?? [];
 
   return (
-    <>
-      <div className="p-6 w-full">
-        <div className="flex justify-center items-center gap-6 px-3 py-2">
-          <p>Top Reviewer</p>
-          <Badge className="flex justify-center items-center bg-primary border rounded-lg w-24 h-8 text-center text-primary-foreground shrink-0">
-            All time
-          </Badge>
-          <SearchBar />
-        </div>
-        <Card x-chunk="dashboard-06-chunk-0" className="mt-4">
-          <div
-            className="table-container"
-            style={{ maxHeight: "600px", overflowY: "auto" }}
-          >
-            <Table className="bg-secondary shadow-lg border rounded-lg w-full overflow-hidden">
-              <TableHeader className="bg-secondary border">
-                <TableRow>
-                  <TableHead className="hidden sm:table-cell">Rank</TableHead>
-                  <TableHead>Username</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Task Reviewed
+    <div className="p-6 w-full">
+      <div className="flex justify-center items-center gap-6 px-3 py-2">
+        <p className="text-md">Top Reviewer</p>
+        <Badge className="flex justify-center items-center bg-primary border rounded-lg w-24 h-8 text-center text-primary-foreground shrink-0">
+          All time
+        </Badge>
+        <SearchBar />
+      </div>
+      <Card x-chunk="dashboard-06-chunk-0" className="mt-4">
+        <div
+          className="table-container"
+          style={{ maxHeight: "600px", overflowY: "auto" }}
+        >
+          <Table className="bg-secondary shadow-lg border rounded-lg w-full overflow-hidden">
+            <TableHeader className="bg-secondary border">
+              <TableRow>
+                {COLUMNS.map((column) => (
+                  <TableHead key={column.accessor} className={column.Header === 'UserName' ? '' : 'hidden md:table-cell'}>
+                    {column.Header}
                   </TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Task Points
-                  </TableHead>
-                  <TableHead className="hidden md:table-cell">Earned</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allReviewer.map((reviewer, index) => (
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allReviewer.map((reviewer, index) => {
+                 const amountEarned = String(reviewer.amountEarned).substring(0,5);
+                return (
                   <TableRow
                     key={index}
-                    className={index % 2 === 0 ? "bg-white" : "bg-white"}
+                    className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                   >
                     <TableCell className="hidden sm:table-cell">
                       {index + 1}
@@ -119,7 +117,7 @@ const TopReviewer: React.FC<{}> = () => {
                         src="/av-7.png"
                         width="36"
                       />
-                      {reviewer.name}
+                      {reviewer.username}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {reviewer.taskCount}
@@ -128,30 +126,30 @@ const TopReviewer: React.FC<{}> = () => {
                       {reviewer.taskPoints}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {reviewer.amountEarned}
+                      {amountEarned}
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+        <CardFooter>
+          <div className="text-muted-foreground text-xs mt-2">
+            Showing{" "}
+            <strong>
+              {" "}
+              {allReviewer.length < 10 ? (
+                <strong>{allReviewer.length}</strong>
+              ) : (
+                <strong>1-10</strong>
+              )}
+            </strong>{" "}
+            of <strong>{allReviewer.length}</strong> Reviewers
           </div>
-          <CardFooter>
-            <div className="text-muted-foreground text-xs mt-2">
-              Showing{" "}
-              <strong>
-                {" "}
-                {allReviewer.length < 10 ? (
-                  <strong>{allReviewer.length}</strong>
-                ) : (
-                  <strong>1-10</strong>
-                )}
-              </strong>{" "}
-              of <strong>{allReviewer.length}</strong> Reviewers
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
-    </>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 

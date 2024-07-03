@@ -66,7 +66,7 @@ const SubmitTaskForm = ({
 
 			let txn = await submitTask([taskOnchainID]);
 			console.log('Txn>>>>>::', txn);
-
+			
 			await submitTaskMutaion({
 				variables: {
 					_id: taskId,

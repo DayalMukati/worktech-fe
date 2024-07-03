@@ -12,11 +12,12 @@ import { useAppDispatch } from "@/hooks/toolKitTyped";
 import { setLeaderboards } from "@/store/leaderboardSlice";
 import SkeletionTable from '@/components/ui/SkeletionTable'
 import ErrorDisplay from './ui/ErrorDisplay';
+
 interface Contributor {
-  name: string;
+  username: string;
   taskCount: number;
   taskPoints: number;
-  amountEarned: string;
+  amountEarned: string | number;  // Adjusted to accept both strings and numbers
 }
 
 interface LeaderboardData {
@@ -62,10 +63,11 @@ const TopContributor: React.FC<{}> = () => {
   }, [loading, error, data]);
 
   if (loading) return <SkeletionTable items={undefined} count={1}/>;
-	if (error) return <ErrorDisplay errorMessage={error.message}/>
+  if (error) return <ErrorDisplay errorMessage={error.message}/>;
+
   const allContributors = [
     ...(data?.getLeaderboard.contributionData ?? []),
-   ];
+  ];
 
   return (
     <div className='p-6 w-full'>
@@ -89,18 +91,21 @@ const TopContributor: React.FC<{}> = () => {
               </TableRow>
             </TableHeader>
             <TableBody className=''>
-              {allContributors.map((contributor, index) => (
-                <TableRow key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-white'}>
-                  <TableCell className='hidden sm:table-cell'>{index + 1}</TableCell>
-                  <TableCell className='flex items-center gap-2 font-medium'>
-                    <Image alt='Contributor image' className='rounded-full aspect-square object-cover' height='36' src='/av-5.png' width='36' />
-                    {contributor.name}
-                  </TableCell>
-                  <TableCell className='hidden md:table-cell'>{contributor.taskCount}</TableCell>
-                  <TableCell className='hidden md:table-cell'>{contributor.taskPoints}</TableCell>
-                  <TableCell className='hidden md:table-cell'>{contributor.amountEarned}</TableCell>
-                </TableRow>
-              ))}
+              {allContributors.map((contributor, index) => {
+                 const amountEarned = String(contributor.amountEarned);
+                return (
+                  <TableRow key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-white'}>
+                    <TableCell className='hidden sm:table-cell'>{index + 1}</TableCell>
+                    <TableCell className='flex items-center gap-2 font-medium'>
+                      <Image alt='Contributor image' className='rounded-full aspect-square object-cover' height='36' src='/av-5.png' width='36' />
+                      {contributor.username}
+                    </TableCell>
+                    <TableCell className='hidden md:table-cell'>{contributor.taskCount}</TableCell>
+                    <TableCell className='hidden md:table-cell'>{contributor.taskPoints}</TableCell>
+                    <TableCell className='hidden md:table-cell'>{amountEarned.substring(0, 5)}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
