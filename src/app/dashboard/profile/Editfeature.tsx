@@ -262,12 +262,20 @@ const EditFeature = () => {
                   </span>
                 )}
               </div>
+              <div className="flex justify-between space-x-2">
+              <Button
+                type="submit"
+                className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
+              >
+                Delete
+              </Button>
               <Button
                 type="submit"
                 className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
               >
                 Submit
               </Button>
+              </div>
             </form>
           </div>
         </div>

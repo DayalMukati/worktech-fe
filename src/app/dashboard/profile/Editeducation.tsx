@@ -9,6 +9,7 @@ import { Pencil, Plus } from "lucide-react";
 
 const EditFeatureSchema = z.object({
   degree: z.string().min(1, "Degree is required"),
+  institute: z.string().min(1, "Institution is required"),
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
     return startDate <= new Date();
@@ -56,7 +57,7 @@ const EditEducation = () => {
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
-          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[400px]">
+          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[460px]">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-xl font-bold">Edit Education</h1>
               <button
@@ -67,6 +68,29 @@ const EditEducation = () => {
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-4">
+                <label
+                  htmlFor="institute"
+                  className="justify-start flex text-sm font-medium text-slate-700"
+                >
+                  Institute
+                </label>
+                <Input
+                  type="text"
+                  id="institute"
+                  placeholder="Enter Institute"
+                  {...register("institute")}
+                  className={`mt-1 ${
+                    errors.degree ? "border-red-500" : "border-slate-300"
+                  } border-2 rounded-md`}
+                  onClick={() => clearErrors("institute")}
+                />
+                {errors.institute && (
+                  <span className="text-red-500 text-xs">
+                    {errors.institute.message}
+                  </span>
+                )}
+              </div>
               <div className="mb-4">
                 <label
                   htmlFor="degree"
@@ -134,12 +158,20 @@ const EditEducation = () => {
                   </span>
                 )}
               </div>
+              <div className="flex justify-between space-x-2">
+              <Button
+                type="submit"
+                className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
+              >
+                Delete
+              </Button>
               <Button
                 type="submit"
                 className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
               >
                 Submit
               </Button>
+              </div>
             </form>
           </div>
         </div>

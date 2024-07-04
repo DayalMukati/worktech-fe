@@ -19,22 +19,28 @@ import { loadOrgs, selectOrg } from "@/store/orgSlice";
 import { LIST_ALL_ORGS_BY_USER_QUERY } from "@/graphql/queries";
 import EditEducation from "./Editeducation";
 import EditFeature from "./Editfeature";
-
+import { z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
 const educationData = [
   {
     degree: "Bachelor of Science in Computer Science",
     startDate: "September 2015",
     endDate: "June 2019",
+    institute: "IIT Indore",
   },
   {
     degree: "Master of Science in Software Engineering",
     startDate: "September 2019",
     endDate: "June 2021",
+    institute: "Manipal university",
   },
   {
     degree: "PhD in Artificial Intelligence",
     startDate: "September 2021",
     endDate: "Present",
+    institute: "Indian Institute Of Technology Delhi",
   },
 ];
 const cardData = [
@@ -44,7 +50,7 @@ const cardData = [
     skills: ["javascript", "blockchain", "Skill C"],
     startDate: "Jan 2018",
     endDate: "Dec 2020",
-    responsibilities: ["Managed team projects.", ,],
+    responsibilities: ["Managed team projects."],
   },
   {
     companyName: "Company Two",
@@ -54,15 +60,32 @@ const cardData = [
     endDate: "Nov 2022",
     responsibilities: ["Led product development."],
   },
-  {
-    companyName: "Company Three",
-    description: "A brief description of Company Three and its core mission.",
-    skills: ["Skill G", "Skill H", "Skill I"],
-    startDate: "Mar 2023",
-    endDate: "Present",
-    responsibilities: ["Directed strategic projects."],
-  },
+  // {
+  //   companyName: "Company Three",
+  //   description: "A brief description of Company Three and its core mission.",
+  //   skills: ["Skill G", "Skill H", "Skill I"],
+  //   startDate: "Mar 2023",
+  //   endDate: "Present",
+  //   responsibilities: ["Directed strategic projects."],
+  // },
 ];
+
+// Define the Zod schema for validation
+const profileSchema = z.object({
+  email: z
+    .string()
+    .email("Invalid email address")
+    .optional(),
+   bio: z.string().optional(),
+  github: z.string().url("Invalid URL").optional(),
+  linkedin: z.string().url("Invalid URL").optional(),
+  twitter: z.string().optional(),
+  discord: z.string().optional(),
+  location: z.string().optional(),
+  status: z.string().optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -102,6 +125,25 @@ const UserProfile = () => {
   const profileInfoRef = useRef<HTMLDivElement>(null);
   const editFormRef = useRef<HTMLDivElement>(null);
 
+  const { control, handleSubmit, reset,register } = useForm<ProfileFormValues>({
+    defaultValues: {
+      email:data?.getUserByToken.email,
+      bio: "",
+      github: "",
+      linkedin: "",
+      twitter: "",
+      location: "",
+      discord:"",
+      status:""
+    },
+    resolver: zodResolver(profileSchema),
+  });
+
+  const onSubmit = (data: ProfileFormValues) => {
+    console.log("Form Data:", data);
+    // Here you would handle form submission, e.g., sending data to the server
+  };
+
   const handleEditClick = () => {
     if (profileInfoRef.current && editFormRef.current) {
       profileInfoRef.current.classList.add("hidden");
@@ -119,23 +161,19 @@ const UserProfile = () => {
   };
 
   const handleSaveClick = () => {
-    if (profileInfoRef.current && editFormRef.current) {
-      profileInfoRef.current.classList.remove("hidden");
-      editFormRef.current.classList.add("hidden");
-      setIsEditing(false);
-    }
+    handleSubmit(onSubmit)();
   };
   // if (loading) return <PageGrid  />;
   // if (error) return <ErrorDisplay errorMessage={error.message}/>
   return (
-    <div className="flex mt-12 mb-6 px-36">
-      <div className="flex flex-col gap-4 w-1/3">
-        <div className="flex flex-col justify-between items-center gap-1 h-full">
+    <div className="flex mt-12 mb-6 space-x-4 px-36">
+      <div className="flex flex-col gap-4 w-1/3 ">
+        <div className="flex flex-col justify-between items-center gap-2">
           <div className="flex flex-col justify-center items-center gap-1 border-slate-300 bg-card shadow-md mx-auto p-6 border rounded-md w-full max-w-md text-card-foreground">
             <div className="relative">
               <Avatar>
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
+                  src={"https://github.com/shadcn.png"}
                   className="rounded-full w-28 h-28"
                 />
                 <AvatarFallback>Avatar</AvatarFallback>
@@ -145,14 +183,14 @@ const UserProfile = () => {
                   id="edit-button"
                   className="right-1 bottom-1 absolute bg-primary p-1 rounded-full text-primary-foreground"
                 >
-                  {" "}
-                  <Icons icon="mdi:pencil"></Icons>
+                  <Icons icon="mdi:pencil" />
                 </button>
               ) : (
                 <button
-                  className={`right-2 bottom-1 absolute p-2 border-2 border-white rounded-full shadow-xl  ${(status =
-                    0 ? "bg-green-500" : "bg-red-700")}`}
-                ></button>
+                  className={`right-2 bottom-1 absolute p-2 border-2 border-white rounded-full shadow-xl
+         ${ data?.getUserByToken.status === 0 ? "bg-red-700": "bg-green-500" } 
+         `}
+                />
               )}
             </div>
             <div
@@ -161,107 +199,134 @@ const UserProfile = () => {
               className={`mt-4 text-center ${isEditing ? "hidden" : ""}`}
             >
               <h2 className="font-semibold text-lg">
-                {data?.getUserByToken.email}
+                {data?.getUserByToken.email || "Username"}
               </h2>
-              <p className="text-muted-foreground">No bio..</p>
+              <p className="text-muted-foreground">{"No bio.."}</p>
             </div>
             <div
               id="edit-form"
               ref={editFormRef}
               className={`mt-4 w-full ${isEditing ? "" : "hidden"}`}
             >
-              <div className="mb-2">
-                <input
-                  type="text"
-                  defaultValue={data?.getUserByToken.email as string}
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                />
-              </div>
-              <div className="mb-2">
-                <textarea
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                  rows={2}
-                >
-                  Add a bio...
-                </textarea>
-              </div>
-              <div className="flex justify-center items-center mb-2">
-                <Icons icon="mdi:github" className="mr-2 w-8 h-8"></Icons>
-                <input
-                  type="text"
-                  defaultValue="https://github.com/harsh"
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                />
-              </div>
-              <div className="flex justify-center items-center mb-2">
-                <Icons
-                  icon="hugeicons:user-status"
-                  className="mr-2 w-8 h-8 text-slate-400"
-                ></Icons>
-                <input
-                  type="text"
-                  defaultValue="@"
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full  text-slate-700 text-foreground"
-                />
-              </div>
-              <div className="flex justify-center items-center mb-2">
-                <Icons
-                  icon="mdi:linkedin"
-                  className="mr-2 w-8 h-8 text-blue-900"
-                ></Icons>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-2">
+                  <Input
+                    type="text"
+                    defaultValue={data?.getUserByToken.email || "Username"}
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    placeholder="Email"
+                    {...register("email")}
+                  />
+                </div>
+                <div className="mb-2">
+                  <textarea
+                    // defaultValue={data?.getUserByToken.bio || ""}
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    rows={2}
+                    placeholder="Add a bio..."
+                    {...register("bio")}
+                  />
+                </div>
+                <div className="flex justify-center items-center mb-2">
+                  <Icons icon="mdi:github" className="mr-2 w-8 h-8" />
+                  <Input
+                    type="text"
+                    // defaultValue={data?.getUserByToken.github || ""}
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    placeholder="https://github.com/username"
+                    {...register("github")}
+                  />
+                </div>
+                <div className="mb-2 flex items-center ">
+                <Icons icon="hugeicons:user-status" className=" text-slate-400 mr-2 w-8 h-8" />
 
-                <input
-                  type="text"
-                  defaultValue="https://www.linkedin.com/in/harsh"
-                  placeholder="Enter Linkedin"
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <select
+                      id="status"
+                      className="bg-input px-2 py-1.5 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                      {...field}
+                    >
+                      <option value="1">Active</option>
+                      <option value="0">Inactive</option>
+                    </select>
+                  )}
                 />
               </div>
-              <div className="flex justify-center items-center mb-2">
-                <Icons
-                  icon="mdi:discord"
-                  className="mr-2 w-8 h-8 text-[#5865F2]"
-                ></Icons>
-
-                <input
-                  type="text"
-                  defaultValue="#"
-                  placeholder="Enter Twitter ID"
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                />
-              </div>
-
-              <div className="flex justify-center items-center mb-2">
-                <Icons
-                  icon="mdi:location-outline"
-                  className="mr-2 w-8 h-8 text-primary"
-                ></Icons>
-
-                <input
-                  type="text"
-                  defaultValue="Indore,MP"
-                  className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                />
-              </div>
+                <div className="flex justify-center items-center mb-2">
+                  <Icons
+                    icon="mdi:linkedin"
+                    className="mr-2 w-8 h-8 text-blue-900"
+                  />
+                  <Input
+                    type="text"
+                    // defaultValue={data?.getUserByToken.linkedin || ""}
+                    placeholder="https://linkedin.com/in/username"
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    {...register("linkedin")}
+                  />
+                </div>
+                <div className="flex justify-center items-center mb-2">
+                  <Icons
+                    icon="mdi:twitter"
+                    className="mr-2 w-8 h-8 text-blue-400"
+                  />
+                  <Input
+                    type="text"
+                    // defaultValue={data?.getUserByToken.twitter || ""}
+                    placeholder="https://twitter.com/username"
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    {...register("twitter")}
+                  />
+                </div>
+                <div className="flex justify-center items-center mb-2">
+                  <Icons
+                    icon="mdi:discord"
+                    className="mr-2 w-8 h-8 text-[#5865F2]"
+                  />
+                  <Input
+                    type="text"
+                    // defaultValue={data?.getUserByToken.twitter || ""}
+                    placeholder="https://twitter.com/username"
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    {...register("twitter")}
+                  />
+                </div>
+                <div className="flex justify-center items-center mb-2">
+                  <Icons
+                    icon="mdi:location-outline"
+                    className="mr-2 w-8 h-8 text-primary"
+                  />
+                  <Input
+                    type="text"
+                    // defaultValue={data?.getUserByToken.location || ""}
+                    placeholder="Location"
+                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                    {...register("location")}
+                  />
+                </div>
+                <div className="flex justify-center items-center mt-4">
+                  <Button
+                    id="cancel-button"
+                    className="bg-slate-300 hover:bg-slate-400 shadow mx-2 px-4 py-1 rounded-md text-slate-900"
+                    onClick={handleCancelClick}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    id="save-button"
+                    className="bg-primary px-4 py-1 rounded-md text-primary-foreground"
+                    type="submit"
+                    onClick={handleSaveClick}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </form>
             </div>
-            {isEditing ? (
-              <div className="flex justify-between">
-                <Button
-                  id="cancel-button"
-                  className="bg-slate-300 hover:bg-slate-400 shadow mx-2 px-4 py-1 rounded-md text-slate-900"
-                  onClick={handleCancelClick}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  id="save-button"
-                  className="bg-primary px-4 py-1 rounded-md text-primary-foreground"
-                  onClick={handleSaveClick}
-                >
-                  Save
-                </Button>
-              </div>
-            ) : (
+            {!isEditing && (
               <Button
                 id="settings-button"
                 className="bg-primary px-4 py-1 rounded-md w-full text-primary-foreground"
@@ -270,7 +335,6 @@ const UserProfile = () => {
                 Edit Profile
               </Button>
             )}
-            
             <Button
               id="settings-button"
               className="bg-primary mt-1 px-4 py-1 rounded-md w-full text-primary-foreground"
@@ -279,12 +343,15 @@ const UserProfile = () => {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-6 border-slate-300 shadow-md p-4 border rounded-md w-full h-fit text-slate-400">
-            <div className="flex items-center gap-2 text-md">
-              <h1 className="font-semibold text-slate-400 text-sm">
-                REPUTATION SCORE
-              </h1>
-              <CircleHelp className="w-4 h-4 text-slate-400" />
+          <div className="flex flex-col gap-4 border-slate-300 shadow-md p-4 border rounded-md w-full  text-slate-400">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 text-md">
+                <h1 className="font-semibold text-slate-400 text-sm">
+                  REPUTATION SCORE
+                </h1>
+                <CircleHelp className="w-4 h-4 text-slate-400" />
+              </div>{" "}
+              <span>782</span>
             </div>
             <div className="flex flex-col text-md">
               <h1 className="font-semibold text-slate-400 text-sm">EARNINGS</h1>
@@ -297,7 +364,7 @@ const UserProfile = () => {
               <span>1.00%</span>
             </div>
           </div>
-          <div className="flex flex-col gap-6 border-slate-300 shadow-lg p-4 border rounded-md w-full h-fit text-slate-400">
+          <div className="flex flex-col gap-6 border-slate-300 shadow-lg p-4 border rounded-md w-full  text-slate-400">
             <div className="w-full">
               <h1 className="font-semibold text-slate-400 text-sm">
                 ORGANIZATIONS
@@ -321,7 +388,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col space-y-1 mx-2 w-2/3">
+      <div className="flex flex-col space-y-2 mx-2 w-2/3">
         {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
           <h1 className="font-semibold text-lg text-slate-600">
             Featured work
@@ -364,31 +431,29 @@ const UserProfile = () => {
                       </span>
                     ))}
                   </div>
-                  <div className=" pt-2 text-slate-500">
-                    <h3 className="font-medium text-sm text-slate-400 ">
-                      Duration
-                    </h3>
-                    <p className="text-sm">
-                      Start Date:{" "}
-                      <span className="font-semibold">{item.startDate}</span>
-                    </p>
-                    <p className="text-sm">
-                      End Date:{" "}
-                      <span className="font-semibold">{item.endDate}</span>
-                    </p>
-                  </div>
                   <div className=" pt-2 ">
                     <h3 className="font-medium text-sm text-slate-400 ">
                       Responsibilities
                     </h3>
                     <span className="text-sm">{item.responsibilities}</span>
                   </div>
+                  <div className=" pt-2 text-slate-500">
+                    <h3 className="font-medium text-sm text-slate-400 ">
+                      Duration
+                    </h3>
+                    <p className="text-sm">
+                      Start Date: <span className="">{item.startDate}</span>
+                    </p>
+                    <p className="text-sm">
+                      End Date: <span className="">{item.endDate}</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
             {cardData.length < 3 ? (
               <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3 h-full text-center">
-                <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer" />
+                <Addfeature />
                 <span className="mt-4 font-semibold text-slate-500 text-sm">
                   Feature work to show your experience
                 </span>
@@ -411,12 +476,18 @@ const UserProfile = () => {
                   <div className="flex justify-between space-x-4 items-center mb-4">
                     <div>
                       <p className="text-md font-semibold text-slate-700">
-                        {item.degree?.length > 25
-                          ? item.degree.substring(0, 25) + "..."
-                          : item.degree}
+                        {item.institute?.length > 25
+                          ? item.institute.substring(0, 25) + "..."
+                          : item.institute}
                       </p>
                     </div>
                     <EditEducation />
+                  </div>
+                  <div className="text-slate-500 text-sm my-1">
+                    {" "}
+                    {item.degree?.length > 25
+                      ? item.degree.substring(0, 25) + "..."
+                      : item.degree}
                   </div>
                   <div className="space-y-2 text-slate-500">
                     <div>
