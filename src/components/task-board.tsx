@@ -31,20 +31,8 @@ import {
 } from '@/graphql/queries';
 import { useParams, useRouter } from 'next/navigation';
 import { UPDATE_TASK_MUTATION } from '@/graphql/mutation';
-import { set, string } from 'zod';
 
-import { useMutation, useQuery } from '@apollo/client';
-import {
-	GET_ALL_TASKS_BY_SPACE_ID_QUERY,
-	GET_USERS_QUERY,
-	LIST_ALL_SKILLS,
-	GET_ALL_TASKS_BY_ASSINEE_ID_QUERY
-} from '@/graphql/queries';
-import { useParams, useRouter } from 'next/navigation';
-import { UPDATE_TASK_MUTATION } from '@/graphql/mutation';
 
-import { getStatusNumber } from '@/lib/getStatusNumber';
-import { GetAllTasksByAssineeIdQuery } from '@/graphql/__generated__/graphql';
 
 import {
 	selectTasks,
