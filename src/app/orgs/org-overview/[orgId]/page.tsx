@@ -60,6 +60,7 @@ const OrgOverview = () => {
 		}
 	});
 
+	console.log("orgData", orgData);
   if (taskloading || loading || orgloading) return <PageGrid/>;
   if (error)
     return (
