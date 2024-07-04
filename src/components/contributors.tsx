@@ -62,21 +62,9 @@ export function SearchBar(): JSX.Element {
 }
 
 // ContributorCard component
-const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
-  const { data: userData, loading: userLoading, error: userError } = useQuery<UserData>(
-    GET_USERS_QUERY
-  );
-
-  if (userLoading) {
-    return <SkeletonGrid />;
-  }
-
-  if (userError) {
-    return <ErrorDisplay errorMessage={userError?.message || "Unknown error"} />;
-  }
-
-   const user = userData?.users.find(user => user._id === contributor.userID?._id);
-    return (
+const ContributorCard: React.FC<any> = ({ contributor }) => {
+  // console.log("contributor", contributor);
+  return (
     <Card className="hover:bg-secondary border-2 min-w-[350px] max-w-[400px] border-primary/20 transition-colors duration-300 cursor-pointer h-30">
       <CardHeader className="p-2">
         <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center">
@@ -90,12 +78,50 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
             />
             <div className="space-y-1">
               <CardTitle className="text-wrap text-md overflow-hidden text-ellipsis">
-                <p>{contributor?.userID?.email}</p>
+                <p>{contributor?.email as string}</p>
               </CardTitle>
               <span className="flex space-x-2">
-                <p>Reputation:</p>
+                {contributor?.skills.map((skill: any, index: any) => {
+                  // console.log("skill", skill);
+                  return (
+                    <Badge
+                      key={index}
+                      className="hover:text-white text-center bg-secondary text-primary border border-primary"
+                    >
+                      {skill?.title === "Javascript"
+                        ? "JS"
+                        : skill?.title === "MERN Stack"
+                        ? "MERN"
+                        : skill?.title === "react"
+                        ? "REACT"
+                        : skill?.title === "tailwind"
+                        ? "TAILWIND"
+                        : skill?.title === "html"
+                        ? "HTML"
+                        : skill?.title === "css"
+                        ? "CSS"
+                        : skill?.title === "nodejs"
+                        ? "NODEJS"
+                        : skill?.title === "mongodb"
+                        ? "MONGODB"
+                        : skill?.title === "graphql"
+                        ? "GRAPHQL"
+                        : skill?.title === "typescript"
+                        ? "TYPESCRIPT"
+                        : skill?.title === "nextjs"
+                        ? "NEXTJS"
+                        : skill?.title === "firebase"
+                        ? "FIREBASE"
+                        : skill?.title === "aws"
+                        ? "AWS"
+                        : skill?.title === "git"
+                        ? "GIT"
+                        : skill?.title}
+                    </Badge>
+                  );
+                })}{" "}
                 <Badge className="hover:text-white text-center bg-secondary text-primary border border-primary">
-                  {contributor.reputation || 1001}
+                  {contributor.reputation || Math.floor(Math.random() * 1000)}
                 </Badge>
               </span>
             </div>
@@ -109,33 +135,24 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
           </CardDescription>
         </div>
       </CardHeader>
-      
     </Card>
   );
 };
 
 // ContributorList component
 const ContributorList: React.FC = () => {
-  const { data, loading, error } = useQuery<QueryData>(
-    LIST_ALL_INTERESTED_CONTRIBUTORS,
-    {
-      fetchPolicy: "cache-and-network",
-      // Optional: You can handle onCompleted to set state if needed
-    }
-  );
-
   const [contributors, setContributors] = useState<Contributor[]>([]);
 
-  useEffect(() => {
-    if (data?.listAllInterestedContributors) {
-      setContributors(data.listAllInterestedContributors);
-    }
-  }, [data]);
+  const { data, loading, error } = useQuery<UserData>(GET_USERS_QUERY, {
+    onCompleted: (data) => {
+      console.log("data contrubuter", data);
+      setContributors(data.users as any);
+    },
+  });
 
   if (loading) {
     return <SkeletonGrid />;
   }
-
   if (error) {
     return <ErrorDisplay errorMessage={error?.message || "Unknown error"} />;
   }
