@@ -58,7 +58,6 @@ export const CREATE_TASK_MUTATION = gql(`
       }
       skills {
         _id
-        title
       }
       acceptanceCriteria
       status
@@ -88,7 +87,7 @@ export const UPDATE_TASK_MUTATION = gql(`
       }
       skills {
         _id
-        title
+       
       }
       acceptanceCriteria
       status
