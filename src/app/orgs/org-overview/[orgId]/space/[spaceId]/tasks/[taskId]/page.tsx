@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { useParams } from 'next/navigation';
-import { GET_TASK_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -13,68 +11,40 @@ import {
 } from '@radix-ui/react-dialog';
 import CompleteTaskForm from '@/components/ui/modals/ComplettaskForm';
 import { CrossIcon } from 'lucide-react';
+import { selectTasks, updatePrivateTasks } from '@/store/taskSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from '@/components/ui/use-toast';
 
 const Taskdetails: React.FC = () => {
+	const dispatch = useDispatch();
 	const params = useParams<{ taskId: string }>();
 
-	const [taskData, setTaskData] = useState({
-		name: 'No task name',
-		description: 'No task description',
-		skills: [] as { _id: string; title: string }[],
-		docUrl: 'No task docUrl',
-		assignee: 'Pawan Kumar',
-		reviewer: 'Rahul',
-		acceptanceCriteria: 'No task acceptance criteria',
-		status: 1
-	});
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [taskData, setTaskData] = useState<any>();
+
 	const [showAllActivity, setShowAllActivity] =
 		useState<boolean>(false);
 	const [openFromReview, setopenFromReview] =
 		useState<boolean>(false);
 
-	const {
-		loading: loadingTask,
-		error: errorTask,
-		data: dataTask
-	} = useQuery(GET_TASK_QUERY, {
-		fetchPolicy: 'no-cache',
-		variables: { _id: params.taskId },
-		onCompleted: () => {
-			setLoading(false);
-			console.log('data->', dataTask?.getTask);
-			setTaskData(dataTask?.getTask as any);
-		}
-	});
+	const { pirvateTasks } = useSelector(selectTasks);
+	console.log('pirvateTasks->', pirvateTasks);
 
 	useEffect(() => {
-		console.log('data->', dataTask?.getTask);
-		setTaskData(dataTask?.getTask as any);
-	}, [loadingTask, errorTask, dataTask]);
+		setTaskData(
+			pirvateTasks.find(task => task._id === params.taskId) as any
+		);
+	}, [pirvateTasks]);
 
 	const toggleShowAll = () => {
 		setShowAllActivity(prev => !prev);
 	};
 
-	if (loading) {
-		return (
-			<div className='flex justify-center items-center w-full h-screen'>
-				Loading...
-			</div>
-		);
-	}
-
-	if (error) {
-		return <div>{error}</div>;
-	}
-
 	if (!taskData) {
 		return null;
 	}
 
-	const handleSubmit = () => {
-		// setopenFromReview(false);
+	const handleReject = () => {
+		console.log('rejected');
 	};
 
 	return (
@@ -96,9 +66,18 @@ const Taskdetails: React.FC = () => {
 						</DialogClose>
 
 						<CompleteTaskForm
-							taskId={params.taskId}
+							taskId={params.taskId as string}
 							docUrl={taskData.docUrl}
-							handlePostSubmit={() => handleSubmit()}
+							taskOnchainID={taskData.taskId}
+							handlePostSubmit={(res: any) => {
+								setopenFromReview(false);
+								dispatch(updatePrivateTasks(res.updateTask));
+								toast({
+									variant: 'default',
+									title: 'Success!',
+									description: 'Task Completed successfully'
+								});
+							}}
 						/>
 					</DialogContent>
 				</Dialog>
@@ -106,9 +85,9 @@ const Taskdetails: React.FC = () => {
 
 			<div className='flex lg:flex-row flex-col gap-2 bg-card p-2 pb-4 border text-card-foreground'>
 				<div className='flex-1 shadow-lg p-4 border rounded-lg'>
-					<div className='mb-2 text-muted-foreground text-sm'>
+					{/* <div className='mb-2 text-muted-foreground text-sm'>
 						Ten (formerly Obscuro) / Community Contributions /
-					</div>
+					</div> */}
 					<h2 className='mb-4 font-bold text-2xl'>
 						{/* Post about Ten in your community */}
 						{taskData.name}
@@ -120,11 +99,11 @@ const Taskdetails: React.FC = () => {
 								className='mr-2 w-4 h-4 text-white'></Icon>
 							Open to Submissions
 						</button>
-						<button className='flex justify-center items-center gap-1 bg-primary px-3 py-1 rounded-md text-sm text-white'>
+						<button className='flex justify-center items-center gap-1 bg-green-600 px-3 py-1 rounded-md text-sm text-white'>
 							<Icon
 								icon='mdi:crown-outline'
 								className='w-4 h-5 text-white'></Icon>
-							10
+							Ammount {taskData.amount}
 						</button>
 						<button className='flex justify-center items-center border-primary px-3 py-1 border rounded-md text-accent-foreground text-sm'>
 							<Icon
@@ -158,7 +137,7 @@ const Taskdetails: React.FC = () => {
 							<div className='flex items-center space-x-14 text-muted-foreground'>
 								<div className='text-sm'>Skills</div>
 								<div className='flex gap-2'>
-									{taskData.skills.map(skill => (
+									{taskData.skills.map((skill: any) => (
 										<span
 											key={skill._id}
 											className='flex bg-primary px-3 py-1 rounded text-muted-foreground text-sm text-white'>
@@ -185,14 +164,24 @@ const Taskdetails: React.FC = () => {
 						</div>
 						<div className='flex ml-auto'>
 							{taskData.status == 3 ? (
-								<Button
-									className='flex justify-center items-center bg-primary mt-3 mr-auto px-3 py-1 rounded-md h-8 text-white'
-									onClick={() => setopenFromReview(true)}>
-									<Icon
-										icon='fluent:document-pdf-32-filled'
-										className='mr-1 w-4 h-4'></Icon>
-									Review Work
-								</Button>
+								<div className='flex flex-col gap-2 w-full'>
+									<Button
+										className='flex justify-center items-center bg-primary mt-3 mr-auto px-3 py-1 rounded-md w-full h-8 text-white'
+										onClick={() => setopenFromReview(true)}>
+										<Icon
+											icon='fluent:document-pdf-32-filled'
+											className='mr-auto w-4 h-4'></Icon>
+										Review Work
+									</Button>
+									<Button
+										className='flex bg-red-500 hover:bg-red-600 mt-3 mr-auto px-3 py-1 rounded-md w-full h-8 text-center text-white'
+										onClick={() => handleReject()}>
+										<Icon
+											icon='fluent:document-pdf-32-filled'
+											className='mr-1 w-4 h-4'></Icon>
+										Reject
+									</Button>
+								</div>
 							) : (
 								''
 							)}

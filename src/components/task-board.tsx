@@ -10,7 +10,7 @@ import {
 	Plus,
 	Trash
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
 import { motion } from 'framer-motion';
@@ -21,6 +21,17 @@ import {
 	DialogTitle,
 	DialogClose
 } from '@radix-ui/react-dialog';
+import { stat } from 'fs';
+import { useMutation, useQuery } from '@apollo/client';
+import {
+	GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
+	GET_ALL_TASKS_BY_SPACE_ID_QUERY,
+	GET_USERS_QUERY,
+	LIST_ALL_SKILLS
+} from '@/graphql/queries';
+import { useParams, useRouter } from 'next/navigation';
+import { UPDATE_TASK_MUTATION } from '@/graphql/mutation';
+import { set, string } from 'zod';
 
 import { useMutation, useQuery } from '@apollo/client';
 import {
@@ -34,6 +45,16 @@ import { UPDATE_TASK_MUTATION } from '@/graphql/mutation';
 
 import { getStatusNumber } from '@/lib/getStatusNumber';
 import { GetAllTasksByAssineeIdQuery } from '@/graphql/__generated__/graphql';
+
+import {
+	selectTasks,
+	setPrivateTasks,
+	setTasks
+} from '@/store/taskSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import BoardGrid from './ui/boardGrid';
+import ErrorDisplay from './ui/ErrorDisplay';
+import useSession from '@/hooks/use-session';
 
 interface ColumnProps {
 	title: string;
@@ -50,14 +71,6 @@ interface CardProps {
 	createdAt: string;
 	tags: string[];
 	handleDragStart: Function;
-	skills?:
-		| {
-				__typename?: 'SkillDto' | undefined;
-				_id: string;
-				title: string;
-		  }[]
-		| null
-		| undefined;
 }
 
 interface DropIndicatorProps {
@@ -65,36 +78,63 @@ interface DropIndicatorProps {
 	column: string;
 }
 
-const TaskBoard = ({
-	isContributer,
-	assigneeId
-}: {
-	isContributer: boolean;
-	assigneeId: string;
-}) => {
+const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
+	const dispatch = useDispatch();
 	const params = useParams<{ spaceId: string }>();
-	console.log('assigneeId->', assigneeId);
+	const {
+		session,
+		login,
+		isLoading: isSessionLoading
+	} = useSession();
+	const { loading: loadingTasksBySpace, error: errorTasksBySpace } =
+		useQuery(GET_ALL_TASKS_BY_SPACE_ID_QUERY, {
+			fetchPolicy: 'no-cache',
+			skip: isContributer,
+			variables: { _id: params.spaceId },
+			onCompleted: data => {
+				dispatch(setPrivateTasks(data.getAllTasksBySpaceId as any));
+			}
+		});
+
+	//for contributer
+	const {
+		loading: loadingTasksByAssignee,
+		error: errorTasksByAssignee
+	} = useQuery(GET_ALL_TASKS_BY_ASSINEE_ID_QUERY, {
+		fetchPolicy: 'no-cache',
+		skip: !isContributer,
+		variables: { _id: session?._id as string },
+		onCompleted: data => {
+			dispatch(setTasks(data.getAllTasksByAssineeId as any));
+		}
+	});
+
+	if (loadingTasksBySpace || loadingTasksByAssignee)
+		return <BoardGrid />;
+	if (errorTasksBySpace || errorTasksByAssignee)
+		return (
+			<ErrorDisplay
+				errorMessage={
+					errorTasksBySpace?.message ||
+					errorTasksByAssignee?.message ||
+					'unkonwnerror'
+				}
+			/>
+		);
+
 	return (
 		<div className='w-full h-[90vh]'>
-			<Board
-				spaceId={params.spaceId}
-				isContributer={isContributer}
-				assigneeId={assigneeId}
-			/>
+			<Board isContributer={isContributer} />
 		</div>
 	);
 };
 
-const Board = ({
-	spaceId,
-	isContributer,
-	assigneeId
-}: {
-	spaceId: string;
-	isContributer: boolean;
-	assigneeId: string;
-}) => {
+const Board = ({ isContributer }: { isContributer: boolean }) => {
+	const { tasks, pirvateTasks } = useSelector(selectTasks);
+	console.log('tasks state->', tasks, pirvateTasks);
+
 	const [cards, setCards] = useState([]);
+
 	const getColumn = (status: number) => {
 		switch (status) {
 			case 1:
@@ -111,55 +151,29 @@ const Board = ({
 				return 'todo';
 		}
 	};
+	useEffect(() => {
+		const taskData = tasks.map(task => ({
+			id: task._id,
+			title: task.name,
+			description: task.description,
+			column: getColumn(task.status),
+			createdAt: Math.floor(Math.random()),
+			tags: task.skills?.map((skill: any) => skill.name)
+		}));
 
-	// console.log("spaceId->", spaceId);
-	useQuery(GET_ALL_TASKS_BY_SPACE_ID_QUERY, {
-		variables: { _id: isContributer ? assigneeId : spaceId },
-		skip: isContributer,
-		onCompleted: data => {
-			console.log('tasks data->', data);
-			const tasks = data.getAllTasksBySpaceId?.map((task: any) => {
-				return {
-					id: task._id,
-					title: task.name,
-					description: task.description,
-					column: getColumn(task.status),
-					createdAt: Math.floor(Math.random()),
-					tags: task.skills.map((skill: any) => skill.name)
-				};
-			});
+		const taskDataPrivate = pirvateTasks.map(task => ({
+			id: task._id,
+			title: task.name,
+			description: task.description,
+			column: getColumn(task.status),
+			createdAt: Math.floor(Math.random()),
+			tags: task.skills?.map((skill: any) => skill.name)
+		}));
 
-			console.log('tasks->', tasks);
-			setCards(tasks as any);
-		},
-		onError(error: any) {
-			console.log('error->', error);
-		}
-	});
-
-	useQuery(GET_ALL_TASKS_BY_ASSINEE_ID_QUERY, {
-		variables: { _id: assigneeId },
-		skip: !isContributer,
-		onCompleted: data => {
-			console.log('tasks data->', data);
-			const tasks = data.getAllTasksByAssineeId?.map((task: any) => {
-				return {
-					id: task._id,
-					title: task.name,
-					description: task.description,
-					column: getColumn(task.status),
-					createdAt: Math.floor(Math.random()),
-					tags: task.skills.map((skill: any) => skill.name)
-				};
-			});
-
-			console.log('tasks->', tasks);
-			setCards(tasks as any);
-		},
-		onError(error: any) {
-			console.log('error->', error);
-		}
-	});
+		isContributer
+			? setCards(taskData as any)
+			: setCards(taskDataPrivate as any);
+	}, [tasks, pirvateTasks]);
 
 	return (
 		<div className='flex gap-3 p-12 w-full h-full overflow-scroll'>
@@ -277,52 +291,52 @@ const Column = ({
 		status: string;
 	}) => {
 		console.log('task status->', status);
-		try {
-			await updateTaskMutaion({
-				variables: {
-					_id: cardId,
-					input: {
-						status: getStatusNumber(status)
-					}
-				},
-				update(cache, { data }) {
-					// Type guard to ensure 'updateTask' exists in the data
-					if (data && 'updateTask' in data) {
-						const updateTask = data.updateTask;
-						const existingTasksData = cache.readQuery({
-							query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
-							variables: { _id: 'assineeIdHere' } // Use the actual assignee ID
-						});
+		// try {
+		// 	await updateTaskMutaion({
+		// 		variables: {
+		// 			_id: cardId,
+		// 			input: {
+		// 				status: getStatusNumber(status)
+		// 			}
+		// 		},
+		// 		update(cache, { data }) {
+		// 			// Type guard to ensure 'updateTask' exists in the data
+		// 			if (data && 'updateTask' in data) {
+		// 				const updateTask = data.updateTask;
+		// 				const existingTasksData = cache.readQuery({
+		// 					query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
+		// 					variables: { _id: 'assineeIdHere' } // Use the actual assignee ID
+		// 				});
 
-						if (existingTasksData) {
-							// Here you would find the task in the existingTasksData.getAllTasksByAssineeId array and update it
-							// This is a simple example that assumes you're replacing the entire list for demonstration purposes
-							const updatedTasks =
-								existingTasksData.getAllTasksByAssineeId.map(task =>
-									task._id === updateTask._id
-										? { ...task, ...updateTask }
-										: task
-								);
+		// 				if (existingTasksData) {
+		// 					// Here you would find the task in the existingTasksData.getAllTasksByAssineeId array and update it
+		// 					// This is a simple example that assumes you're replacing the entire list for demonstration purposes
+		// 					const updatedTasks =
+		// 						existingTasksData.getAllTasksByAssineeId.map(task =>
+		// 							task._id === updateTask._id
+		// 								? { ...task, ...updateTask }
+		// 								: task
+		// 						);
 
-							// Write the updated data back into the cache
-							cache.writeQuery({
-								query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
-								variables: { _id: 'assineeIdHere' }, // Use the actual assignee ID
-								data: {
-									getAllTasksByAssineeId:
-										updatedTasks as unknown as GetAllTasksByAssineeIdQuery['getAllTasksByAssineeId']
-								}
-							});
-						}
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				}
-			});
-		} catch (error) {
-			console.log('error->', error);
-		}
+		// 					// Write the updated data back into the cache
+		// 					cache.writeQuery({
+		// 						query: GET_ALL_TASKS_BY_ASSINEE_ID_QUERY,
+		// 						variables: { _id: 'assineeIdHere' }, // Use the actual assignee ID
+		// 						data: {
+		// 							getAllTasksByAssineeId:
+		// 								updatedTasks as unknown as GetAllTasksByAssineeIdQuery['getAllTasksByAssineeId']
+		// 						}
+		// 					});
+		// 				}
+		// 			}
+		// 		},
+		// 		onError(error: any): never {
+		// 			throw new Error(error);
+		// 		}
+		// 	});
+		// } catch (error) {
+		// 	console.log('error->', error);
+		// }
 	};
 
 	const highlightIndicator = (e: React.DragEvent<HTMLDivElement>) => {

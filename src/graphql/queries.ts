@@ -72,6 +72,8 @@ export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
       description
       priority
       amount
+      docUrl
+      taskId
       activities {
         userId
         activity
@@ -284,6 +286,7 @@ export const LIST_ALL_INTERESTED_CONTRIBUTORS = gql(`
       description
       userID{
           _id
+          email
       }
       taskID{
           _id
@@ -328,6 +331,7 @@ export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
     description
     priority
     amount
+    taskId
     activities{
         userId
         activity
@@ -353,20 +357,20 @@ export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
   }
 `);
 
-  export const GET_LEADERBOARD_DATA = gql(`
+export const GET_LEADERBOARD_DATA = gql(`
     query GetLeaderboard {
   getLeaderboard {
     contributionData {
-      name
-      taskCount
-      taskPoints
-      amountEarned
+       username
+       taskCount
+       taskPoints
+       amountEarned
     }
     reviewData {
-      name
-      taskCount
+       username
+       taskCount
       taskPoints
       amountEarned
     }
   }
-}`)
+}`);

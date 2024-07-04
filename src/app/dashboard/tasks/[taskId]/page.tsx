@@ -1,9 +1,7 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Icon from '@/components/ui/icon';
-import { useParams } from 'next/navigation';
-import { GET_TASK_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client';
+import { useParams, useRouter } from 'next/navigation';
 import SubmitTaskForm from '@/components/ui/modals/SubmittaskForm';
 import {
 	Dialog,
@@ -14,23 +12,16 @@ import {
 import { CrossIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AcceptTaskForm from '@/components/ui/modals/AcceptTaskfrom';
-import { space } from 'postcss/lib/list';
+import { selectTasks, updateTasks } from '@/store/taskSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from '@/components/ui/use-toast';
 
 const Taskdetails: React.FC = () => {
 	const params = useParams<{ taskId: string }>();
+	const dispatch = useDispatch();
 
-	const [taskData, setTaskData] = useState({
-		name: 'No task name',
-		description: 'No task description',
-		skills: [] as { _id: string; title: string }[],
-
-		assignee: 'Pawan Kumar',
-		reviewer: 'Rahul',
-		acceptanceCriteria: 'No task acceptance criteria',
-		status: 0
-	});
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const [taskData, setTaskData] = useState<any>();
+	const router = useRouter();
 	const [showAllActivity, setShowAllActivity] =
 		useState<boolean>(false);
 	const [submitFormOpen, setSubmitFormOpen] =
@@ -39,59 +30,54 @@ const Taskdetails: React.FC = () => {
 		useState<boolean>(false);
 	const [isRejected, setIsRejected] = useState(false);
 
-	const {
-		loading: loadingTask,
-		error: errorTask,
-		data: dataTask
-	} = useQuery(GET_TASK_QUERY, {
-		fetchPolicy: 'no-cache',
-		variables: { _id: params.taskId },
-		onCompleted: () => {
-			setLoading(false);
-		}
-	});
+	const { tasks } = useSelector(selectTasks);
+	useEffect(() => {
+		setTaskData(
+			tasks.find(task => task._id === params.taskId) as any
+		);
+	}, []);
+	console.log('taskData->', taskData);
+
 	const [isSubmited, setIsSubmitted] = useState(false);
 	const [isAccepted, setIsAccepted] = useState(false);
-
-	useEffect(() => {
-		// console.log("data->", dataTask?.getTask);
-		setTaskData(dataTask?.getTask as any);
-		if (dataTask?.getTask?.status === 3) {
-			setIsSubmitted(true);
-		}
-	}, [loadingTask, errorTask, dataTask]);
 
 	const toggleShowAll = () => {
 		setShowAllActivity(prev => !prev);
 	};
 
-	if (loading) {
-		return (
-			<div className='flex justify-center items-center w-full h-screen'>
-				Loading...
-			</div>
-		);
-	}
-
-	if (error) {
-		return <div>{error}</div>;
-	}
-
 	if (!taskData) {
 		return null;
 	}
 
-	const handleSubmit = () => {
+	const handleSubmit = (res: any) => {
 		setIsSubmitted(true);
 		setSubmitFormOpen(false);
+		dispatch(updateTasks(res.updateTask));
+		toast({
+			variant: 'default',
+			title: 'Success!',
+			description: 'Task updated successfully'
+		});
 	};
-	const handleAccept = () => {
+	const handleAccept = (res: any) => {
+		console.log('res->', res.updateTask);
+		dispatch(updateTasks(res.updateTask));
 		setIsAccepted(true);
 		setAcceptFormOpen(false);
+		toast({
+			variant: 'default',
+			title: 'Accepted!',
+			description: 'Task Accepted successfully'
+		});
 	};
 
 	const handleRejectTask = () => {
 		setIsRejected(true);
+		toast({
+			variant: 'destructive',
+			title: 'Rejected!',
+			description: 'Task Rejected successfully'
+		});
 	};
 
 	return (
@@ -114,8 +100,8 @@ const Taskdetails: React.FC = () => {
 
 						<AcceptTaskForm
 							taskId={params.taskId}
-							handlePostSubmit={() => {
-								handleAccept();
+							handlePostSubmit={(res: any) => {
+								handleAccept(res);
 							}}
 						/>
 					</DialogContent>
@@ -138,9 +124,10 @@ const Taskdetails: React.FC = () => {
 						</DialogClose>
 
 						<SubmitTaskForm
+							taskOnchainID={taskData?.taskId as string}
 							taskId={params.taskId}
-							handlePostSubmit={() => {
-								handleSubmit();
+							handlePostSubmit={(res: any) => {
+								handleSubmit(res);
 							}}
 						/>
 					</DialogContent>
@@ -162,11 +149,11 @@ const Taskdetails: React.FC = () => {
 								className='mr-2 w-4 h-4 text-white'></Icon>
 							Open to Submissions
 						</button>
-						<button className='flex justify-center items-center gap-1 bg-primary px-3 py-1 rounded-md text-sm text-white'>
+						<button className='flex justify-center items-center gap-1 bg-green-600 px-3 py-1 rounded-md text-sm text-white'>
 							<Icon
 								icon='mdi:crown-outline'
 								className='w-4 h-5 text-white'></Icon>
-							10
+							Ammount {taskData.amount}
 						</button>
 						<button className='flex justify-center items-center border-primary px-3 py-1 border rounded-md text-accent-foreground text-sm'>
 							<Icon
@@ -200,7 +187,7 @@ const Taskdetails: React.FC = () => {
 							<div className='flex items-center space-x-14 text-muted-foreground'>
 								<div className='text-sm'>Skills</div>
 								<div className='flex gap-2'>
-									{taskData.skills.map(skill => (
+									{taskData.skills.map((skill: any) => (
 										<span
 											key={skill._id}
 											className='flex bg-primary px-3 py-1 rounded text-muted-foreground text-sm text-white'>

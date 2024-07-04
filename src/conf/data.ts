@@ -188,16 +188,24 @@ export const DEFAULT_CARDS = [
 ];
 
 export default organizations;
- 
 
 export const spaces = [
-  {
-    name: "Community Contributions",
-    visibility: false,
-    // tasks: ["Task 1", "Task 2", "Task 3"],
-  },
-  {
-    name: "Developer challenges",
-    visibility: false,
-  },
+	{
+		name: 'Community Contributions',
+		visibility: false
+		// tasks: ["Task 1", "Task 2", "Task 3"],
+	},
+	{
+		name: 'Developer challenges',
+		visibility: false
+	}
 ];
+
+export const TASK_STATUS = {
+	TODO: 0,
+	ASSIGNED: 1,
+	IN_PROGRESS: 2,
+	REVIEW: 3,
+	COMPLETED: 4,
+	REJECT: 5
+};

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 import { Label } from '@radix-ui/react-label';
-import Select, { components } from 'react-select';
+import Select, { components, SingleValue } from 'react-select';
 import { useMutation } from '@apollo/client';
 import { CREATE_TASK_MUTATION } from '@/graphql/mutation';
 import { useAppSelector } from '@/hooks/toolKitTyped';
@@ -26,20 +26,20 @@ import Web3, { AbiItem } from 'web3';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
 import useWeb3 from '@/hooks/useWeb3';
 import { Textarea } from '../textarea';
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
-	taskName: z.string().min(2, 'Task Name is required'),
-	description: z.string().min(2, 'Description is required'),
-	acceptanceCriteria: z
-		.string()
-		.min(2, 'Acceptance Criteria is required'),
-	status: z.number().min(1, 'Status is required'),
-	assignee: z.array(z.string()).min(1, 'Assignee is required'),
-	priority: z.string().min(1, 'Priority is required'),
-	reviewer: z.string().min(1, 'Reviewers is required'),
-	price: z.string().min(1, 'Price is required'),
-	skills: z.array(z.string()).min(1, 'Skills is required')
+  taskName: z.string().min(2, "Task Name is required"),
+  description: z.string().min(2, "Description is required"),
+  acceptanceCriteria: z.string().min(2, "Acceptance Criteria is required"),
+  status: z.number().min(1, "Status is required"),
+  assignee: z.array(z.string()).min(1, "Assignee is required"),
+  priority: z.string().min(1, "Priority is required"),
+  reviewer: z.array(z.string()).min(1, "Reviewers is required"),
+  price: z.string().min(1, "Price is required"),
+  skills: z.array(z.string()).min(1, "Skills is required"),
 });
 
 type Schema = z.infer<typeof createTaskSchema>;
@@ -54,101 +54,94 @@ const status = [
 ];
 
 const customOption = (props: any) => {
-	return (
-		<components.Option {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.Option>
+  );
 };
 
 const customSingleValue = (props: any) => {
-	return (
-		<components.SingleValue {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.SingleValue>
-	);
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.SingleValue>
+  );
 };
 
 const customOptionAssignee = (props: any) => {
-	return (
-		<components.Option {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.Option>
+  );
 };
 const customSingleValueAssignee = (props: any) => {
-	return (
-		<components.SingleValue {...props}>
-			<div className='flex items-center'>
-				{props.data.icon}
-				<span className='ml-2'>{props.data.label}</span>
-			</div>
-		</components.SingleValue>
-	);
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center">
+        {props.data.icon}
+        <span className="ml-2">{props.data.label}</span>
+      </div>
+    </components.SingleValue>
+  );
 };
 
 const Priority = [
-	{ value: 'high', label: 'high', color: 'red' },
-	{ value: 'medium', label: 'medium', color: 'yellow' },
-	{ value: 'low', label: 'low', color: 'green' }
+  { value: "high", label: "high", color: "red" },
+  { value: "medium", label: "medium", color: "yellow" },
+  { value: "low", label: "low", color: "green" },
 ];
 
 const customPriorityOption = (props: any) => {
-	return (
-		<components.Option {...props}>
-			<div className='flex items-center'>
-				<span
-					className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
-				/>
-				<span>{props.data.label}</span>
-			</div>
-		</components.Option>
-	);
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        <span
+          className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
+        />
+        <span>{props.data.label}</span>
+      </div>
+    </components.Option>
+  );
 };
 
 const customPrioritySingleValue = (props: any) => {
-	return (
-		<components.SingleValue {...props}>
-			<div className='flex items-center'>
-				<span
-					className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
-				/>
-				<span>{props.data.label}</span>
-			</div>
-		</components.SingleValue>
-	);
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center">
+        <span
+          className={`mr-2 h-2 w-2 rounded-full bg-${props.data.color}-500`}
+        />
+        <span>{props.data.label}</span>
+      </div>
+    </components.SingleValue>
+  );
 };
 
-const Reviewers = [
-	{ value: 'ak@gmail.com', label: 'Ak-8968' },
-	{ value: 'dn@gmail.com', label: 'DM-477' },
-	{ value: 'vineet@gmail.com', label: 'Vk-123' }
-];
-
 const CreateTaskForm = ({
-	spaceId,
-	handlePostSubmit,
-	column,
-	users,
-	skillsData
+  spaceId,
+  handlePostSubmit,
+  column,
+  users,
+  skillsData,
 }: {
-	spaceId: string;
-	handlePostSubmit: Function;
-	column: string;
-	users: any;
-	skillsData: any;
+  spaceId: string;
+  handlePostSubmit: Function;
+  column: string;
+  users: any;
+  skillsData: any;
 }) => {
-	
-	const {
+  const {
     register,
     handleSubmit,
     watch,
@@ -162,6 +155,7 @@ const CreateTaskForm = ({
   });
 
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const { toast } = useToast();
   const [description, setDescription] = useState("");
   const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
   const [isDescriptionGenerating, setIsDescriptionGenerating] = useState(false);
@@ -169,8 +163,14 @@ const CreateTaskForm = ({
     useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const { connectToMetaMask, createTask, active } = useWeb3();
+  const { connectToMetaMask, createTask, active, convertHbarToTinybars } =
+    useWeb3();
   const Assignee = users?.map((user: any) => ({
+    value: [user._id, user.walletAddress],
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
+  const Reviewers = users?.map((user: any) => ({
     value: [user._id, user.walletAddress],
     label: user.email,
     icon: <Users className="w-4 h-4" />,
@@ -261,18 +261,28 @@ const CreateTaskForm = ({
       if (!active) {
         await connectToMetaMask();
       }
-      const priceInWei = Web3.utils.toWei(data.price, "ether");
+      const priceInTinyHbar = await convertHbarToTinybars(data.price);
+      // const priceInWei = Web3.utils.toWei(data.price, "ether");
+      // const weiAmount = Math.floor(Number(data.price) * hbarToWeiFactor);
+
+      console.log("priceInWei++++", priceInTinyHbar);
       let txn = await createTask([
         data.taskName,
-        priceInWei,
-        "0x6880c2B6d2C95003d9C73764F0855d41e9C967Bd",
+        priceInTinyHbar,
+        data.assignee[1],
+        data.reviewer[1],
       ]);
+      console.log("txn-> from createtask", txn);
+      if (!txn) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
+        return;
+      }
       let taskId = Number(txn.events.TaskCreated.returnValues[0]);
-      // console.log(
-      // 	'data->',
-      // 	txn,
-      // 	Number(txn.events.TaskCreated.returnValues[0], data);
-      // );
       await createTaskMutaion({
         variables: {
           input: {
@@ -283,7 +293,7 @@ const CreateTaskForm = ({
             priority: data.priority,
             amount: Number(data.price),
             activities: [],
-            reviewer: data.reviewer,
+            reviewer: data.reviewer[0],
             assinees: [data.assignee[0]],
             skills: data.skills,
             acceptanceCriteria: data.acceptanceCriteria,
@@ -294,19 +304,31 @@ const CreateTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
+          toast({
+            variant: "default",
+            title: "Success!",
+            description: "Task created successfully",
+          });
           handlePostSubmit(res);
         },
       });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setIsLoading(false);
       console.log("error->", error);
     }
   };
 
-	const onerror = (err: any) => {
-		console.log('err->', err);
-	};
+  const onerror = (err: any) => {
+    console.log("err->", err);
+  };
 
-	return (
+  return (
     <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
       <div className="gap-6 grid grid-cols-3 p-4">
         <div className="col-span-2">
@@ -491,7 +513,12 @@ const CreateTaskForm = ({
                       }),
                     }}
                     options={Assignee}
-                    onChange={(selectedOption) => {
+                    onChange={(
+                      selectedOption: SingleValue<{
+                        value: string;
+                        label: string;
+                      }>
+                    ) => {
                       field.onChange(
                         selectedOption ? selectedOption.value : null
                       );
@@ -580,7 +607,12 @@ const CreateTaskForm = ({
                     }),
                   }}
                   options={Reviewers}
-                  onChange={(selectedOption) => {
+                  onChange={(
+                    selectedOption: SingleValue<{
+                      value: string;
+                      label: string;
+                    }>
+                  ) => {
                     field.onChange(
                       selectedOption ? selectedOption.value : null
                     );

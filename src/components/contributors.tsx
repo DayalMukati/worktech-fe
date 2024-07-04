@@ -25,7 +25,9 @@ interface Contributor {
   reputation: number;
   description: string;
   avatar: string;
-  userID?: { _id: string };
+  userID?: { _id: string 
+    email : string
+  };
 }
 interface ContributorCardProps {
   contributor: Contributor;
@@ -88,12 +90,12 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
             />
             <div className="space-y-1">
               <CardTitle className="text-wrap text-md overflow-hidden text-ellipsis">
-                {user && <p>{user.email}</p>}
+                <p>{contributor?.userID?.email}</p>
               </CardTitle>
               <span className="flex space-x-2">
                 <p>Reputation:</p>
                 <Badge className="hover:text-white text-center bg-secondary text-primary border border-primary">
-                  {contributor.reputation}
+                  {contributor.reputation || 1001}
                 </Badge>
               </span>
             </div>

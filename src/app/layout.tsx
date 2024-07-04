@@ -7,36 +7,35 @@ import Sidebar from '@/components/sidebar';
 import { getIronSession } from 'iron-session';
 import { SessionData, sessionOptions } from '@/lib/session';
 import { cookies } from 'next/headers';
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-	title: 'OneWork',
-	description: 'A project management tool for teams'
+  title: "OneWork",
+  description: "A project management tool for teams",
 };
 
 async function getSession() {
-	const session = await getIronSession<SessionData>(
-		cookies(),
-		sessionOptions
-	);
+  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
-	return session;
+  return session;
 }
 
 export default async function RootLayout({
-	children
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	const session = await getSession();
-	console.log(session);
-	return (
-		<html lang='en'>
-			<body className={''}>
-				<Providers>
-					<Sidebar />
-					{children}
-				</Providers>
-			</body>
-		</html>
-	);
+  const session = await getSession();
+  console.log(session);
+  return (
+    <html lang="en">
+      <body className={""}>
+        <Providers>
+          <Sidebar />
+          {children}
+          <Toaster />
+        </Providers>
+      </body>
+    </html>
+  );
 }

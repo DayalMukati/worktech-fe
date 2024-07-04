@@ -14,6 +14,7 @@ import Icons from '@/components/ui/icon';
 import useSession from '@/hooks/use-session';
 import SkeletonGrid from '@/components/ui/SkeletionGrid';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
+import PageGrid from '@/components/ui/pageGrid';
 
 const UserProfile = () => {
 	const [user, setUser] = useState(null);
@@ -52,7 +53,7 @@ const UserProfile = () => {
 			// Add save functionality here
 		}
 	};
-	if (loading) return <SkeletonGrid />;
+	if (loading) return <PageGrid />;
 	if (error) return <ErrorDisplay errorMessage={error.message}/>
 	return (
 		<div className='flex mt-12 px-36'>

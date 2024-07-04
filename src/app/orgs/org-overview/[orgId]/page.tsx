@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { CircleCheck, Users, UserPlus } from 'lucide-react';
 import { GET_ALL_SPACES_BY_ORG_ID_QUERY } from '@/graphql/queries';
 import { selectSpaces, setSpaces } from '@/store/spacesSlice';
@@ -18,7 +18,8 @@ import { useQuery } from '@apollo/client';
 import { useParams } from 'next/navigation';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
 import SkeletonGrid from '@/components/ui/SkeletionGrid';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import PageGrid from '@/components/ui/pageGrid';
 
 const OrgOverview = () => {
 	const params = useParams();
@@ -59,47 +60,43 @@ const OrgOverview = () => {
 		}
 	});
 
-	if (taskloading || loading || orgloading) return <SkeletonGrid />;
-	if (error)
-		return (
-			<ErrorDisplay
-				errorMessage={
-					error.message ||
-					orgError?.message ||
-					taskerror?.message ||
-					'Unknown error occurred'
-				}
-			/>
-		);
-	return (
-		<div className='p-4'>
-			<div className='grid grid-rows-1 bg-white shadow-lg border rounded-lg w-full'>
-				<div className='h-full'>
-					<div className='flex justify-between'>
-						<div className='flex gap-2 my-6 px-10'>
-							<Image
-								src='/image.png'
-								className='w-18 h-18'
-								width={100}
-								height={100}
-								alt='logo'
-							/>
-							<div className='flex flex-col'>
-								<h1 className='text-[30px]'>
-									{orgData?.getOrg?.name}
-								</h1>
-								<p className='text-[14px] text-slate-400'>
-									{orgData?.getOrg?.description ||
-										'Encyrpting Ethereum'}
-									t
-								</p>
-								<div className='flex mt-4 text-slate-600 text-sm'>
-									<span>Time to payment 0.0 days </span>
-								</div>
-							</div>
-						</div>
-						<div className='flex flex-col mx-4 mt-6'>
-							{/* <Button className="flex justify-between bg-primary w-24">
+  if (taskloading || loading || orgloading) return <PageGrid/>;
+  if (error)
+    return (
+      <ErrorDisplay
+        errorMessage={
+          error.message ||
+          orgError?.message ||
+          taskerror?.message ||
+          "Unknown error occurred"
+        }
+      />
+    );
+  return (
+    <div className="p-4">
+      <div className="grid grid-rows-1 bg-white shadow-lg border rounded-lg w-full">
+        <div className="h-full">
+          <div className="flex justify-between">
+            <div className="flex gap-2 my-6 px-10">
+              <Image
+                src="/image.png"
+                className="w-18 h-18"
+                width={100}
+                height={100}
+                alt="logo"
+              />
+              <div className="flex flex-col">
+                <h1 className="text-[30px]">{orgData?.getOrg?.name}</h1>
+                <p className="text-[14px] text-slate-400">
+                  {orgData?.getOrg?.description || "Encyrpting Ethereum"}t
+                </p>
+                <div className="flex mt-4 text-slate-600 text-sm">
+                  <span>Time to payment 0.0 days </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col mx-4 mt-6">
+              {/* <Button className="flex justify-between bg-primary w-24">
               <LogIn className="w-[20px] h-[20px]" />
               Login
             </Button> */}
@@ -185,13 +182,11 @@ const OrgOverview = () => {
 							</div>
 						</div>
 
-						<div className='flex flex-col gap-4 py-4 pr-20'>
-							<div className='flex flex-col gap-4'>
-								<h1 className='mb-2 text-slate-700 text-xl'>About</h1>
-								<p className='text-left text-slate-400'>
-									No Description
-								</p>
-							</div>
+            <div className="flex flex-col gap-4 py-4 pr-20">
+              <div className="flex flex-col gap-4">
+                <h1 className="mb-2 text-slate-700 text-xl">About</h1>
+                <p className="text-left text-slate-400">This organization contributes to open tasks</p>
+              </div>
 
 							<div className='flex flex-col gap-4 mt-4'>
 								<h1 className='text-slate-700 text-xl'>
