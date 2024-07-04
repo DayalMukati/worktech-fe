@@ -111,7 +111,7 @@ const TaskBoard = ({ isContributer }: { isContributer: boolean }) => {
 
 const Board = ({ isContributer }: { isContributer: boolean }) => {
   const { tasks, pirvateTasks } = useSelector(selectTasks);
-  console.log("tasks state->", tasks, pirvateTasks);
+  //   console.log("tasks state->", tasks, pirvateTasks);
 
   const [cards, setCards] = useState([]);
 
@@ -155,43 +155,43 @@ const Board = ({ isContributer }: { isContributer: boolean }) => {
       : setCards(taskDataPrivate as any);
   }, [tasks, pirvateTasks]);
 
-	return (
-		<div className='flex gap-3 p-12 w-full h-full overflow-scroll'>
-			<Column
-				title='To Do'
-				headingColor='text-red-500'
-				column='todo'
-				cards={cards}
-				setCards={setCards}
-				isContributer={isContributer as any}
-			/>
-			<Column
-				title='In Progress'
-				headingColor='text-yellow-500'
-				column='in-progress'
-				cards={cards}
-				setCards={setCards}
-				isContributer={isContributer as any}
-			/>
-			<Column
-				title='In Review'
-				headingColor='text-orange-500'
-				column='in-review'
-				cards={cards}
-				setCards={setCards}
-				isContributer={isContributer as any}
-			/>
-			<Column
-				title='Done'
-				headingColor='text-green-500'
-				column='done'
-				cards={cards}
-				setCards={setCards}
-				isContributer={isContributer as any}
-			/>
-			{/* <DropZone setCards={setCards} /> */}
-		</div>
-	);
+  return (
+    <div className="flex gap-3 p-12 w-full h-full overflow-scroll">
+      <Column
+        title="To Do"
+        headingColor="text-red-500"
+        column="todo"
+        cards={cards}
+        setCards={setCards}
+        isContributer={isContributer as any}
+      />
+      <Column
+        title="In Progress"
+        headingColor="text-yellow-500"
+        column="in-progress"
+        cards={cards}
+        setCards={setCards}
+        isContributer={isContributer as any}
+      />
+      <Column
+        title="In Review"
+        headingColor="text-orange-500"
+        column="in-review"
+        cards={cards}
+        setCards={setCards}
+        isContributer={isContributer as any}
+      />
+      <Column
+        title="Done"
+        headingColor="text-green-500"
+        column="done"
+        cards={cards}
+        setCards={setCards}
+        isContributer={isContributer as any}
+      />
+      {/* <DropZone setCards={setCards} /> */}
+    </div>
+  );
 };
 
 const Column = ({
