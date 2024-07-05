@@ -20,6 +20,7 @@ import PageGrid from "@/components/ui/pageGrid";
 import ErrorDisplay from "@/components/ui/ErrorDisplay";
 import Header from "@/components/header";
 import Activites from "@/components/activities/activites";
+import ServerDownPage from "@/components/ui/serverdownpage";
 
 const Taskdetails: React.FC = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,8 @@ const Taskdetails: React.FC = () => {
   if (!taskData) return <PageGrid />;
 
   if (loading) return <PageGrid />;
-  if (error) return <ErrorDisplay errorMessage={error.message} />;
+  // if (error) return <ErrorDisplay errorMessage={error.message} />;
+  if (error) return <ServerDownPage />;
 
   const handleReject = () => {
     console.log("rejected");
