@@ -31,6 +31,13 @@ export type ActivityInput = {
   userId: Scalars['String']['input'];
 };
 
+export type CheckInput = {
+  company?: InputMaybe<Scalars['String']['input']>;
+  degree?: InputMaybe<Scalars['String']['input']>;
+  institute?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateRoleInput = {
   description: Scalars['String']['input'];
   status: Scalars['Float']['input'];
@@ -38,18 +45,65 @@ export type CreateRoleInput = {
 };
 
 export type CreateUserInput = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  discord?: InputMaybe<Scalars['String']['input']>;
+  earnings?: InputMaybe<Scalars['Float']['input']>;
+  education?: InputMaybe<Array<EducationInput>>;
   email: Scalars['String']['input'];
+  featureWork?: InputMaybe<Array<FeatureWorkInput>>;
   firstName?: InputMaybe<Scalars['String']['input']>;
   gender?: InputMaybe<Scalars['String']['input']>;
+  github?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
+  linkedIn?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
   mobile?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   profilePic?: InputMaybe<Scalars['String']['input']>;
+  reputationScore?: InputMaybe<Scalars['Float']['input']>;
+  revenueShare?: InputMaybe<Scalars['Float']['input']>;
   signupMode?: InputMaybe<Scalars['String']['input']>;
   skills?: InputMaybe<Array<Scalars['ID']['input']>>;
   status: Scalars['Float']['input'];
+  twitter?: InputMaybe<Scalars['String']['input']>;
   userRoles?: InputMaybe<Array<Scalars['ID']['input']>>;
   walletAddress: Scalars['String']['input'];
+};
+
+export type Education = {
+  __typename?: 'Education';
+  degree?: Maybe<Scalars['String']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  institute?: Maybe<Scalars['String']['output']>;
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type EducationInput = {
+  degree?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  institute?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type FeatureWork = {
+  __typename?: 'FeatureWork';
+  company?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  position?: Maybe<Scalars['String']['output']>;
+  responsibilities?: Maybe<Scalars['String']['output']>;
+  skills?: Maybe<Array<Scalars['String']['output']>>;
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type FeatureWorkInput = {
+  company?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+  responsibilities?: InputMaybe<Scalars['String']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type InterestedContributorsDto = {
@@ -118,6 +172,8 @@ export type LoginUserInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addAdminPermission: User;
+  addUserEducation: User;
+  addUserFeatureWork: User;
   createInterestedContributor: InterestedContributorsDto;
   createOrg: OrgDto;
   createRole: Roles;
@@ -125,6 +181,8 @@ export type Mutation = {
   createSpace: SpaceDto;
   createTask: Tasks;
   createUser: User;
+  deleteUserEducation: UpdateAndDeleteUserInfoOutput;
+  deleteUserFeatureWork: UpdateAndDeleteUserInfoOutput;
   inviteAdminUser: InviteAdminUserOutput;
   loginUser: LoginResult;
   registerUser: LoginResult;
@@ -137,6 +195,8 @@ export type Mutation = {
   updateTask: Tasks;
   updateUser: User;
   updateUserByEmail: User;
+  updateUserEducation: UpdateAndDeleteUserInfoOutput;
+  updateUserFeatureWork: UpdateAndDeleteUserInfoOutput;
   verifyAdminUser: User;
   verifyOtp: LoginResult;
 };
@@ -144,6 +204,18 @@ export type Mutation = {
 
 export type MutationAddAdminPermissionArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type MutationAddUserEducationArgs = {
+  _id: Scalars['String']['input'];
+  input: Array<EducationInput>;
+};
+
+
+export type MutationAddUserFeatureWorkArgs = {
+  _id: Scalars['String']['input'];
+  input: Array<FeatureWorkInput>;
 };
 
 
@@ -179,6 +251,18 @@ export type MutationCreateTaskArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteUserEducationArgs = {
+  _id: Scalars['String']['input'];
+  input: CheckInput;
+};
+
+
+export type MutationDeleteUserFeatureWorkArgs = {
+  _id: Scalars['String']['input'];
+  input: CheckInput;
 };
 
 
@@ -251,6 +335,18 @@ export type MutationUpdateUserByEmailArgs = {
 };
 
 
+export type MutationUpdateUserEducationArgs = {
+  _id: Scalars['String']['input'];
+  input: UpdateUserEducationInput;
+};
+
+
+export type MutationUpdateUserFeatureWorkArgs = {
+  _id: Scalars['String']['input'];
+  input: UpdateUserFeatureWorkInput;
+};
+
+
 export type MutationVerifyAdminUserArgs = {
   input: VerifyAdminUserInput;
 };
@@ -266,6 +362,7 @@ export type OrgDto = {
   contributors?: Maybe<Array<UserDto>>;
   createdBy: UserDto;
   description?: Maybe<Scalars['String']['output']>;
+  logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   reviewers?: Maybe<Array<UserDto>>;
   roles?: Maybe<Array<RoleDto>>;
@@ -278,6 +375,7 @@ export type OrgsInput = {
   contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   createdBy?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   reviewers?: InputMaybe<Array<Scalars['ID']['input']>>;
   roles?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -506,17 +604,33 @@ export type TasksInput = {
   taskId?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateAndDeleteUserInfoOutput = {
+  __typename?: 'UpdateAndDeleteUserInfoOutput';
+  _id: Scalars['ID']['output'];
+  education?: Maybe<Array<Education>>;
+  featureWork?: Maybe<Array<FeatureWork>>;
+};
+
 export type UpdateInput = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  discord?: InputMaybe<Scalars['String']['input']>;
+  earnings?: InputMaybe<Scalars['Float']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
   gender?: InputMaybe<Scalars['String']['input']>;
+  github?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
+  linkedIn?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
   mobile?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   profilePic?: InputMaybe<Scalars['String']['input']>;
+  reputationScore?: InputMaybe<Scalars['Float']['input']>;
+  revenueShare?: InputMaybe<Scalars['Float']['input']>;
   signupMode?: InputMaybe<Scalars['String']['input']>;
   skills?: InputMaybe<Array<Scalars['ID']['input']>>;
   status?: InputMaybe<Scalars['Float']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
   userRoles?: InputMaybe<Array<Scalars['ID']['input']>>;
   walletAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -531,6 +645,7 @@ export type UpdateInterestedContributorsInput = {
 export type UpdateOrgsInput = {
   contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   reviewers?: InputMaybe<Array<Scalars['ID']['input']>>;
   roles?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -574,6 +689,16 @@ export type UpdateTasksInput = {
   taskId?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateUserEducationInput = {
+  checkInput: CheckInput;
+  education?: InputMaybe<EducationInput>;
+};
+
+export type UpdateUserFeatureWorkInput = {
+  checkInput: CheckInput;
+  featureWork?: InputMaybe<FeatureWorkInput>;
+};
+
 export type UpdateUserInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   firstname?: InputMaybe<Scalars['String']['input']>;
@@ -584,20 +709,31 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID']['output'];
+  bio?: Maybe<Scalars['String']['output']>;
   contributedTasks?: Maybe<TaskData>;
   createdAt: Scalars['DateTime']['output'];
+  discord?: Maybe<Scalars['String']['output']>;
+  earnings?: Maybe<Scalars['Float']['output']>;
+  education?: Maybe<Array<Education>>;
   email: Scalars['String']['output'];
+  featureWork?: Maybe<Array<FeatureWork>>;
   firstName?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<Scalars['String']['output']>;
+  github?: Maybe<Scalars['String']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
+  linkedIn?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
   mobile?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
   permissions: Array<Scalars['String']['output']>;
   profilePic?: Maybe<Scalars['String']['output']>;
+  reputationScore?: Maybe<Scalars['Float']['output']>;
+  revenueShare?: Maybe<Scalars['Float']['output']>;
   reviewedTasks?: Maybe<TaskData>;
   signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
-  status: Scalars['Float']['output'];
+  status: Scalars['Int']['output'];
+  twitter?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   userRoles?: Maybe<Array<RoleDto>>;
   walletAddress: Scalars['String']['output'];
@@ -606,19 +742,30 @@ export type User = {
 export type UserDto = {
   __typename?: 'UserDto';
   _id: Scalars['ID']['output'];
+  bio?: Maybe<Scalars['String']['output']>;
   contributedTasks?: Maybe<TaskDataDto>;
   createdAt: Scalars['DateTime']['output'];
+  discord?: Maybe<Scalars['String']['output']>;
+  earnings?: Maybe<Scalars['Float']['output']>;
+  education?: Maybe<Array<Education>>;
   email: Scalars['String']['output'];
+  featureWork?: Maybe<Array<FeatureWork>>;
   firstName?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<Scalars['String']['output']>;
+  github?: Maybe<Scalars['String']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
+  linkedIn?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
   mobile?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
   profilePic?: Maybe<Scalars['String']['output']>;
+  reputationScore?: Maybe<Scalars['Float']['output']>;
+  revenueShare?: Maybe<Scalars['Float']['output']>;
   reviewedTasks?: Maybe<TaskDataDto>;
   signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
   status: Scalars['Int']['output'];
+  twitter?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   userRoles?: Maybe<Array<RoleDto>>;
   walletAddress: Scalars['String']['output'];
@@ -799,8 +946,8 @@ export const ListAllOrgsByUserDocument = {"kind":"Document","definitions":[{"kin
 export const GetSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSpace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"activities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"activity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assinees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"acceptanceCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetSpaceQuery, GetSpaceQueryVariables>;
 export const GetAllSpacesByOrgIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllSpacesByOrgId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllSpacesByOrgId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"org"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"activities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"activity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assinees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"acceptanceCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetAllSpacesByOrgIdQuery, GetAllSpacesByOrgIdQueryVariables>;
 export const ListAllSpacesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAllSpaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listAllSpaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<ListAllSpacesQuery, ListAllSpacesQueryVariables>;
-export const GetTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"taskId"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"docUrl"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"activities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"activity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assinees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"acceptanceCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetTaskQuery, GetTaskQueryVariables>;
-export const ListAllInterestedContributorsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAllInterestedContributors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listAllInterestedContributors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"userID"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskID"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<ListAllInterestedContributorsQuery, ListAllInterestedContributorsQueryVariables>;
+export const GetTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"taskId"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"docUrl"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"activities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"activity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"space"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assinees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"acceptanceCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetTaskQuery, GetTaskQueryVariables>;
+export const ListAllInterestedContributorsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListAllInterestedContributors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listAllInterestedContributors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"userID"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taskID"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<ListAllInterestedContributorsQuery, ListAllInterestedContributorsQueryVariables>;
 export const GetUsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUsers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"gender"}},{"kind":"Field","name":{"kind":"Name","value":"mobile"}},{"kind":"Field","name":{"kind":"Name","value":"signupMode"}},{"kind":"Field","name":{"kind":"Name","value":"userRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"profilePic"}},{"kind":"Field","name":{"kind":"Name","value":"walletAddress"}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetUsersQuery, GetUsersQueryVariables>;
 export const GetAllTasksByAssineeIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllTasksByAssineeId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllTasksByAssineeId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"activities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"activity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"assinees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"acceptanceCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetAllTasksByAssineeIdQuery, GetAllTasksByAssineeIdQueryVariables>;
- export const GetLeaderboardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLeaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contributionData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskPoints"}},{"kind":"Field","name":{"kind":"Name","value":"amountEarned"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskPoints"}},{"kind":"Field","name":{"kind":"Name","value":"amountEarned"}}]}}]}}]}}]} as unknown as DocumentNode<GetLeaderboardQuery, GetLeaderboardQueryVariables>;
+export const GetLeaderboardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLeaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLeaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contributionData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskPoints"}},{"kind":"Field","name":{"kind":"Name","value":"amountEarned"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviewData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"taskCount"}},{"kind":"Field","name":{"kind":"Name","value":"taskPoints"}},{"kind":"Field","name":{"kind":"Name","value":"amountEarned"}}]}}]}}]}}]} as unknown as DocumentNode<GetLeaderboardQuery, GetLeaderboardQueryVariables>;

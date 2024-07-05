@@ -1,8 +1,8 @@
-import { Orgs } from '@/graphql/__generated__/graphql';
+import { OrgDto } from '@/graphql/__generated__/graphql';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface OrgState {
-	orgs: Orgs[]; // Use Orgs[] directly for typing the array of organizations
+	orgs: OrgDto[]; // Use Orgs[] directly for typing the array of organizations
 }
 
 const initialState: OrgState = {
@@ -13,10 +13,10 @@ export const orgSlice = createSlice({
 	name: 'org', // Corrected the name to 'org' to reflect the slice's purpose
 	initialState,
 	reducers: {
-		createOrg: (state, action: PayloadAction<Orgs>) => {
+		createOrg: (state, action: PayloadAction<OrgDto>) => {
 			state.orgs.push(action.payload);
 		},
-		loadOrgs: (state, action: PayloadAction<Orgs[]>) => {
+		loadOrgs: (state, action: PayloadAction<OrgDto[]>) => {
 			// Directly use Orgs[] for the payload type
 			state.orgs = action.payload;
 		}
