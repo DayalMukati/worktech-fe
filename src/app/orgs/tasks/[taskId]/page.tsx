@@ -19,6 +19,7 @@ import { GET_TASK_QUERY } from "@/graphql/queries";
 import PageGrid from "@/components/ui/pageGrid";
 import ErrorDisplay from "@/components/ui/ErrorDisplay";
 import Header from "@/components/header";
+import Activites from "@/components/activities/activites";
 
 const Taskdetails: React.FC = () => {
   const dispatch = useDispatch();
@@ -225,63 +226,7 @@ const Taskdetails: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col justify-between bg-popover shadow-md p-2 border rounded-lg w-full lg:w-1/3 text-popover-foreground">
-          <span className="flex border-2 mb-2 p-2 rounded-lg font-medium">
-            {" "}
-            <h3 className="mx-2 font-medium">Activity</h3>{" "}
-            <Icon
-              icon="mdi:filter"
-              className="flex items-center ml-auto"
-            ></Icon>
-          </span>
-          <div
-            className="mb-2 p-2 h-full text-muted-foreground text-sm cursor-pointer"
-            onClick={toggleShowAll}
-          >
-            {showAllActivity ? (
-              <span className="flex space-x-1">
-                <Icon
-                  icon="material-symbols:play-arrow"
-                  className="w-4 h-4"
-                ></Icon>
-                <p>Show more</p>
-              </span>
-            ) : (
-              <span className="flex space-x-1">
-                <Icon icon="fe:arrow-down" className="w-4 h-4"></Icon>
-                <p>Show less</p>
-              </span>
-            )}
-          </div>
-
-          {/* {showAllActivity
-          ? taskData.activity.slice(0, 1).map((activity, index) => (
-              <div key={index} className="m-2 text-muted-foreground text-sm">
-                {activity.user} changed status from {activity.statusChange}
-                <div className="text-muted-foreground text-xs">
-                  {activity.date}
-                </div>
-              </div>
-            ))
-          : taskData.activity.map((activity, index) => (
-              <div key={index} className="m-2 text-muted-foreground text-sm">
-                {activity.user} changed status from {activity.statusChange}
-                <div className="text-muted-foreground text-xs">
-                  {activity.date}
-                </div>
-              </div>
-            ))} */}
-          <div className="flex mt-[35rem] p-2">
-            <input
-              type="text"
-              className="flex-1 bg-input p-2 border border-border rounded-l-lg text-foreground focus:outline-none"
-              placeholder="Write a comment"
-            />
-            <button className="bg-primary px-4 py-2 rounded-r-lg text-primary-foreground">
-              Send
-            </button>
-          </div>
-        </div>
+        <Activites activityData={taskData.activities} taskId={params.taskId} />
       </div>
     </>
   );

@@ -37,7 +37,6 @@ export function SearchBar() {
 }
 
 export function OrgListingCard({ org, logo }: any) {
-  console.log("logo->", logo);
   return (
     <Link href={`/orgs/org-overview/${org._id}`}>
       <Card className="border-2 border-primary/20 hover:bg-secondary mt-2 min-w-[350px] max-w-[400px] h-full transition-colors duration-300 cursor-pointer">

@@ -82,7 +82,6 @@ const ContributorCard: React.FC<any> = ({ contributor }) => {
               </CardTitle>
               <span className="flex space-x-2">
                 {contributor?.skills.map((skill: any, index: any) => {
-                  // console.log("skill", skill);
                   return (
                     <Badge
                       key={index}
@@ -145,7 +144,6 @@ const ContributorList: React.FC = () => {
 
   const { data, loading, error } = useQuery<UserData>(GET_USERS_QUERY, {
     onCompleted: (data) => {
-      console.log("data contrubuter", data);
       setContributors(data.users as any);
     },
   });
@@ -166,8 +164,8 @@ const ContributorList: React.FC = () => {
 
         <SearchBar />
         <div className="w-full grid grid-cols-3 gap-4">
-          {contributors.map((contributor) => (
-            <ContributorCard key={contributor.name} contributor={contributor} />
+          {contributors.map((contributor, index) => (
+            <ContributorCard key={index} contributor={contributor} />
           ))}
         </div>
       </div>

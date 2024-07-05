@@ -50,7 +50,6 @@ const Sidebar = () => {
     {
       fetchPolicy: "cache-and-network",
       onCompleted: (data) => {
-        console.log({ listOrgs: data.listAllOrgsByUser });
         dispatch(loadOrgs(data.listAllOrgsByUser as any));
       },
     }

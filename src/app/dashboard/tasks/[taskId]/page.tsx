@@ -16,71 +16,62 @@ import { selectTasks, updateTasks } from '@/store/taskSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from '@/components/ui/use-toast';
 
+import Activites from "@/components/activities/activites";
+import { setActivity } from "@/store/activities";
+
 const Taskdetails: React.FC = () => {
-	const params = useParams<{ taskId: string }>();
-	const dispatch = useDispatch();
+  const params = useParams<{ taskId: string }>();
+  const dispatch = useDispatch();
 
-	const [taskData, setTaskData] = useState<any>();
-	const router = useRouter();
-	const [showAllActivity, setShowAllActivity] =
-		useState<boolean>(false);
-	const [submitFormOpen, setSubmitFormOpen] =
-		useState<boolean>(false);
-	const [accpetFormOpen, setAcceptFormOpen] =
-		useState<boolean>(false);
-	const [isRejected, setIsRejected] = useState(false);
+  const [taskData, setTaskData] = useState<any>();
+  const [submitFormOpen, setSubmitFormOpen] = useState<boolean>(false);
+  const [accpetFormOpen, setAcceptFormOpen] = useState<boolean>(false);
+  const [isRejected, setIsRejected] = useState(false);
 
-	const { tasks } = useSelector(selectTasks);
-	useEffect(() => {
-		setTaskData(
-			tasks.find(task => task._id === params.taskId) as any
-		);
-	}, []);
-	console.log('taskData->', taskData);
+  const { tasks } = useSelector(selectTasks);
+  useEffect(() => {
+    setTaskData(tasks.find((task) => task._id === params.taskId) as any);
+  }, []);
 
-	const [isSubmited, setIsSubmitted] = useState(false);
-	const [isAccepted, setIsAccepted] = useState(false);
+  const [isSubmited, setIsSubmitted] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
 
-	const toggleShowAll = () => {
-		setShowAllActivity(prev => !prev);
-	};
+  if (!taskData) {
+    return null;
+  }
 
-	if (!taskData) {
-		return null;
-	}
+  const handleSubmit = (res: any) => {
+    setIsSubmitted(true);
+    setSubmitFormOpen(false);
+    dispatch(updateTasks(res.updateTask));
+    toast({
+      variant: "default",
+      title: "Success!",
+      description: "Task updated successfully",
+    });
+  };
+  const handleAccept = (res: any) => {
 
-	const handleSubmit = (res: any) => {
-		setIsSubmitted(true);
-		setSubmitFormOpen(false);
-		dispatch(updateTasks(res.updateTask));
-		toast({
-			variant: 'default',
-			title: 'Success!',
-			description: 'Task updated successfully'
-		});
-	};
-	const handleAccept = (res: any) => {
-		console.log('res->', res.updateTask);
-		dispatch(updateTasks(res.updateTask));
-		setIsAccepted(true);
-		setAcceptFormOpen(false);
-		toast({
-			variant: 'default',
-			title: 'Accepted!',
-			description: 'Task Accepted successfully'
-		});
-	};
+    dispatch(updateTasks(res.updateTask));
+    setIsAccepted(true);
+    setAcceptFormOpen(false);
+    toast({
+      variant: "default",
+      title: "Accepted!",
+      description: "Task Accepted successfully",
+    });
+  };
 
-	const handleRejectTask = () => {
-		setIsRejected(true);
-		toast({
-			variant: 'destructive',
-			title: 'Rejected!',
-			description: 'Task Rejected successfully'
-		});
-	};
+  const handleRejectTask = () => {
+    setIsRejected(true);
+    toast({
+      variant: "destructive",
+      title: "Rejected!",
+      description: "Task Rejected successfully",
+    });
+  };
 
-	return (
+  return (
     <>
       {accpetFormOpen && (
         <Dialog open={true}>
@@ -290,63 +281,10 @@ const Taskdetails: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col justify-between bg-popover shadow-md p-2 border rounded-lg w-full lg:w-1/3 text-popover-foreground">
-          <span className="flex border-2 mb-2 p-2 rounded-lg font-medium">
-            {" "}
-            <h3 className="mx-2 font-medium">Activity</h3>{" "}
-            <Icon
-              icon="mdi:filter"
-              className="flex items-center ml-auto"
-            ></Icon>
-          </span>
-          <div
-            className="mb-2 p-2 h-full text-muted-foreground text-sm cursor-pointer"
-            onClick={toggleShowAll}
-          >
-            {showAllActivity ? (
-              <span className="flex space-x-1">
-                <Icon
-                  icon="material-symbols:play-arrow"
-                  className="w-4 h-4"
-                ></Icon>
-                <p>Show more</p>
-              </span>
-            ) : (
-              <span className="flex space-x-1">
-                <Icon icon="fe:arrow-down" className="w-4 h-4"></Icon>
-                <p>Show less</p>
-              </span>
-            )}
-          </div>
-
-          {/* {showAllActivity
-          ? taskData.activity.slice(0, 1).map((activity, index) => (
-              <div key={index} className="m-2 text-muted-foreground text-sm">
-                {activity.user} changed status from {activity.statusChange}
-                <div className="text-muted-foreground text-xs">
-                  {activity.date}
-                </div>
-              </div>
-            ))
-          : taskData.activity.map((activity, index) => (
-              <div key={index} className="m-2 text-muted-foreground text-sm">
-                {activity.user} changed status from {activity.statusChange}
-                <div className="text-muted-foreground text-xs">
-                  {activity.date}
-                </div>
-              </div>
-            ))} */}
-          <div className="flex mt-[35rem] p-2">
-            <input
-              type="text"
-              className="flex-1 bg-input p-2 border border-border rounded-l-lg text-foreground focus:outline-none"
-              placeholder="Write a comment"
-            />
-            <button className="bg-primary px-4 py-2 rounded-r-lg text-primary-foreground">
-              Send
-            </button>
-          </div>
-        </div>
+        {/* <div className="flex flex-col justify-between bg-popover shadow-md p-2 border rounded-lg w-full lg:w-1/3 text-popover-foreground">
+          <Activites />
+        </div> */}
+        <Activites activityData ={taskData.activities} taskId={params.taskId} />
       </div>
     </>
   );

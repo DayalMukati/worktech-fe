@@ -31,6 +31,13 @@ export type ActivityInput = {
   userId: Scalars['String']['input'];
 };
 
+export type CheckInput = {
+  company?: InputMaybe<Scalars['String']['input']>;
+  degree?: InputMaybe<Scalars['String']['input']>;
+  institute?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateRoleInput = {
   description: Scalars['String']['input'];
   status: Scalars['Float']['input'];
@@ -38,18 +45,65 @@ export type CreateRoleInput = {
 };
 
 export type CreateUserInput = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  discord?: InputMaybe<Scalars['String']['input']>;
+  earnings?: InputMaybe<Scalars['Float']['input']>;
+  education?: InputMaybe<Array<EducationInput>>;
   email: Scalars['String']['input'];
+  featureWork?: InputMaybe<Array<FeatureWorkInput>>;
   firstName?: InputMaybe<Scalars['String']['input']>;
   gender?: InputMaybe<Scalars['String']['input']>;
+  github?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
+  linkedIn?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
   mobile?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   profilePic?: InputMaybe<Scalars['String']['input']>;
+  reputationScore?: InputMaybe<Scalars['Float']['input']>;
+  revenueShare?: InputMaybe<Scalars['Float']['input']>;
   signupMode?: InputMaybe<Scalars['String']['input']>;
   skills?: InputMaybe<Array<Scalars['ID']['input']>>;
   status: Scalars['Float']['input'];
+  twitter?: InputMaybe<Scalars['String']['input']>;
   userRoles?: InputMaybe<Array<Scalars['ID']['input']>>;
   walletAddress: Scalars['String']['input'];
+};
+
+export type Education = {
+  __typename?: 'Education';
+  degree?: Maybe<Scalars['String']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  institute?: Maybe<Scalars['String']['output']>;
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type EducationInput = {
+  degree?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  institute?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type FeatureWork = {
+  __typename?: 'FeatureWork';
+  company?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  position?: Maybe<Scalars['String']['output']>;
+  responsibilities?: Maybe<Scalars['String']['output']>;
+  skills?: Maybe<Array<Scalars['String']['output']>>;
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type FeatureWorkInput = {
+  company?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+  responsibilities?: InputMaybe<Scalars['String']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type InterestedContributorsDto = {
@@ -118,6 +172,8 @@ export type LoginUserInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addAdminPermission: User;
+  addUserEducation: User;
+  addUserFeatureWork: User;
   createInterestedContributor: InterestedContributorsDto;
   createOrg: OrgDto;
   createRole: Roles;
@@ -125,6 +181,8 @@ export type Mutation = {
   createSpace: SpaceDto;
   createTask: Tasks;
   createUser: User;
+  deleteUserEducation: UpdateAndDeleteUserInfoOutput;
+  deleteUserFeatureWork: UpdateAndDeleteUserInfoOutput;
   inviteAdminUser: InviteAdminUserOutput;
   loginUser: LoginResult;
   registerUser: LoginResult;
@@ -137,6 +195,8 @@ export type Mutation = {
   updateTask: Tasks;
   updateUser: User;
   updateUserByEmail: User;
+  updateUserEducation: UpdateAndDeleteUserInfoOutput;
+  updateUserFeatureWork: UpdateAndDeleteUserInfoOutput;
   verifyAdminUser: User;
   verifyOtp: LoginResult;
 };
@@ -144,6 +204,18 @@ export type Mutation = {
 
 export type MutationAddAdminPermissionArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type MutationAddUserEducationArgs = {
+  _id: Scalars['String']['input'];
+  input: Array<EducationInput>;
+};
+
+
+export type MutationAddUserFeatureWorkArgs = {
+  _id: Scalars['String']['input'];
+  input: Array<FeatureWorkInput>;
 };
 
 
@@ -179,6 +251,18 @@ export type MutationCreateTaskArgs = {
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteUserEducationArgs = {
+  _id: Scalars['String']['input'];
+  input: CheckInput;
+};
+
+
+export type MutationDeleteUserFeatureWorkArgs = {
+  _id: Scalars['String']['input'];
+  input: CheckInput;
 };
 
 
@@ -251,6 +335,18 @@ export type MutationUpdateUserByEmailArgs = {
 };
 
 
+export type MutationUpdateUserEducationArgs = {
+  _id: Scalars['String']['input'];
+  input: UpdateUserEducationInput;
+};
+
+
+export type MutationUpdateUserFeatureWorkArgs = {
+  _id: Scalars['String']['input'];
+  input: UpdateUserFeatureWorkInput;
+};
+
+
 export type MutationVerifyAdminUserArgs = {
   input: VerifyAdminUserInput;
 };
@@ -266,6 +362,7 @@ export type OrgDto = {
   contributors?: Maybe<Array<UserDto>>;
   createdBy: UserDto;
   description?: Maybe<Scalars['String']['output']>;
+  logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   reviewers?: Maybe<Array<UserDto>>;
   roles?: Maybe<Array<RoleDto>>;
@@ -278,6 +375,7 @@ export type OrgsInput = {
   contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   createdBy?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   reviewers?: InputMaybe<Array<Scalars['ID']['input']>>;
   roles?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -506,17 +604,33 @@ export type TasksInput = {
   taskId?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateAndDeleteUserInfoOutput = {
+  __typename?: 'UpdateAndDeleteUserInfoOutput';
+  _id: Scalars['ID']['output'];
+  education?: Maybe<Array<Education>>;
+  featureWork?: Maybe<Array<FeatureWork>>;
+};
+
 export type UpdateInput = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  discord?: InputMaybe<Scalars['String']['input']>;
+  earnings?: InputMaybe<Scalars['Float']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
   gender?: InputMaybe<Scalars['String']['input']>;
+  github?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
+  linkedIn?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
   mobile?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
   profilePic?: InputMaybe<Scalars['String']['input']>;
+  reputationScore?: InputMaybe<Scalars['Float']['input']>;
+  revenueShare?: InputMaybe<Scalars['Float']['input']>;
   signupMode?: InputMaybe<Scalars['String']['input']>;
   skills?: InputMaybe<Array<Scalars['ID']['input']>>;
   status?: InputMaybe<Scalars['Float']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
   userRoles?: InputMaybe<Array<Scalars['ID']['input']>>;
   walletAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -531,6 +645,7 @@ export type UpdateInterestedContributorsInput = {
 export type UpdateOrgsInput = {
   contributors?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  logoUrl?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   reviewers?: InputMaybe<Array<Scalars['ID']['input']>>;
   roles?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -574,6 +689,16 @@ export type UpdateTasksInput = {
   taskId?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateUserEducationInput = {
+  checkInput: CheckInput;
+  education?: InputMaybe<EducationInput>;
+};
+
+export type UpdateUserFeatureWorkInput = {
+  checkInput: CheckInput;
+  featureWork?: InputMaybe<FeatureWorkInput>;
+};
+
 export type UpdateUserInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   firstname?: InputMaybe<Scalars['String']['input']>;
@@ -584,20 +709,31 @@ export type UpdateUserInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID']['output'];
+  bio?: Maybe<Scalars['String']['output']>;
   contributedTasks?: Maybe<TaskData>;
   createdAt: Scalars['DateTime']['output'];
+  discord?: Maybe<Scalars['String']['output']>;
+  earnings?: Maybe<Scalars['Float']['output']>;
+  education?: Maybe<Array<Education>>;
   email: Scalars['String']['output'];
+  featureWork?: Maybe<Array<FeatureWork>>;
   firstName?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<Scalars['String']['output']>;
+  github?: Maybe<Scalars['String']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
+  linkedIn?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
   mobile?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
   permissions: Array<Scalars['String']['output']>;
   profilePic?: Maybe<Scalars['String']['output']>;
+  reputationScore?: Maybe<Scalars['Float']['output']>;
+  revenueShare?: Maybe<Scalars['Float']['output']>;
   reviewedTasks?: Maybe<TaskData>;
   signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
-  status: Scalars['Float']['output'];
+  status: Scalars['Int']['output'];
+  twitter?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   userRoles?: Maybe<Array<RoleDto>>;
   walletAddress: Scalars['String']['output'];
@@ -606,19 +742,30 @@ export type User = {
 export type UserDto = {
   __typename?: 'UserDto';
   _id: Scalars['ID']['output'];
+  bio?: Maybe<Scalars['String']['output']>;
   contributedTasks?: Maybe<TaskDataDto>;
   createdAt: Scalars['DateTime']['output'];
+  discord?: Maybe<Scalars['String']['output']>;
+  earnings?: Maybe<Scalars['Float']['output']>;
+  education?: Maybe<Array<Education>>;
   email: Scalars['String']['output'];
+  featureWork?: Maybe<Array<FeatureWork>>;
   firstName?: Maybe<Scalars['String']['output']>;
   gender?: Maybe<Scalars['String']['output']>;
+  github?: Maybe<Scalars['String']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
+  linkedIn?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
   mobile?: Maybe<Scalars['String']['output']>;
   password?: Maybe<Scalars['String']['output']>;
   profilePic?: Maybe<Scalars['String']['output']>;
+  reputationScore?: Maybe<Scalars['Float']['output']>;
+  revenueShare?: Maybe<Scalars['Float']['output']>;
   reviewedTasks?: Maybe<TaskDataDto>;
   signupMode?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<SkillDto>>;
   status: Scalars['Int']['output'];
+  twitter?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   userRoles?: Maybe<Array<RoleDto>>;
   walletAddress: Scalars['String']['output'];

@@ -4,17 +4,13 @@ import { Button } from "../button";
 import { Input } from "../input";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 
-import { Label } from "@radix-ui/react-label";
-import { components } from "react-select";
 import { useMutation } from "@apollo/client";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import useSmartContract from "@/hooks/useSmartContract";
 import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
 import useWeb3 from "@/hooks/useWeb3";
 
 const AcceptTaskForm = ({
