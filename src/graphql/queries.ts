@@ -20,6 +20,7 @@ export const GET_USER_BY_TOKEN = gql(`
       email
       gender
       mobile
+      bio
       signupMode
       userRoles {
         _id

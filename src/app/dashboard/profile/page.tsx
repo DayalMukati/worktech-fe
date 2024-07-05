@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { GET_USER_BY_TOKEN } from "@/graphql/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
@@ -12,7 +12,6 @@ import ErrorDisplay from "@/components/ui/ErrorDisplay";
 import PageGrid from "@/components/ui/pageGrid";
 import Addfeature from "./Addfeature";
 import AddEducation from "./Addeducation";
-import { usePathname } from "next/navigation";
 import { getInitials } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import { loadOrgs, selectOrg } from "@/store/orgSlice";
@@ -23,6 +22,8 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import { UPDATE_USER_MUTATION } from '@/graphql/mutation';
+import { DocumentNode } from 'graphql';
 const educationData = [
   {
     degree: "Bachelor of Science in Computer Science",
@@ -72,76 +73,81 @@ const cardData = [
 
 // Define the Zod schema for validation
 const profileSchema = z.object({
-  email: z
-    .string()
-    .email("Invalid email address")
-    .optional(),
-   bio: z.string().optional(),
-  github: z.string().url("Invalid URL").optional(),
-  linkedin: z.string().url("Invalid URL").optional(),
+  id: z.string(),
+  bio: z.string().optional(),
+  github: z.string().optional(),
+  linkedin: z.string().optional(),
   twitter: z.string().optional(),
   discord: z.string().optional(),
-  location: z.string().optional(),
-  status: z.string().optional(),
+   status: z.number().optional(),
 });
 
-type ProfileFormValues = z.infer<typeof profileSchema>;
+type Schema = z.infer<typeof profileSchema>;
 
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
   const { session } = useSession();
-  const pathname = usePathname();
-  let orgUriId = "";
-
-  if (pathname.startsWith("/orgs/") && pathname.split("/").length > 2) {
-    const segments = pathname.split("/");
-    orgUriId = segments[segments.length - 1];
-  }
-
   const dispatch = useAppDispatch();
-  const currentURI = usePathname();
-
   const { orgs } = useAppSelector(selectOrg);
 
-  const { loading: isLoadingOrgs } = useQuery(
-    LIST_ALL_ORGS_BY_USER_QUERY,
-
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted: (data) => {
-        console.log({ listOrgs: data.listAllOrgsByUser });
-        dispatch(loadOrgs(data.listAllOrgsByUser));
-      },
-    }
-  );
-
-  const { data, loading, error } = useQuery(GET_USER_BY_TOKEN, {
+  const { loading: isLoadingOrgs } = useQuery(LIST_ALL_ORGS_BY_USER_QUERY, {
+    fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      // setUser(data.getUserByToken);
+      console.log({ listOrgs: data.listAllOrgsByUser });
+      dispatch(loadOrgs(data.listAllOrgsByUser));
     },
   });
 
+  const { data, loading, error } = useQuery(GET_USER_BY_TOKEN, {
+    onCompleted: (data) => {
+      setUser(data.getUserByToken);
+    },
+  });
+
+  const [user, setUser] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const profileInfoRef = useRef<HTMLDivElement>(null);
   const editFormRef = useRef<HTMLDivElement>(null);
 
-  const { control, handleSubmit, reset,register } = useForm<ProfileFormValues>({
-    defaultValues: {
-      email:data?.getUserByToken.email,
-      bio: "",
-      github: "",
-      linkedin: "",
-      twitter: "",
-      location: "",
-      discord:"",
-      status:""
-    },
+  const [updateUserMutation] = useMutation(UPDATE_USER_MUTATION);
+  const {
+    handleSubmit,
+    control,
+    clearErrors,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm<Schema>({
     resolver: zodResolver(profileSchema),
   });
 
-  const onSubmit = (data: ProfileFormValues) => {
-    console.log("Form Data:", data);
-    // Here you would handle form submission, e.g., sending data to the server
+  const onSubmit = async (data: Schema) => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+
+    try {
+      const { data: mutationData } = await updateUserMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            status: data.status,
+            github: data.github,
+            bio: data.bio,
+            discord: data.discord,
+            linkedIn: data.linkedin,
+             twitter: data.twitter,
+          },
+        },
+      });
+      setIsEditing(false);
+      if (profileInfoRef.current && editFormRef.current) {
+        profileInfoRef.current.classList.remove("hidden");
+        editFormRef.current.classList.add("hidden");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const handleEditClick = () => {
@@ -157,14 +163,15 @@ const UserProfile = () => {
       profileInfoRef.current.classList.remove("hidden");
       editFormRef.current.classList.add("hidden");
       setIsEditing(false);
+      reset(user);
     }
   };
 
   const handleSaveClick = () => {
     handleSubmit(onSubmit)();
   };
-  // if (loading) return <PageGrid  />;
-  // if (error) return <ErrorDisplay errorMessage={error.message}/>
+  if (loading) return <PageGrid />;
+  if (error) return <ErrorDisplay errorMessage={error.message} />;
   return (
     <div className="flex mt-12 mb-6 space-x-4 px-36">
       <div className="flex flex-col gap-4 w-1/3 ">
@@ -188,7 +195,7 @@ const UserProfile = () => {
               ) : (
                 <button
                   className={`right-2 bottom-1 absolute p-2 border-2 border-white rounded-full shadow-xl
-         ${ data?.getUserByToken.status === 0 ? "bg-red-700": "bg-green-500" } 
+         ${data?.getUserByToken.status === 0 ? "bg-red-700" : "bg-green-500"} 
          `}
                 />
               )}
@@ -201,60 +208,80 @@ const UserProfile = () => {
               <h2 className="font-semibold text-lg">
                 {data?.getUserByToken.email || "Username"}
               </h2>
-              <p className="text-muted-foreground">{"No bio.."}</p>
+              <p className="text-muted-foreground">
+                {data?.getUserByToken.bio || "No bio.."}
+              </p>
             </div>
             <div
               id="edit-form"
               ref={editFormRef}
               className={`mt-4 w-full ${isEditing ? "" : "hidden"}`}
             >
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-2">
-                  <Input
-                    type="text"
-                    defaultValue={data?.getUserByToken.email || "Username"}
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    placeholder="Email"
-                    {...register("email")}
-                  />
-                </div>
+              <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                {" "}
+                <input
+                  type="hidden"
+                  {...register("id")}
+                  defaultValue={user?.id}
+                />
                 <div className="mb-2">
                   <textarea
-                    // defaultValue={data?.getUserByToken.bio || ""}
                     className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
                     rows={2}
                     placeholder="Add a bio..."
                     {...register("bio")}
                   />
+                  {errors.bio && (
+                    <span className="text-red-500 text-xs">
+                      {errors.bio.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex justify-center items-center mb-2">
                   <Icons icon="mdi:github" className="mr-2 w-8 h-8" />
                   <Input
                     type="text"
-                    // defaultValue={data?.getUserByToken.github || ""}
                     className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
                     placeholder="https://github.com/username"
                     {...register("github")}
                   />
+                  {errors.github && (
+                    <span className="text-red-500 text-xs">
+                      {errors.github.message}
+                    </span>
+                  )}
                 </div>
                 <div className="mb-2 flex items-center ">
-                <Icons icon="hugeicons:user-status" className=" text-slate-400 mr-2 w-8 h-8" />
+                  <Icons
+                    icon="hugeicons:user-status"
+                    className=" text-slate-400 mr-2 w-8 h-8"
+                  />
 
-                <Controller
-                  name="status"
-                  control={control}
-                  render={({ field }) => (
-                    <select
-                      id="status"
-                      className="bg-input px-2 py-1.5 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                      {...field}
-                    >
-                      <option value="1">Active</option>
-                      <option value="0">Inactive</option>
-                    </select>
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        id="status"
+                        className="bg-input px-2 py-1.5 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
+                        {...field}
+                        value={field.value?.toString()} // Ensure the value is a string for the select component
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        } // Convert the value back to a number on change
+                      >
+                        <option value={1}>Active</option>
+                        <option value={0}>Inactive</option>
+                      </select>
+                    )}
+                  />
+
+                  {errors.status && (
+                    <span className="text-red-500 text-xs">
+                      {errors.status.message}
+                    </span>
                   )}
-                />
-              </div>
+                </div>
                 <div className="flex justify-center items-center mb-2">
                   <Icons
                     icon="mdi:linkedin"
@@ -262,11 +289,15 @@ const UserProfile = () => {
                   />
                   <Input
                     type="text"
-                    // defaultValue={data?.getUserByToken.linkedin || ""}
                     placeholder="https://linkedin.com/in/username"
                     className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
                     {...register("linkedin")}
                   />
+                  {errors.linkedin && (
+                    <span className="text-red-500 text-xs">
+                      {errors.linkedin.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex justify-center items-center mb-2">
                   <Icons
@@ -275,11 +306,15 @@ const UserProfile = () => {
                   />
                   <Input
                     type="text"
-                    // defaultValue={data?.getUserByToken.twitter || ""}
                     placeholder="https://twitter.com/username"
                     className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
                     {...register("twitter")}
                   />
+                  {errors.twitter && (
+                    <span className="text-red-500 text-xs">
+                      {errors.twitter.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex justify-center items-center mb-2">
                   <Icons
@@ -288,26 +323,17 @@ const UserProfile = () => {
                   />
                   <Input
                     type="text"
-                    // defaultValue={data?.getUserByToken.twitter || ""}
                     placeholder="https://twitter.com/username"
                     className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    {...register("twitter")}
+                    {...register("discord")}
                   />
+                  {errors.discord && (
+                    <span className="text-red-500 text-xs">
+                      {errors.discord.message}
+                    </span>
+                  )}
                 </div>
-                <div className="flex justify-center items-center mb-2">
-                  <Icons
-                    icon="mdi:location-outline"
-                    className="mr-2 w-8 h-8 text-primary"
-                  />
-                  <Input
-                    type="text"
-                    // defaultValue={data?.getUserByToken.location || ""}
-                    placeholder="Location"
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    {...register("location")}
-                  />
-                </div>
-                <div className="flex justify-center items-center mt-4">
+                 <div className="flex justify-center items-center mt-4">
                   <Button
                     id="cancel-button"
                     className="bg-slate-300 hover:bg-slate-400 shadow mx-2 px-4 py-1 rounded-md text-slate-900"
@@ -389,7 +415,7 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mx-2 w-2/3">
-        {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
+       {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
           <h1 className="font-semibold text-lg text-slate-600">
             Featured work
           </h1>
