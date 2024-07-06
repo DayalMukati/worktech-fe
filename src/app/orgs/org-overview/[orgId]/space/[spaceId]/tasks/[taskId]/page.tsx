@@ -1,32 +1,39 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Icon from '@/components/ui/icon';
-import { useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+"use client";
+import React, { useEffect, useState } from "react";
+import Icon from "@/components/ui/icon";
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogTitle
-} from '@radix-ui/react-dialog';
-import CompleteTaskForm from '@/components/ui/modals/ComplettaskForm';
-import { CrossIcon } from 'lucide-react';
-import { selectTasks, updatePrivateTasks } from '@/store/taskSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from '@/components/ui/use-toast';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
+import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
+import { CrossIcon } from "lucide-react";
+import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "@/components/ui/use-toast";
 import Activites from "@/components/activities/activites";
 
 const Taskdetails: React.FC = () => {
-  const dispatch = useDispatch();
-  const params = useParams<{ taskId: string }>();
+  const params = useParams();
 
   const [taskData, setTaskData] = useState<any>();
 
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
   const [openFromReview, setopenFromReview] = useState<boolean>(false);
 
-  const { pirvateTasks } = useSelector(selectTasks);
-  console.log("pirvateTasks->", pirvateTasks);
+  const {
+    loading: loadingTask,
+    error: errorTask,
+    data: dataTask,
+  } = useQuery(GET_TASK_QUERY, {
+    variables: { _id: params.taskId as string },
+    onCompleted: () => {
+      setLoading(false);
+    },
+  });
 
   useEffect(() => {
     setTaskData(pirvateTasks.find((task) => task._id === params.taskId) as any);
@@ -36,9 +43,25 @@ const Taskdetails: React.FC = () => {
     setShowAllActivity((prev) => !prev);
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   if (!taskData) {
     return null;
   }
+
+  const handleSubmit = () => {
+    setopenFromReview(false);
+  };
 
   const handleReject = () => {
     console.log("rejected");
