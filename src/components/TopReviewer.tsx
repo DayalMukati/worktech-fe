@@ -100,7 +100,7 @@ const TopReviewer: React.FC<{}> = () => {
             </TableHeader>
             <TableBody>
               {allReviewer.map((reviewer, index) => {
-                 const amountEarned = String(reviewer.amountEarned).substring(0,5);
+                 const amountEarned = String(reviewer.amountEarned).substring(0,4);
                 return (
                   <TableRow
                     key={index}
@@ -126,7 +126,7 @@ const TopReviewer: React.FC<{}> = () => {
                       {reviewer.taskPoints}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {amountEarned}
+                      {amountEarned} HBAR
                     </TableCell>
                   </TableRow>
                 );

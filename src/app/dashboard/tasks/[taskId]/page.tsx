@@ -20,19 +20,23 @@ import Activites from "@/components/activities/activites";
 import { setActivity } from "@/store/activities";
 
 const Taskdetails: React.FC = () => {
-  const params = useParams<{ taskId: string }>();
-  const dispatch = useDispatch();
+	const params = useParams<{ taskId: string }>();
 
   const [taskData, setTaskData] = useState<any>();
   const [submitFormOpen, setSubmitFormOpen] = useState<boolean>(false);
   const [accpetFormOpen, setAcceptFormOpen] = useState<boolean>(false);
   const [isRejected, setIsRejected] = useState(false);
 
-  const { tasks } = useSelector(selectTasks);
-  useEffect(() => {
-    setTaskData(tasks.find((task) => task._id === params.taskId) as any);
-  }, []);
-
+  const {
+    loading: loadingTask,
+    error: errorTask,
+    data: dataTask,
+  } = useQuery(GET_TASK_QUERY, {
+    variables: { _id: params.taskId },
+    onCompleted: () => {
+      setLoading(false);
+    },
+  });
   const [isSubmited, setIsSubmitted] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
 
@@ -90,8 +94,8 @@ const Taskdetails: React.FC = () => {
 
             <AcceptTaskForm
               taskId={params.taskId}
-              handlePostSubmit={(res: any) => {
-                handleAccept(res);
+              handlePostSubmit={() => {
+                handleAccept();
               }}
             />
           </DialogContent>

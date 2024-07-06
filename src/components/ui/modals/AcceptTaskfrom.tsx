@@ -45,7 +45,7 @@ const AcceptTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
-          handlePostSubmit(res as any);
+          handlePostSubmit(res);
         },
       });
     } catch (error) {

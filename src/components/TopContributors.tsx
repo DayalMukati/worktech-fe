@@ -102,7 +102,7 @@ const TopContributor: React.FC<{}> = () => {
                     </TableCell>
                     <TableCell className='hidden md:table-cell'>{contributor.taskCount}</TableCell>
                     <TableCell className='hidden md:table-cell'>{contributor.taskPoints}</TableCell>
-                    <TableCell className='hidden md:table-cell'>{amountEarned.substring(0, 5)}</TableCell>
+                    <TableCell className='hidden md:table-cell'>{amountEarned.substring(0,4)} HBAR</TableCell>
                   </TableRow>
                 );
               })}
