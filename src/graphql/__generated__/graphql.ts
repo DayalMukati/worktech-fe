@@ -26,9 +26,9 @@ export type Activity = {
 };
 
 export type ActivityInput = {
-  activity?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>;
-  userId: Scalars['String']['input'];
+  userId: Scalars["String"]["input"];
+  activity?: InputMaybe<Scalars["String"]["input"]>;
+  createdAt?: InputMaybe<Scalars["DateTime"]["input"]>;
 };
 
 export type CheckInput = {

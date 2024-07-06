@@ -32,7 +32,8 @@ const Activites = ({ activityData, taskId }: any) => {
           _id: taskId,
           input: {
             activities: {
-              userId: userData.userId,
+              //@ts-ignore
+              userId: userData?.userId,
               activity: comment,
             },
           },
@@ -112,7 +113,7 @@ const Activites = ({ activityData, taskId }: any) => {
                 <div className="">
                   <div className="flex  items-center justify-end">
                     <div className="flex  text-xs p-2 text-sky-600">
-                      {userData.username}
+                      {userData.username ? userData.username : "Task Creator"}
                     </div>
                     <Image
                       src={userData.profilePicture}
