@@ -93,7 +93,7 @@ const UserProfile = () => {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       console.log({ listOrgs: data.listAllOrgsByUser });
-      dispatch(loadOrgs(data.listAllOrgsByUser));
+      dispatch(loadOrgs(data.listAllOrgsByUser as any));
     },
   });
 
@@ -136,7 +136,7 @@ const UserProfile = () => {
             bio: data.bio,
             discord: data.discord,
             linkedIn: data.linkedin,
-             twitter: data.twitter,
+            twitter: data.twitter,
           },
         },
       });
@@ -333,7 +333,7 @@ const UserProfile = () => {
                     </span>
                   )}
                 </div>
-                 <div className="flex justify-center items-center mt-4">
+                <div className="flex justify-center items-center mt-4">
                   <Button
                     id="cancel-button"
                     className="bg-slate-300 hover:bg-slate-400 shadow mx-2 px-4 py-1 rounded-md text-slate-900"
@@ -397,6 +397,7 @@ const UserProfile = () => {
               </h1>
               {orgs.map(({ name, _id }) => (
                 <Link
+                  key={_id}
                   className="flex space-x-4 my-2 w-full"
                   href={`/orgs/org-overview/${_id}`}
                 >
@@ -415,7 +416,7 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mx-2 w-2/3">
-       {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
+        {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
           <h1 className="font-semibold text-lg text-slate-600">
             Featured work
           </h1>

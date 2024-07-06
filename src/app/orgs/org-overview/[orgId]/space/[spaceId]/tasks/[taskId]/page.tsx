@@ -1,19 +1,19 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Icon from '@/components/ui/icon';
-import { useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+"use client";
+import React, { useEffect, useState } from "react";
+import Icon from "@/components/ui/icon";
+import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogTitle
-} from '@radix-ui/react-dialog';
-import CompleteTaskForm from '@/components/ui/modals/ComplettaskForm';
-import { CrossIcon } from 'lucide-react';
-import { selectTasks, updatePrivateTasks } from '@/store/taskSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from '@/components/ui/use-toast';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
+import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
+import { CrossIcon } from "lucide-react";
+import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "@/components/ui/use-toast";
 import Activites from "@/components/activities/activites";
 
 const Taskdetails: React.FC = () => {

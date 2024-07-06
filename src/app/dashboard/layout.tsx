@@ -35,7 +35,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     if (!session.authToken) {
       router.push("/");
     }
-  }, []);
+  }, [session]);
 
   return (
     <div className="flex flex-col bg-muted/40 w-full h-screen">

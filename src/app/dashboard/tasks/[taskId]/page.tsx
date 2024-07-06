@@ -1,42 +1,38 @@
-'use client';
-import React, { use, useEffect, useState } from 'react';
-import Icon from '@/components/ui/icon';
-import { useParams, useRouter } from 'next/navigation';
-import SubmitTaskForm from '@/components/ui/modals/SubmittaskForm';
+"use client";
+import React, { use, useEffect, useState } from "react";
+import Icon from "@/components/ui/icon";
+import { useParams, useRouter } from "next/navigation";
+import SubmitTaskForm from "@/components/ui/modals/SubmittaskForm";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogTitle
-} from '@radix-ui/react-dialog';
-import { CrossIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import AcceptTaskForm from '@/components/ui/modals/AcceptTaskfrom';
-import { selectTasks, updateTasks } from '@/store/taskSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from '@/components/ui/use-toast';
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@radix-ui/react-dialog";
+import { CrossIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import AcceptTaskForm from "@/components/ui/modals/AcceptTaskfrom";
+import { selectTasks, updateTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "@/components/ui/use-toast";
 
 import Activites from "@/components/activities/activites";
 import { setActivity } from "@/store/activities";
 
 const Taskdetails: React.FC = () => {
-	const params = useParams<{ taskId: string }>();
+  const params = useParams<{ taskId: string }>();
+  const dispatch = useDispatch();
 
   const [taskData, setTaskData] = useState<any>();
   const [submitFormOpen, setSubmitFormOpen] = useState<boolean>(false);
   const [accpetFormOpen, setAcceptFormOpen] = useState<boolean>(false);
   const [isRejected, setIsRejected] = useState(false);
 
-  const {
-    loading: loadingTask,
-    error: errorTask,
-    data: dataTask,
-  } = useQuery(GET_TASK_QUERY, {
-    variables: { _id: params.taskId },
-    onCompleted: () => {
-      setLoading(false);
-    },
-  });
+  const { tasks } = useSelector(selectTasks);
+  useEffect(() => {
+    setTaskData(tasks.find((task) => task._id === params.taskId) as any);
+  }, [tasks]);
+
   const [isSubmited, setIsSubmitted] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
 
@@ -55,7 +51,6 @@ const Taskdetails: React.FC = () => {
     });
   };
   const handleAccept = (res: any) => {
-
     dispatch(updateTasks(res.updateTask));
     setIsAccepted(true);
     setAcceptFormOpen(false);
@@ -94,8 +89,8 @@ const Taskdetails: React.FC = () => {
 
             <AcceptTaskForm
               taskId={params.taskId}
-              handlePostSubmit={() => {
-                handleAccept();
+              handlePostSubmit={(res: any) => {
+                handleAccept(res);
               }}
             />
           </DialogContent>
@@ -288,7 +283,7 @@ const Taskdetails: React.FC = () => {
         {/* <div className="flex flex-col justify-between bg-popover shadow-md p-2 border rounded-lg w-full lg:w-1/3 text-popover-foreground">
           <Activites />
         </div> */}
-        <Activites activityData ={taskData.activities} taskId={params.taskId} />
+        <Activites activityData={taskData.activities} taskId={params.taskId} />
       </div>
     </>
   );
