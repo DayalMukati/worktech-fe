@@ -16,25 +16,23 @@ import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
 import useWeb3 from "@/hooks/useWeb3";
+import { toast } from "../use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
 // Define the schema using Zod
-
-
-
 
 const CompleteTaskForm = ({
   taskId,
   docUrl,
   handlePostSubmit,
-  taskOnchainID
+  taskOnchainID,
 }: {
   taskId: string;
   docUrl: string;
   handlePostSubmit: Function;
-  taskOnchainID: any
+  taskOnchainID: any;
 }) => {
   const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
-
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
@@ -42,15 +40,15 @@ const CompleteTaskForm = ({
   const { web3 } = useAppSelector(selectUserAuth);
 
   const { callMethod, account } = useSmartContract();
-  const { connectToMetaMask, completeTask, active, convertHbarToTinybars } = useWeb3();
+  const { connectToMetaMask, completeTask, active, convertHbarToTinybars } =
+    useWeb3();
 
   const onSubmitFrom = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
+      console.log("taskOnchainID>>>>>>++++++", taskOnchainID);
 
-      
       if (!active) {
         await connectToMetaMask();
       }
@@ -60,10 +58,8 @@ const CompleteTaskForm = ({
       // const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
 
       // console.log('taskData++++', {rewardAmount}, taskData.reward);
-      let txn = await completeTask([
-        taskOnchainID
-      ]);
-      console.log('txn++++++', txn);
+      let txn = await completeTask([taskOnchainID]);
+      console.log("txn++++++", txn);
       setLoading(false);
 
       await updateTaskMutaion({
@@ -81,11 +77,13 @@ const CompleteTaskForm = ({
           handlePostSubmit(res);
         },
       });
-
-      //   if (!active) {
-      //     await connectToMetaMask();
-      //   }
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
       console.log("error->", error);
     } finally {
       setLoading(false);
@@ -97,7 +95,7 @@ const CompleteTaskForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={(e)=>onSubmitFrom(e)}>
+    <form autoComplete="off" onSubmit={(e) => onSubmitFrom(e)}>
       <div className="flex flex-col gap-6  p-4">
         <div className="flex flex-col">
           <Input
@@ -105,7 +103,6 @@ const CompleteTaskForm = ({
             placeholder="submited task link ...."
             className="w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
             value={docUrl}
-          
           />
           <Button
             type="submit"

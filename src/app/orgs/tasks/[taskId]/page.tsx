@@ -14,31 +14,45 @@ import { CrossIcon } from "lucide-react";
 import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
+import { useQuery } from "@apollo/client";
+import { GET_TASK_QUERY } from "@/graphql/queries";
+import PageGrid from "@/components/ui/pageGrid";
+import ErrorDisplay from "@/components/ui/ErrorDisplay";
+import Header from "@/components/header";
 import Activites from "@/components/activities/activites";
+import ServerDownPage from "@/components/ui/serverdownpage";
 
 const Taskdetails: React.FC = () => {
   const dispatch = useDispatch();
   const params = useParams<{ taskId: string }>();
+  console.log("params");
 
   const [taskData, setTaskData] = useState<any>();
 
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
   const [openFromReview, setopenFromReview] = useState<boolean>(false);
 
-  const { pirvateTasks } = useSelector(selectTasks);
-  console.log("pirvateTasks->", pirvateTasks);
-
-  useEffect(() => {
-    setTaskData(pirvateTasks.find((task) => task._id === params.taskId) as any);
-  }, [pirvateTasks]);
-
   const toggleShowAll = () => {
     setShowAllActivity((prev) => !prev);
   };
 
-  if (!taskData) {
-    return null;
-  }
+  const { data, loading, error } = useQuery(GET_TASK_QUERY, {
+    variables: {
+      _id: params.taskId as string,
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setTaskData(data.getTask);
+    }
+  }, [data]);
+
+  if (!taskData) return <PageGrid />;
+
+  if (loading) return <PageGrid />;
+  // if (error) return <ErrorDisplay errorMessage={error.message} />;
+  if (error) return <ServerDownPage />;
 
   const handleReject = () => {
     console.log("rejected");
@@ -46,6 +60,7 @@ const Taskdetails: React.FC = () => {
 
   return (
     <>
+      <Header />
       {openFromReview && (
         <Dialog open={true}>
           <div className="z-10 fixed inset-0 bg-black opacity-30"></div>
@@ -78,15 +93,14 @@ const Taskdetails: React.FC = () => {
           </DialogContent>
         </Dialog>
       )}
-
-      <div className="flex lg:flex-row flex-col gap-2 bg-card p-2 pb-4 border text-card-foreground">
+      <div className="flex lg:flex-row flex-col gap-2 bg-card p-2 pb-4 border text-card-foreground px-20 mx-auto my-auto">
         <div className="flex-1 shadow-lg p-4 border rounded-lg">
           {/* <div className='mb-2 text-muted-foreground text-sm'>
 						Ten (formerly Obscuro) / Community Contributions /
 					</div> */}
           <h2 className="mb-4 font-bold text-2xl">
             {/* Post about Ten in your community */}
-            {taskData.name}
+            {/* {taskData.name} */}
           </h2>
           <div className="flex flex-wrap gap-2 mb-4">
             <button className="flex justify-center items-center bg-primary px-3 py-1 rounded-md text-primary-foreground text-sm">
@@ -101,7 +115,7 @@ const Taskdetails: React.FC = () => {
                 icon="mdi:crown-outline"
                 className="w-4 h-5 text-white"
               ></Icon>
-              Amount {taskData.amount} HBAR
+              Amount {taskData?.amount} HBAR
             </button>
             <button className="flex justify-center items-center border-primary px-3 py-1 border rounded-md text-accent-foreground text-sm">
               <Icon
