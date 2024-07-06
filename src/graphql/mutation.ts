@@ -93,32 +93,7 @@ export const UPDATE_TASK_MUTATION = gql(`
   }
 `);
 
-export const GET_USER_BY_TOKEN = gql(`
-  query GetUserByToken {
-    getUserByToken {
-      _id
-      firstName
-      lastName
-      email
-      gender
-      mobile
-      signupMode
-      userRoles {
-        _id
-        title
-      }
-      status
-      profilePic
-      walletAddress
-      skills {
-        _id
-        title
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`);
+ 
 
 export const CREATE_SPACE_MUTATION = gql(`
   mutation CreateSpace($input: SpacesInput!) {
@@ -197,6 +172,25 @@ export const UPDATE_ORG_MUTATION = gql(`
         _id
       }
       status
+    }
+  }
+`);
+export const UPDATE_USER_MUTATION = gql(`
+  mutation UpdateUser($_id: String!, $input: UpdateInput!) {
+    updateUser(_id: $_id, input: $input) {
+       _id
+     mobile
+    gender
+    status
+    signupMode
+    profilePic
+    linkedIn
+    twitter
+    discord
+    github
+    bio
+    createdAt
+    updatedAt
     }
   }
 `);
