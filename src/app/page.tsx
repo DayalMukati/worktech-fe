@@ -2,7 +2,7 @@ import OpenTaskList from "@/components/open-task-list";
 import OrgList from "@/components/org-listings";
 import Contributors from "@/components/contributors";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useEffect } from "react";
+import React from "react";
 import Header from "@/components/header";
 
 import { cookies } from "next/headers";
