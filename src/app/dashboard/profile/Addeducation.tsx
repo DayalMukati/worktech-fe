@@ -2,17 +2,19 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus } from "lucide-react";
 import useSession from "@/hooks/use-session";
 import { useMutation } from "@apollo/client";
 import { ADD_EDUCATION_MUTATION } from "@/graphql/mutation";
-const addFeatureSchema = z.object({
+import { useAppDispatch } from "@/hooks/toolKitTyped";
+import { addEducation } from '@/store/UserSlice';  // Adjust the import path as necessary
+import { useForm } from "react-hook-form";
+
+const addEducationSchema = z.object({
   degree: z.string().min(1, "Degree is required"),
   institute: z.string().min(1, "Institution is required"),
-
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
     return startDate <= new Date();
@@ -23,18 +25,20 @@ const addFeatureSchema = z.object({
   }, "End Date must be in the future"),
 });
 
-type FormValues = z.infer<typeof addFeatureSchema>;
+type FormValues = z.infer<typeof addEducationSchema>;
 
 const AddEducation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { session } = useSession();
+  const dispatch = useAppDispatch();  // Use the custom hook for dispatch
   const {
     register,
     handleSubmit,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(addFeatureSchema),
+    resolver: zodResolver(addEducationSchema),
     mode: "all",
   });
   const [addEducationMutation] = useMutation(ADD_EDUCATION_MUTATION);
@@ -45,6 +49,7 @@ const AddEducation = () => {
 
   const closeModal = () => {
     setIsOpen(false);
+    reset()
   };
 
   const onSubmit = async (data: FormValues) => {
@@ -52,8 +57,9 @@ const AddEducation = () => {
       console.error("Session ID is undefined");
       return;
     }
-     try {
-      const { data: mutationData } = await addEducationMutation({
+
+    try {
+       const { data: mutationData } = await addEducationMutation({
         variables: {
           _id: session._id,
           input: {
@@ -61,15 +67,24 @@ const AddEducation = () => {
             startDate: data.startDate,
             endDate: data.endDate,
             degree: data.degree,
-             
           },
         },
       });
+
+       if (mutationData) {
+        dispatch(addEducation({
+          institute: data.institute,
+          degree: data.degree,
+          startDate: data.startDate,
+          endDate: data.endDate,
+        }));
+      }
+
       console.log("Mutation response:", mutationData);  
+     
       closeModal();  
     } catch (error) {
       console.error("Error:", error);
-       
     }
   };
 
@@ -95,7 +110,7 @@ const AddEducation = () => {
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
+              <div className="mb-4">
                 <label
                   htmlFor="institute"
                   className="justify-start flex text-sm font-medium text-slate-700"
@@ -108,7 +123,7 @@ const AddEducation = () => {
                   placeholder="Enter Institute"
                   {...register("institute")}
                   className={`mt-1 ${
-                    errors.degree ? "border-red-500" : "border-slate-300"
+                    errors.institute ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
                   onClick={() => clearErrors("institute")}
                 />

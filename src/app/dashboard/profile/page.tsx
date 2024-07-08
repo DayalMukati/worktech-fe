@@ -2,9 +2,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
-import { GET_USER_BY_TOKEN } from "@/graphql/queries";
+import {
+  GET_USER_BY_TOKEN,
+  LIST_ALL_ORGS_BY_USER_QUERY,
+} from "@/graphql/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { CircleHelp, CirclePlus, Coffee, Pencil, Plus } from "lucide-react";
+import { CircleHelp, CirclePlus, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icon";
 import useSession from "@/hooks/use-session";
@@ -15,319 +18,51 @@ import AddEducation from "./Addeducation";
 import { getInitials } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 import { loadOrgs, selectOrg } from "@/store/orgSlice";
-import { LIST_ALL_ORGS_BY_USER_QUERY } from "@/graphql/queries";
+import { setUser, updateUser } from "@/store/UserSlice";
 import EditEducation from "./Editeducation";
 import EditFeature from "./Editfeature";
-import { z } from "zod";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { UPDATE_USER_MUTATION } from "@/graphql/mutation";
-const profileSchema = z.object({
-  id: z.string(),
-  bio: z.string().optional(),
-  github: z.string().optional(),
-  linkedin: z.string().optional(),
-  twitter: z.string().optional(),
-  discord: z.string().optional(),
-  status: z.number().optional(),
-});
+import Updateuser from "./updateuser";
 
-type Schema = z.infer<typeof profileSchema>;
+
 
 const UserProfile = () => {
   const { session } = useSession();
   const dispatch = useAppDispatch();
   const { orgs } = useAppSelector(selectOrg);
+  const user = useAppSelector((state) => state.UserSlice.user);
 
   const { loading: isLoadingOrgs } = useQuery(LIST_ALL_ORGS_BY_USER_QUERY, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      console.log({ listOrgs: data.listAllOrgsByUser });
       dispatch(loadOrgs(data.listAllOrgsByUser));
     },
   });
 
   const { data, loading, error } = useQuery(GET_USER_BY_TOKEN, {
     onCompleted: (data) => {
-      setUser(data.getUserByToken);
+      dispatch(setUser(data.getUserByToken));
     },
   });
 
-  const [user, setUser] = useState<any>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const profileInfoRef = useRef<HTMLDivElement>(null);
-  const editFormRef = useRef<HTMLDivElement>(null);
-  const [updateUserMutation] = useMutation(UPDATE_USER_MUTATION);
-  const {
-    handleSubmit,
-    control,
-    clearErrors,
-    formState: { errors },
-    register,
-    reset,
-  } = useForm<Schema>({
-    resolver: zodResolver(profileSchema),
-  });
-
-  const onSubmit = async (data: Schema) => {
-    if (!session._id) {
-      console.error("Session ID is undefined");
-      return;
-    }
-
-    try {
-      const { data: mutationData } = await updateUserMutation({
-        variables: {
-          _id: session._id,
-          input: {
-            status: data.status,
-            github: data.github,
-            bio: data.bio,
-            discord: data.discord,
-            linkedIn: data.linkedin,
-            twitter: data.twitter,
-          },
-        },
-      });
-      setIsEditing(false);
-      if (profileInfoRef.current && editFormRef.current) {
-        profileInfoRef.current.classList.remove("hidden");
-        editFormRef.current.classList.add("hidden");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleEditClick = () => {
-    if (profileInfoRef.current && editFormRef.current) {
-      profileInfoRef.current.classList.add("hidden");
-      editFormRef.current.classList.remove("hidden");
-      setIsEditing(true);
-    }
-  };
-
-  const handleCancelClick = () => {
-    if (profileInfoRef.current && editFormRef.current) {
-      profileInfoRef.current.classList.remove("hidden");
-      editFormRef.current.classList.add("hidden");
-      setIsEditing(false);
-      reset(user);
-    }
-  };
-
-  const handleSaveClick = () => {
-    handleSubmit(onSubmit)();
-  };
+ 
   const featureData = user?.featureWork?.map((obj: any, index: number) => ({
     ...obj,
     id: index + 1,
   }));
+
   const educationData = user?.education?.map((obj: any, index: number) => ({
     ...obj,
     id: index + 1,
   }));
+
   if (loading) return <PageGrid />;
   if (error) return <ErrorDisplay errorMessage={error.message} />;
-
   return (
     <div className="flex mt-12 mb-6 space-x-4 px-36">
       <div className="flex flex-col gap-4 w-1/3 ">
         <div className="flex flex-col justify-between items-center gap-2">
-          <div className="flex flex-col justify-center items-center gap-1 border-slate-300 bg-card shadow-md mx-auto p-6 border rounded-md w-full max-w-md text-card-foreground">
-            <div className="relative">
-              <Avatar>
-                <AvatarImage
-                  src={"https://github.com/shadcn.png"}
-                  className="rounded-full w-28 h-28"
-                />
-                <AvatarFallback>Avatar</AvatarFallback>
-              </Avatar>
-              {isEditing ? (
-                <button
-                  id="edit-button"
-                  className="right-1 bottom-1 absolute bg-primary p-1 rounded-full text-primary-foreground"
-                >
-                  <Icons icon="mdi:pencil" />
-                </button>
-              ) : (
-                <button
-                  className={`right-2 bottom-1 absolute p-2 border-2 border-white rounded-full shadow-xl
-         ${data?.getUserByToken.status === 0 ? "bg-red-700" : "bg-green-500"} 
-         `}
-                />
-              )}
-            </div>
-            <div
-              id="profile-info"
-              ref={profileInfoRef}
-              className={`mt-4 text-center ${isEditing ? "hidden" : ""}`}
-            >
-              <h2 className="font-semibold text-lg">
-                {data?.getUserByToken.email || "Username"}
-              </h2>
-              <p className="text-muted-foreground">
-                {data?.getUserByToken.bio || "No bio.."}
-              </p>
-            </div>
-            <div
-              id="edit-form"
-              ref={editFormRef}
-              className={`mt-4 w-full ${isEditing ? "" : "hidden"}`}
-            >
-              <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-                {" "}
-                <input
-                  type="hidden"
-                  {...register("id")}
-                  defaultValue={user?.id}
-                />
-                <div className="mb-2">
-                  <textarea
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    rows={2}
-                    placeholder="Add a bio..."
-                    {...register("bio")}
-                  />
-                  {errors.bio && (
-                    <span className="text-red-500 text-xs">
-                      {errors.bio.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-center items-center mb-2">
-                  <Icons icon="mdi:github" className="mr-2 w-8 h-8" />
-                  <Input
-                    type="text"
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    placeholder="https://github.com/username"
-                    {...register("github")}
-                  />
-                  {errors.github && (
-                    <span className="text-red-500 text-xs">
-                      {errors.github.message}
-                    </span>
-                  )}
-                </div>
-                <div className="mb-2 flex items-center ">
-                  <Icons
-                    icon="hugeicons:user-status"
-                    className=" text-slate-400 mr-2 w-8 h-8"
-                  />
-
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <select
-                        id="status"
-                        className="bg-input px-2 py-1.5 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                        {...field}
-                        value={field.value?.toString()} // Ensure the value is a string for the select component
-                        onChange={(e) =>
-                          field.onChange(parseInt(e.target.value))
-                        } // Convert the value back to a number on change
-                      >
-                        <option value={1}>Active</option>
-                        <option value={0}>Inactive</option>
-                      </select>
-                    )}
-                  />
-
-                  {errors.status && (
-                    <span className="text-red-500 text-xs">
-                      {errors.status.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-center items-center mb-2">
-                  <Icons
-                    icon="mdi:linkedin"
-                    className="mr-2 w-8 h-8 text-blue-900"
-                  />
-                  <Input
-                    type="text"
-                    placeholder="https://linkedin.com/in/username"
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    {...register("linkedin")}
-                  />
-                  {errors.linkedin && (
-                    <span className="text-red-500 text-xs">
-                      {errors.linkedin.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-center items-center mb-2">
-                  <Icons
-                    icon="mdi:twitter"
-                    className="mr-2 w-8 h-8 text-blue-400"
-                  />
-                  <Input
-                    type="text"
-                    placeholder="https://twitter.com/username"
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    {...register("twitter")}
-                  />
-                  {errors.twitter && (
-                    <span className="text-red-500 text-xs">
-                      {errors.twitter.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-center items-center mb-2">
-                  <Icons
-                    icon="mdi:discord"
-                    className="mr-2 w-8 h-8 text-[#5865F2]"
-                  />
-                  <Input
-                    type="text"
-                    placeholder="https://twitter.com/username"
-                    className="bg-input px-2 py-1 mt-1 border border-border rounded w-full text-slate-700 text-foreground"
-                    {...register("discord")}
-                  />
-                  {errors.discord && (
-                    <span className="text-red-500 text-xs">
-                      {errors.discord.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-center items-center mt-4">
-                  <Button
-                    id="cancel-button"
-                    className="bg-slate-300 hover:bg-slate-400 shadow mx-2 px-4 py-1 rounded-md text-slate-900"
-                    onClick={handleCancelClick}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    id="save-button"
-                    className="bg-primary px-4 py-1 rounded-md text-primary-foreground"
-                    type="submit"
-                    onClick={handleSaveClick}
-                  >
-                    Save
-                  </Button>
-                </div>
-              </form>
-            </div>
-            {!isEditing && (
-              <Button
-                id="settings-button"
-                className="bg-primary px-4 py-1 rounded-md w-full text-primary-foreground"
-                onClick={handleEditClick}
-              >
-                Edit Profile
-              </Button>
-            )}
-            <Button
-              id="settings-button"
-              className="bg-primary mt-1 px-4 py-1 rounded-md w-full text-primary-foreground"
-            >
-              Settings
-            </Button>
-          </div>
-
+          
+          <Updateuser/>
           <div className="flex flex-col gap-4 border-slate-300 shadow-md p-4 border rounded-md w-full  text-slate-400">
             <div className="flex flex-col">
               <div className="flex items-center gap-2 text-md">
@@ -374,17 +109,7 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mx-2 w-2/3">
-        {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
-          <h1 className="font-semibold text-lg text-slate-600">
-            Featured work
-          </h1>
-          <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3 h-full text-center">
-            <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer" />
-            <span className="mt-4 font-semibold text-slate-500 text-sm">
-              Feature work to show your experience
-            </span>
-          </div>
-        </div> */}
+      
 
         <div className="flex flex-col justify-center border-slate-300 shadow-md px-2 py-2  border rounded-md">
           <h1 className="font-semibold text-lg text-slate-600">
@@ -393,38 +118,29 @@ const UserProfile = () => {
           <div className="flex space-x-2 overflow-hidden mt-1">
             {user?.featureWork &&
               user.featureWork.length > 0 &&
-              user?.featureWork.map(
-                (
-                  item: {
-                    company: string;
-                    skills: string[];
-                    responsibilities: string;
-                    startDate: string;
-                    endDate: string;
-                    position: string;
-                  },
-                  index: React.Key | null | undefined
-                ) => (
-                  <div
-                    key={index}
-                    className="bg-card flex-col w-1/3 text-card-foreground rounded-lg border "
-                  >
-                    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-card text-card-foreground p-4">
-                      <div className="px-1 py-1 flex justify-between">
-                        <span className="mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
-                          {typeof item.company === "string" && (
-                            <span className="mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
-                              {item.company.length > 12
-                                ? item.company.substring(0, 12) + "..."
-                                : item.company}
-                            </span>
-                          )}
-                        </span>
-                        <EditFeature Data={featureData} index={index} />
-                      </div>
-                      <div className="pt-2 pb-1">
-                        {item.skills.length > 0 ? (
-                          item.skills.slice(0, 1).map((skill, index) => (
+              user.featureWork.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="bg-card flex-col w-1/3 text-card-foreground rounded-lg border "
+                >
+                  <div className="max-w-sm rounded overflow-hidden shadow-lg bg-card text-card-foreground p-4">
+                    <div className="px-1 py-1 flex justify-between">
+                      <span className="mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
+                        {typeof item.company === "string" && (
+                          <span className="mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
+                            {item.company.length > 12
+                              ? item.company.substring(0, 12) + "..."
+                              : item.company}
+                          </span>
+                        )}
+                      </span>
+                      <EditFeature Data={featureData} index={index} />
+                    </div>
+                    <div className="pt-2 pb-1">
+                      {item.skills.length > 0 ? (
+                        item.skills
+                          .slice(0, 1)
+                          .map((skill: any, index: any) => (
                             <span
                               key={index}
                               className="inline-block border border-primary/60 rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2"
@@ -432,41 +148,38 @@ const UserProfile = () => {
                               {skill}
                             </span>
                           ))
-                        ) : (
-                          <span className="inline-block border border-primary/60 rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2">
-                            <p> + Skills</p>
-                          </span>
-                        )}
-                      </div>
-                      <div className="pt-2">
-                        <h3 className="font-medium text-sm text-slate-400">
-                          Position
-                        </h3>
-                        <span className="text-sm">{item.position || ""}</span>
-                      </div>
-                      <div className="pt-2 text-slate-500">
-                        <h3 className="font-medium text-sm text-slate-400">
-                          Duration
-                        </h3>
-                        <p className="text-sm">
-                          Start Date:{" "}
-                          <span className="">
-                            {new Date(item.startDate).toLocaleDateString(
-                              "en-GB"
-                            )}
-                          </span>
-                        </p>
-                        <p className="text-sm">
-                          End Date:{" "}
-                          <span className="">
-                            {new Date(item.endDate).toLocaleDateString("en-GB")}
-                          </span>
-                        </p>
-                      </div>
+                      ) : (
+                        <span className="inline-block border border-primary/60 rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2">
+                          <p> + Skills</p>
+                        </span>
+                      )}
+                    </div>
+                    <div className="pt-2">
+                      <h3 className="font-medium text-sm text-slate-400">
+                        Position
+                      </h3>
+                      <span className="text-sm">{item.position || ""}</span>
+                    </div>
+                    <div className="pt-2 text-slate-500">
+                      <h3 className="font-medium text-sm text-slate-400">
+                        Duration
+                      </h3>
+                      <p className="text-sm">
+                        Start Date:{" "}
+                        <span className="">
+                          {new Date(item.startDate).toLocaleDateString("en-GB")}
+                        </span>
+                      </p>
+                      <p className="text-sm">
+                        End Date:{" "}
+                        <span className="">
+                          {new Date(item.endDate).toLocaleDateString("en-GB")}
+                        </span>
+                      </p>
                     </div>
                   </div>
-                )
-              )}
+                </div>
+              ))}
 
             {user?.featureWork && user.featureWork.length < 3 ? (
               <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3 h-full text-center">
@@ -495,7 +208,7 @@ const UserProfile = () => {
                         startDate: string;
                         endDate: string;
                       },
-                      index: React.Key | null | undefined
+                      index: number
                     ) => (
                       <div
                         key={index}

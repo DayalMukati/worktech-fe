@@ -32,6 +32,7 @@ export const GET_USER_BY_TOKEN = gql(`
         responsibilities
         startDate
         endDate
+       
     }
     education {
         institute

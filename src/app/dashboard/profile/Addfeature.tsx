@@ -11,11 +11,13 @@ import Select from "react-select";
 import { CirclePlus } from "lucide-react";
 import { ADD_FEATURE_MUTATION } from "@/graphql/mutation";
 import { useMutation } from "@apollo/client";
+import { addFeatureWork } from "@/store/UserSlice";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
 
 const addFeatureSchema = z.object({
   company: z.string().min(1, "Company is required"),
   position: z.string().min(1, "Position is required"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
     return startDate <= new Date();
@@ -24,8 +26,8 @@ const addFeatureSchema = z.object({
     const endDate = new Date(date);
     return endDate >= new Date();
   }, "End Date must be in the future"),
-  responsibilities: z.string().min(1, "Responsibilities are required"),
-  skills: z.array(z.string()).min(1, "Skills are required"),
+  responsibilities: z.string().optional(),
+  skills: z.array(z.string()).optional(),
 });
 
 type FormValues = z.infer<typeof addFeatureSchema>;
@@ -39,11 +41,13 @@ const skillsOptions = [
 const AddFeature = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { session } = useSession();
+  const dispatch = useAppDispatch();
   const {
     register,
     control,
     handleSubmit,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(addFeatureSchema),
@@ -56,37 +60,61 @@ const AddFeature = () => {
   };
 
   const closeModal = () => {
+    
     setIsOpen(false);
+    reset()
   };
 
   const onSubmit = async (data: FormValues) => {
-    if (!session._id) {
+    if (!session?._id) {
       console.error("Session ID is undefined");
       return;
     }
-     try {
+  
+    try {
       const { data: mutationData } = await addFeatureMutation({
         variables: {
           _id: session._id,
-          input: {
-            company: data.company,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            skills: data.skills,
-            position: data.position,
-            responsibilities: data.responsibilities,
-            description:data.description
-          },
+          input: [
+            {
+              company: data.company,
+              position: data.position,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              skills: data.skills || [], // Default to an empty array if no skills are selected
+              responsibilities: data.responsibilities || "", // Provide default empty string if undefined
+              description: data.description || "", // Default to an empty string if no description is provided
+            },
+          ],
         },
       });
-      console.log("Mutation response:", mutationData);  
-      closeModal();  
+  
+      console.log("Mutation response:", mutationData);
+  
+       const newFeatureWork = mutationData?.addUserFeatureWork?.featureWork;
+  
+      if (newFeatureWork && newFeatureWork.length > 0) {
+         const featureWorks = newFeatureWork.map((work) => ({
+          company: work.company || "",
+          position: work.position || "",
+          skills: work.skills || [],
+          responsibilities: work.responsibilities || "", 
+          startDate: work.startDate || "",  
+          endDate: work.endDate || "", 
+          description: work.description || "",
+        }));
+  
+         dispatch(addFeatureWork(featureWorks));
+      } else {
+        console.error("Feature work data is missing in the mutation response");
+      }
+  
+      closeModal();
     } catch (error) {
       console.error("Error:", error);
-       
     }
   };
-
+  
   return (
     <div>
       <button
@@ -257,7 +285,7 @@ const AddFeature = () => {
                   </span>
                 )}
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label
                   htmlFor="description"
                   className=" text-sm font-medium justify-start flex text-slate-700"
@@ -278,7 +306,7 @@ const AddFeature = () => {
                     {errors.description.message}
                   </span>
                 )}
-              </div>
+              </div> */}
               <Button
                 type="submit"
                 className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"

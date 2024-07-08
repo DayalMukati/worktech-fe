@@ -3,13 +3,14 @@ import layoutSlice from './layoutSlice';
 import orgSlice from './orgSlice';
 import spacesSlice from "./spacesSlice";
 import leaderboardSlice from './leaderboardSlice';
-import profileSlice from "./profileSlice"
+import UserSlice from './UserSlice';
 const rootReducer = {
   layoutSlice,
   authSlice,
   orgSlice,
   spacesSlice,
   leaderboardSlice,
-  profileSlice,
+   UserSlice
+   
 };
 export default rootReducer;

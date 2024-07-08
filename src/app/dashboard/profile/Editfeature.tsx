@@ -11,11 +11,13 @@ import { Pencil } from "lucide-react";
 import { useMutation } from "@apollo/client";
 import useSession from "@/hooks/use-session";
 import { UPDATE_FEATURE_MUTATION, DELETE_FEATURE_MUTATION } from "@/graphql/mutation";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
+import { updateFeatureWork, deleteFeatureWork } from "@/store/UserSlice";
 
 const EditFeatureSchema = z.object({
   company: z.string().min(1, "Company is required"),
-  description: z.string().min(1, "Description is required"),
   position: z.string().min(1, "Position is required"),
+  description: z.string().optional(),
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
     return startDate <= new Date();
@@ -24,8 +26,8 @@ const EditFeatureSchema = z.object({
     const endDate = new Date(date);
     return endDate >= new Date();
   }, "End Date must be in the future"),
-  responsibilities: z.string().min(1, "Responsibilities are required"),
-  skills: z.array(z.string()).min(1, "Skills are required"),
+  responsibilities: z.string().optional(),
+  skills: z.array(z.string()).optional(),
 });
 
 type FormValues = z.infer<typeof EditFeatureSchema>;
@@ -38,13 +40,13 @@ const skillsOptions = [
 
 interface EditFeatureProps {
   Data: any;
-  index: any;
+  index: number;
 }
 
 const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
   const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useAppDispatch();
   const {
     register,
     control,
@@ -65,6 +67,7 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
       console.error("Session ID is undefined");
       return;
     }
+
     try {
       const { data: mutationData } = await updateFeatureMutation({
         variables: {
@@ -86,7 +89,24 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
           },
         },
       });
+
       console.log("Mutation response:", mutationData);
+
+      dispatch(
+        updateFeatureWork({
+          index,
+          updatedFeatureWork: {
+            company: data.company,
+            position: data.position,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            skills: data.skills || [],
+            responsibilities: data.responsibilities || '',
+            description: data.description || '',
+          },
+        })
+      );
+
       closeModal();
     } catch (error) {
       console.error("Error:", error);
@@ -108,7 +128,11 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
           },
         },
       });
+
       console.log("Delete response:", mutationData);
+
+      dispatch(deleteFeatureWork(index));
+
       closeModal();
     } catch (error) {
       console.error("Error:", error);
@@ -297,13 +321,11 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
                 </label>
                 <Textarea
                   id="responsibilities"
-                  placeholder="Enter Responsibilities"
                   defaultValue={user.responsibilities}
+                  placeholder="Enter Responsibilities"
                   {...register("responsibilities")}
                   className={`mt-1 ${
-                    errors.responsibilities
-                      ? "border-red-500"
-                      : "border-slate-300"
+                    errors.responsibilities ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
                   onClick={() => clearErrors("responsibilities")}
                 />
@@ -313,17 +335,17 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
                   </span>
                 )}
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className=" text-sm font-medium justify-start flex text-slate-700"
+                  className="justify-start flex text-sm font-medium text-slate-700"
                 >
                   Description
                 </label>
                 <Textarea
                   id="description"
-                  placeholder="Enter Feature Description"
                   defaultValue={user.description}
+                  placeholder="Enter Description"
                   {...register("description")}
                   className={`mt-1 ${
                     errors.description ? "border-red-500" : "border-slate-300"
@@ -335,7 +357,7 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
                     {errors.description.message}
                   </span>
                 )}
-              </div>
+              </div> */}
               <div className="flex justify-between space-x-2">
                 <Button
                   type="button"

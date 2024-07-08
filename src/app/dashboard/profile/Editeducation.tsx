@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { useMutation } from "@apollo/client";
 import useSession from "@/hooks/use-session";
 import { UPDATE_EDUCATION_MUTATION, DELETE_EDUCATION_MUTATION } from "@/graphql/mutation";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
+import { updateEducation, deleteEducation } from '@/store/UserSlice';  // Adjust the import path as necessary
 
 const EditFeatureSchema = z.object({
   degree: z.string().min(1, "Degree is required"),
@@ -27,13 +29,14 @@ type FormValues = z.infer<typeof EditFeatureSchema>;
 
 interface EditEducationProps {
   Data: any;
-  index: any;
+  index: number;
 }
 
 const EditEducation: React.FC<EditEducationProps> = ({ Data, index }) => {
   const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const user = Data[index];
+  const dispatch = useAppDispatch();  // Use the custom hook for dispatch
 
   const {
     register,
@@ -58,14 +61,34 @@ const EditEducation: React.FC<EditEducationProps> = ({ Data, index }) => {
         variables: {
           _id: session._id,
           input: {
-            institute: data.institute,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            degree: data.degree,
+            checkInput: {
+              institute: user.institute,
+              degree: user.degree,
+            },
+            education: {
+              institute: data.institute,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              degree: data.degree,
+            }
           },
         },
       });
-      console.log("Mutation response:", mutationData);
+
+      // Dispatch the updateEducation action
+      if (mutationData) {
+        dispatch(updateEducation({
+          index,
+          updatedEducation: {
+            institute: data.institute,
+            degree: data.degree,
+            startDate: data.startDate,
+            endDate: data.endDate,
+          },
+        }));
+      }
+
+      console.log("Update response:", mutationData);
       closeModal();
     } catch (error) {
       console.error("Error:", error);
@@ -87,6 +110,12 @@ const EditEducation: React.FC<EditEducationProps> = ({ Data, index }) => {
           },
         },
       });
+
+      // Dispatch the deleteEducation action
+      if (mutationData) {
+        dispatch(deleteEducation({ index }));
+      }
+
       console.log("Delete response:", mutationData);
       closeModal();
     } catch (error) {
