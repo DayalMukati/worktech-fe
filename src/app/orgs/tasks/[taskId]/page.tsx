@@ -77,7 +77,7 @@ const Taskdetails: React.FC = () => {
             </DialogClose>
 
             <CompleteTaskForm
-              reviewer={taskData.reviewer[0]}
+              reviewer={taskData.reviewer._id}
               taskId={params.taskId as string}
               docUrl={taskData.docUrl}
               taskOnchainID={taskData.taskId}
