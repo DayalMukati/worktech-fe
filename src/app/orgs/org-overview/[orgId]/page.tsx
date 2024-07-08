@@ -80,19 +80,19 @@ const OrgOverview = () => {
           <div className="flex justify-between">
             <div className="flex gap-2 my-6 px-10">
               <Image
-                src="/image.png"
+                src="/logo/logo-1.webp"
                 className="w-18 h-18"
                 width={100}
                 height={100}
                 alt="logo"
               />
               <div className="flex flex-col">
-                <h1 className="text-[30px]">{orgData?.getOrg?.name}</h1>
+                <h1 className="text-[30px]">Open DAO</h1>
                 <p className="text-[14px] text-slate-400">
-                  {orgData?.getOrg?.description || "Encyrpting Ethereum"}t
+                  {orgData?.getOrg?.description || "A Open DAO for world."}
                 </p>
                 <div className="flex mt-4 text-slate-600 text-sm">
-                  <span>Time to payment 0.0 days </span>
+                  <span>Time to payment 3 days </span>
                 </div>
               </div>
             </div>
@@ -186,7 +186,7 @@ const OrgOverview = () => {
             <div className="flex flex-col gap-4 py-4 pr-20">
               <div className="flex flex-col gap-4">
                 <h1 className="mb-2 text-slate-700 text-xl">About</h1>
-                <p className="text-left text-slate-400">This organization contributes to open tasks</p>
+                <p className="text-left text-slate-400">A Open DAO for world.</p>
               </div>
 
 							<div className='flex flex-col gap-4 mt-4'>
