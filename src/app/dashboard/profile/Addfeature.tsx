@@ -6,24 +6,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useSession from "@/hooks/use-session";
 import Select from "react-select";
 import { CirclePlus } from "lucide-react";
+import { ADD_FEATURE_MUTATION } from "@/graphql/mutation";
+import { useMutation } from "@apollo/client";
+import { addFeatureWork } from "@/store/UserSlice";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
 
 const addFeatureSchema = z.object({
-  description: z.string().min(1, "Description is required"),
   company: z.string().min(1, "Company is required"),
   position: z.string().min(1, "Position is required"),
-  startDate: z.string().refine((date) => {
-    const startDate = new Date(date);
-    return startDate <= new Date();
-  }, "Start Date must be in the past or present"),
-  endDate: z.string().refine((date) => {
-    const endDate = new Date(date);
-    return endDate >= new Date();
-  }, "End Date must be in the future"),
-  responsibilities: z.string().min(1, "Responsibilities are required"),
-  skills: z.array(z.string()).min(1, "Skills are required"),
+  description: z.string().optional(),
+  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid Start Date"),
+  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid End Date"),
+  responsibilities: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+}).superRefine((data, ctx) => {
+  const startDate = new Date(data.startDate);
+  const endDate = new Date(data.endDate);
+  if (endDate < startDate) {
+    ctx.addIssue({
+      code: "custom",
+      message: "End Date must be greater than Start Date",
+      path: ["endDate"],
+    });
+  }
 });
+
 
 type FormValues = z.infer<typeof addFeatureSchema>;
 
@@ -35,29 +45,81 @@ const skillsOptions = [
 
 const AddFeature = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { session } = useSession();
+  const dispatch = useAppDispatch();
   const {
     register,
     control,
     handleSubmit,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(addFeatureSchema),
     mode: "all",
   });
+  const [addFeatureMutation] = useMutation(ADD_FEATURE_MUTATION);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
 
   const closeModal = () => {
+    
     setIsOpen(false);
+    reset()
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const onSubmit = async (data: FormValues) => {
+    if (!session?._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+  
+    try {
+      const { data: mutationData } = await addFeatureMutation({
+        variables: {
+          _id: session._id,
+          input: [
+            {
+              company: data.company,
+              position: data.position,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              skills: data.skills || [], // Default to an empty array if no skills are selected
+              responsibilities: data.responsibilities || "", // Provide default empty string if undefined
+              description: data.description || "", // Default to an empty string if no description is provided
+            },
+          ],
+        },
+      });
+  
+      console.log("Mutation response:", mutationData);
+  
+       const newFeatureWork = mutationData?.addUserFeatureWork?.featureWork;
+  
+      if (newFeatureWork && newFeatureWork.length > 0) {
+         const featureWorks = newFeatureWork.map((work) => ({
+          company: work.company || "",
+          position: work.position || "",
+          skills: work.skills || [],
+          responsibilities: work.responsibilities || "", 
+          startDate: work.startDate || "",  
+          endDate: work.endDate || "", 
+          description: work.description || "",
+        }));
+  
+         dispatch(addFeatureWork(featureWorks));
+      } else {
+        console.error("Feature work data is missing in the mutation response");
+      }
+  
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
-
+  
   return (
     <div>
       <button
@@ -69,7 +131,7 @@ const AddFeature = () => {
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
-          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[600px]">
+          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto scrollbar-hide h-[600px]">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-xl font-bold">Add Experience</h1>
               <button
@@ -80,8 +142,6 @@ const AddFeature = () => {
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-             
-
               <div className="mb-4">
                 <label
                   htmlFor="company"
@@ -97,7 +157,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.company ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("company")}
                 />
                 {errors.company && (
                   <span className="text-red-500 text-xs">
@@ -120,7 +179,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.position ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("position")}
                 />
                 {errors.position && (
                   <span className="text-red-500 text-xs">
@@ -167,7 +225,6 @@ const AddFeature = () => {
                   </span>
                 )}
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="startDate"
@@ -182,7 +239,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.startDate ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("startDate")}
                 />
                 {errors.startDate && (
                   <span className="text-red-500 text-xs">
@@ -204,7 +260,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.endDate ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("endDate")}
                 />
                 {errors.endDate && (
                   <span className="text-red-500 text-xs">
@@ -228,7 +283,6 @@ const AddFeature = () => {
                       ? "border-red-500"
                       : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("responsibilities")}
                 />
                 {errors.responsibilities && (
                   <span className="text-red-500 text-xs">
@@ -236,7 +290,7 @@ const AddFeature = () => {
                   </span>
                 )}
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label
                   htmlFor="description"
                   className=" text-sm font-medium justify-start flex text-slate-700"
@@ -257,7 +311,7 @@ const AddFeature = () => {
                     {errors.description.message}
                   </span>
                 )}
-              </div>
+              </div> */}
               <Button
                 type="submit"
                 className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"

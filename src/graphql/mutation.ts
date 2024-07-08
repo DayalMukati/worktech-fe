@@ -95,7 +95,7 @@ export const UPDATE_TASK_MUTATION = gql(`
   }
 `);
 
- 
+
 
 export const CREATE_SPACE_MUTATION = gql(`
   mutation CreateSpace($input: SpacesInput!) {
@@ -195,4 +195,177 @@ export const UPDATE_USER_MUTATION = gql(`
     updatedAt
     }
   }
+`);
+export const ADD_FEATURE_MUTATION = gql(`
+  mutation AddUserFeatureWork($_id: String!, $input: [FeatureWorkInput!]!) {
+    addUserFeatureWork(_id: $_id, input: $input) {
+     _id
+    firstName
+    lastName
+    email
+    walletAddress
+    mobile
+    gender
+    status
+    signupMode
+    profilePic
+    userRoles {
+      _id
+    }
+    skills {
+      _id
+    }
+    featureWork{
+        company
+        position
+        skills
+        responsibilities
+        startDate
+        endDate
+description    
+}
+    education {
+        institute
+        degree
+        startDate
+        endDate
+    }
+    createdAt
+    updatedAt
+    }
+  }
+`);
+
+export const UPDATE_FEATURE_MUTATION = gql(`
+  mutation UpdateUserFeatureWork($_id: String!, $input:UpdateUserFeatureWorkInput!) {
+  updateUserFeatureWork(_id: $_id, input: $input) {
+    _id
+   
+    featureWork {
+      company
+      position
+      skills
+      responsibilities
+      startDate
+      endDate
+      description
+    }
+    education {
+      institute
+      degree
+      startDate
+      endDate
+    }
+   }
+}
+
+`);
+export const ADD_EDUCATION_MUTATION = gql(`
+  mutation AddUserEducation($_id: String!, $input: [EducationInput!]!) {
+    addUserEducation(_id: $_id, input: $input) {
+     _id
+    firstName
+    lastName
+    email
+    walletAddress
+    mobile
+    gender
+    status
+    signupMode
+    profilePic
+    userRoles {
+      _id
+    }
+    skills {
+      _id
+    }
+    featureWork{
+        company
+        position
+        skills
+        responsibilities
+        startDate
+        endDate
+        
+    }
+    education {
+        institute
+        degree
+        startDate
+        endDate
+    }
+    createdAt
+    updatedAt
+    }
+  }
+`);
+export const UPDATE_EDUCATION_MUTATION = gql(`
+  mutation UpdateUserEducation($_id: String!, $input:UpdateUserEducationInput!) {
+  updateUserEducation(_id: $_id, input: $input) {
+    _id
+   
+    featureWork {
+      company
+      position
+      skills
+      responsibilities
+      startDate
+      endDate
+      description
+    }
+    education {
+      institute
+      degree
+      startDate
+      endDate
+    }
+   }
+}
+
+`);
+export const DELETE_FEATURE_MUTATION = gql(`
+  mutation DeleteUserFeatureWork($_id: String!, $input:CheckInput!) {
+  deleteUserFeatureWork(_id: $_id, input: $input) {
+    _id
+    featureWork {
+      company
+      position
+      skills
+      responsibilities
+      startDate
+      endDate
+      description
+    }
+    education {
+      institute
+      degree
+      startDate
+      endDate
+    }
+   }
+}
+
+`);
+export const DELETE_EDUCATION_MUTATION = gql(`
+  mutation DeleteUserEducation($_id: String!, $input:CheckInput!) {
+  deleteUserEducation(_id: $_id, input: $input) {
+    _id 
+    featureWork {
+      company
+      position
+      skills
+      responsibilities
+      startDate
+      endDate
+      description
+    }
+    education {
+      institute
+      degree
+      startDate
+      endDate
+    }
+   }
+}
+
 `);

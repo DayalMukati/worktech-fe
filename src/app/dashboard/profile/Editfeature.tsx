@@ -7,26 +7,31 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Select from "react-select";
-import { CirclePlus, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { useMutation } from "@apollo/client";
+import useSession from "@/hooks/use-session";
+import { UPDATE_FEATURE_MUTATION, DELETE_FEATURE_MUTATION } from "@/graphql/mutation";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
+import { updateFeatureWork, deleteFeatureWork } from "@/store/UserSlice";
 
 const EditFeatureSchema = z.object({
-  type: z.string().min(1, "Type is required"),
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  expedite: z.boolean().optional(),
-  deposit: z.number().min(1, "Deposit is required"),
   company: z.string().min(1, "Company is required"),
   position: z.string().min(1, "Position is required"),
-  startDate: z.string().refine((date) => {
-    const startDate = new Date(date);
-    return startDate <= new Date();
-  }, "Start Date must be in the past or present"),
-  endDate: z.string().refine((date) => {
-    const endDate = new Date(date);
-    return endDate >= new Date();
-  }, "End Date must be in the future"),
-  responsibilities: z.string().min(1, "Responsibilities are required"),
-  skills: z.array(z.string()).min(1, "Skills are required"),
+  description: z.string().optional(),
+  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid Start Date"),
+  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid End Date"),
+  responsibilities: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+}).superRefine((data, ctx) => {
+  const startDate = new Date(data.startDate);
+  const endDate = new Date(data.endDate);
+  if (endDate < startDate) {
+    ctx.addIssue({
+      code: "custom",
+      message: "End Date must be greater than Start Date",
+      path: ["endDate"],
+    });
+  }
 });
 
 type FormValues = z.infer<typeof EditFeatureSchema>;
@@ -37,8 +42,15 @@ const skillsOptions = [
   { value: "Blockchain", label: "Blockchain" },
 ];
 
-const EditFeature = () => {
+interface EditFeatureProps {
+  Data: any;
+  index: number;
+}
+
+const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
+  const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useAppDispatch();
   const {
     register,
     control,
@@ -50,7 +62,88 @@ const EditFeature = () => {
     mode: "all",
   });
 
-  const toggleModal = () => {
+  const [updateFeatureMutation] = useMutation(UPDATE_FEATURE_MUTATION);
+  const [deleteFeatureMutation] = useMutation(DELETE_FEATURE_MUTATION);
+  const user = Data[index];
+
+  const onSubmit = async (data: FormValues) => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+
+    try {
+      const { data: mutationData } = await updateFeatureMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            checkInput: {
+              company: user.company,
+              position: user.position,
+            },
+            featureWork: {
+              company: data.company,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              skills: data.skills,
+              position: data.position,
+              responsibilities: data.responsibilities,
+              description: data.description,
+            },
+          },
+        },
+      });
+
+      console.log("Mutation response:", mutationData);
+
+      dispatch(
+        updateFeatureWork({
+          index,
+          updatedFeatureWork: {
+            company: data.company,
+            position: data.position,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            skills: data.skills || [],
+            responsibilities: data.responsibilities || '',
+            description: data.description || '',
+          },
+        })
+      );
+
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const onDelete = async () => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+    try {
+      const { data: mutationData } = await deleteFeatureMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            company: user.company,
+            position: user.position,
+          },
+        },
+      });
+
+      console.log("Delete response:", mutationData);
+
+      dispatch(deleteFeatureWork(index));
+
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleModalToggle = () => {
     setIsOpen(!isOpen);
   };
 
@@ -58,14 +151,19 @@ const EditFeature = () => {
     setIsOpen(false);
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const formatDate = (date: string | number | Date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
   };
+
+  const startDate = formatDate(user.startDate);
+  const endDate = formatDate(user.endDate);
 
   return (
     <div>
       <button
-        onClick={toggleModal}
+        onClick={handleModalToggle}
         aria-label="Edit Experience"
         title="Edit Experience"
       >
@@ -73,19 +171,17 @@ const EditFeature = () => {
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
-          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[600px]">
+          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto scrollbar-hide h-[600px]">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-xl font-bold">Edit Experience</h1>
               <button
                 className="text-slate-400 hover:text-slate-800 text-2xl"
-                onClick={toggleModal}
+                onClick={handleModalToggle}
               >
                 &times;
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-             
-
               <div className="mb-4">
                 <label
                   htmlFor="company"
@@ -97,6 +193,7 @@ const EditFeature = () => {
                   type="text"
                   id="company"
                   placeholder="Enter Company"
+                  defaultValue={user.company}
                   {...register("company")}
                   className={`mt-1 ${
                     errors.company ? "border-red-500" : "border-slate-300"
@@ -119,6 +216,7 @@ const EditFeature = () => {
                 <Input
                   type="text"
                   id="position"
+                  defaultValue={user.position}
                   placeholder="Enter Position"
                   {...register("position")}
                   className={`mt-1 ${
@@ -142,6 +240,7 @@ const EditFeature = () => {
                 <Controller
                   name="skills"
                   control={control}
+                  defaultValue={user.skills}
                   render={({ field: { onChange, value = [] } }) => (
                     <Select
                       id="skills"
@@ -171,7 +270,6 @@ const EditFeature = () => {
                   </span>
                 )}
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="startDate"
@@ -182,6 +280,7 @@ const EditFeature = () => {
                 <Input
                   type="date"
                   id="startDate"
+                  defaultValue={startDate}
                   {...register("startDate")}
                   className={`mt-1 ${
                     errors.startDate ? "border-red-500" : "border-slate-300"
@@ -204,6 +303,7 @@ const EditFeature = () => {
                 <Input
                   type="date"
                   id="endDate"
+                  defaultValue={endDate}
                   {...register("endDate")}
                   className={`mt-1 ${
                     errors.endDate ? "border-red-500" : "border-slate-300"
@@ -225,12 +325,11 @@ const EditFeature = () => {
                 </label>
                 <Textarea
                   id="responsibilities"
+                  defaultValue={user.responsibilities}
                   placeholder="Enter Responsibilities"
                   {...register("responsibilities")}
                   className={`mt-1 ${
-                    errors.responsibilities
-                      ? "border-red-500"
-                      : "border-slate-300"
+                    errors.responsibilities ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
                   onClick={() => clearErrors("responsibilities")}
                 />
@@ -240,16 +339,17 @@ const EditFeature = () => {
                   </span>
                 )}
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className=" text-sm font-medium justify-start flex text-slate-700"
+                  className="justify-start flex text-sm font-medium text-slate-700"
                 >
                   Description
                 </label>
                 <Textarea
                   id="description"
-                  placeholder="Enter Feature Description"
+                  defaultValue={user.description}
+                  placeholder="Enter Description"
                   {...register("description")}
                   className={`mt-1 ${
                     errors.description ? "border-red-500" : "border-slate-300"
@@ -261,20 +361,21 @@ const EditFeature = () => {
                     {errors.description.message}
                   </span>
                 )}
-              </div>
+              </div> */}
               <div className="flex justify-between space-x-2">
-              <Button
-                type="submit"
-                className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
-              >
-                Delete
-              </Button>
-              <Button
-                type="submit"
-                className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
-              >
-                Submit
-              </Button>
+                <Button
+                  type="button"
+                  onClick={onDelete}
+                  className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
+                >
+                  Delete
+                </Button>
+                <Button
+                  type="submit"
+                  className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </div>
