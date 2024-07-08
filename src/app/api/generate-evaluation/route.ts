@@ -15,28 +15,20 @@ export async function POST(req: NextRequest) {
 				{
 					role: 'system',
 					content:
-						'You are an AI evaluator. Your task is to evaluate a proposal based on its description and criteria. Provide a score from 1 to 10, where 10 is the highest. Then, list 5 key points justifying the score. Format your evaluation in markdown as shown below.'
+						'Provide a concise evaluation of the proposal, including a score and key points for justification, formatted in markdown.'
 				},
 				{
 					role: 'user',
-					content: `Description: ${description}`
+					content: `**Original Proposal**\n\nDescription: ${description}\n\nProposal: ${proposal}\n\nCriteria: ${criteria}`
 				},
 				{
 					role: 'user',
-					content: `Proposal: ${proposal}`
-				},
-				{
-					role: 'user',
-					content: `Criteria: ${criteria}`
-				},
-				{
-					role: 'user',
-					content: 'Please evaluate the proposal.'
+					content: 'Evaluate the proposal.'
 				},
 				{
 					role: 'system',
 					content:
-						'Format your response as follows:\n\n# Evaluation and Score\n\n**Score:** [Your Score Here]\n\n**Justification:**\n1. [Reason 1]\n2. [Reason 2]\n3. [Reason 3]\n4. [Reason 4]\n5. [Reason 5]'
+						'# Evaluation\n\n**Score:** [Your Score Here]\n\n## Justification\n1. [Reason 1]\n2. [Reason 2]\n3. [Reason 3]\n4. [Reason 4]\n5. [Reason 5]'
 				}
 			]
 		});
