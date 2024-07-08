@@ -80,12 +80,12 @@ const Activites = ({ activityData, taskId }: any) => {
         )}
       </div>
 
-      <div className="overflow-y-scroll h-[850px] flex flex-col justify-end scrollbar-hide">
+      <div className="overflow-y-scroll h-[850px] flex flex-col justify-end scrollbar-hide ">
         {showAllActivity &&
           activity.map((data: any, index: number) => (
             <div
               key={index}
-              className={` m-2 text-slate-800 rounded-md  text-sm p-2  w-fit   ${
+              className={`m-2 text-slate-800 rounded-md  text-sm p-2    ${
                 userData.userId === data.userId
                   ? "bg-green-200 mr-auto"
                   : "bg-slate-200  ml-auto"
@@ -106,11 +106,13 @@ const Activites = ({ activityData, taskId }: any) => {
 
                   <div className="flex text-muted-foreground text-xs text-ellipsis text-wrap ">
                     <CornerDownRight className="w-4 h-4 mr-2 text-sky-600" />
-                    {data.activity}
+                    <div className="max-w-[400px]  w-fit whitespace-normal break-words flex-grow">
+                      {data.activity}
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="">
+                <div className="w-fit">
                   <div className="flex  items-center justify-end">
                     <div className="flex  text-xs p-2 text-sky-600">
                       {userData.username ? userData.username : "Task Creator"}
@@ -124,8 +126,10 @@ const Activites = ({ activityData, taskId }: any) => {
                     />
                   </div>
 
-                  <div className="flex text-muted-foreground text-xs text-ellipsis text-wrap justify-end">
-                    {data.activity}
+                  <div className="flex text-muted-foreground text-xs justify-end flex-wrap w-fit">
+                    <div className="max-w-[400px]  w-fit whitespace-normal break-words flex-grow">
+                      {data.activity}
+                    </div>
                     <CornerDownLeft className="w-4 h-4 mr-2 text-sky-600" />
                   </div>
                 </div>

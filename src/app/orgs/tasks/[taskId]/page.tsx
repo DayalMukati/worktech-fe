@@ -168,7 +168,7 @@ const Taskdetails: React.FC = () => {
                     src={"/av-7.png"}
                     alt="reviewer profile picture"
                   />
-                  <span className="text-sm">{"No task reviewer"}</span>
+                  <span className="text-sm">{taskData.reviewer[0]}</span>
                 </div>
               </div>
             </div>

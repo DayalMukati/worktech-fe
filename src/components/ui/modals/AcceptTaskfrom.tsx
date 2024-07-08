@@ -13,10 +13,13 @@ import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
 import useWeb3 from "@/hooks/useWeb3";
 
+
 const AcceptTaskForm = ({
+  assignee,
   taskId,
   handlePostSubmit,
 }: {
+  assignee: string;
   taskId: string;
   handlePostSubmit: Function;
 }) => {
@@ -38,6 +41,11 @@ const AcceptTaskForm = ({
         variables: {
           _id: taskId,
           input: {
+            activities: {
+              //@ts-ignore
+              userId: assignee,
+              activity: "Task Accepted",
+            },
             status: 2, // task accepted
           },
         },
@@ -45,6 +53,7 @@ const AcceptTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
+          console.log("res->", res);
           handlePostSubmit(res);
         },
       });

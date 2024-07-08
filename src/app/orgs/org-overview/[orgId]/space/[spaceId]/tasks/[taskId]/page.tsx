@@ -130,7 +130,8 @@ const Taskdetails: React.FC = () => {
               <div className="flex items-center space-x-8 text-muted-foreground">
                 <div className="text-sm">Assignee</div>
                 <div className="text-sm">
-                  {taskData.assignee || "No task assignee."}
+                  {console.log("assignee", taskData)}
+                  {taskData?.assinees?.[0]?.email || "No task assignee."}
                 </div>
               </div>
               <div className="flex items-center space-x-14 text-muted-foreground">
