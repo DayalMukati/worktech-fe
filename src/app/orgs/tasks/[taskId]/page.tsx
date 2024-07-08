@@ -11,7 +11,11 @@ import {
 } from "@radix-ui/react-dialog";
 import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
 import { CrossIcon } from "lucide-react";
-import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
+import {
+  selectTasks,
+  setActivity,
+  updatePrivateTasks,
+} from "@/store/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
 import { useQuery } from "@apollo/client";
@@ -21,9 +25,10 @@ import ErrorDisplay from "@/components/ui/ErrorDisplay";
 import Header from "@/components/header";
 import Activites from "@/components/activities/activites";
 import ServerDownPage from "@/components/ui/serverdownpage";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
 
 const Taskdetails: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams<{ taskId: string }>();
   console.log("params");
 
@@ -45,6 +50,7 @@ const Taskdetails: React.FC = () => {
   useEffect(() => {
     if (data) {
       setTaskData(data.getTask);
+      dispatch(setActivity(data.getTask.activities as any));
     }
   }, [data]);
 

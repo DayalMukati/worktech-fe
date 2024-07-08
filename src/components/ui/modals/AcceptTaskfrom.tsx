@@ -12,7 +12,7 @@ import useSmartContract from "@/hooks/useSmartContract";
 import { selectUserAuth } from "@/store/authSlice";
 import Web3, { AbiItem } from "web3";
 import useWeb3 from "@/hooks/useWeb3";
-
+import { setActivity } from "@/store/taskSlice";
 
 const AcceptTaskForm = ({
   assignee,
@@ -24,6 +24,7 @@ const AcceptTaskForm = ({
   handlePostSubmit: Function;
 }) => {
   const [submitTaskMutation] = useMutation(UPDATE_TASK_MUTATION);
+  const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
@@ -55,6 +56,7 @@ const AcceptTaskForm = ({
         },
         onCompleted: async (res: any) => {
           console.log("res->", res);
+          dispatch(setActivity(res.updateTask.activities as any));
           handlePostSubmit(res);
         },
       });

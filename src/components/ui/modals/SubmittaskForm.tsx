@@ -19,9 +19,8 @@ import useWeb3 from '@/hooks/useWeb3';
 import { TASK_STATUS } from '@/conf/data';
 import { toast } from '../use-toast';
 import { ToastAction } from '@radix-ui/react-toast';
-
-import { Textarea } from '@/components/ui/textarea';
-import activities from "@/store/activities";
+import { Textarea } from "@/components/ui/textarea";
+import { setActivity } from "@/store/taskSlice";
 
 // Define the schema using Zod
 const updateTaskSchema = z.object({
@@ -42,6 +41,7 @@ const SubmitTaskForm = ({
   taskData: any;
 }) => {
   const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+  const dispatch = useAppDispatch();
   const { connectToMetaMask, submitTask, active } = useWeb3();
   console.log("taskOnchainID+++", taskOnchainID);
   const {
@@ -108,6 +108,7 @@ const SubmitTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
+          dispatch(setActivity(res.updateTask.activities as any));
           handlePostSubmit(res);
           // blockchain code
         },

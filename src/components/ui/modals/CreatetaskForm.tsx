@@ -18,18 +18,18 @@ import { Label } from '@radix-ui/react-label';
 import Select, { components, SingleValue } from 'react-select';
 import { useMutation } from '@apollo/client';
 import { CREATE_TASK_MUTATION } from '@/graphql/mutation';
-import { useAppSelector } from '@/hooks/toolKitTyped';
-import { getStatusNumber } from '@/lib/getStatusNumber';
-import useSmartContract from '@/hooks/useSmartContract';
-import { selectUserAuth } from '@/store/authSlice';
-import Web3, { AbiItem } from 'web3';
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
-import useWeb3 from '@/hooks/useWeb3';
-import { Textarea } from '../textarea';
+import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
+import { getStatusNumber } from "@/lib/getStatusNumber";
+import useSmartContract from "@/hooks/useSmartContract";
+import { selectUserAuth } from "@/store/authSlice";
+import Web3, { AbiItem } from "web3";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/sc-constants";
+import useWeb3 from "@/hooks/useWeb3";
+import { Textarea } from "../textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
-import { setActivity } from "@/store/activities";
+import { setActivity } from "@/store/taskSlice";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -158,6 +158,7 @@ const CreateTaskForm = ({
 
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
   const [description, setDescription] = useState("");
   const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
   const [isDescriptionGenerating, setIsDescriptionGenerating] = useState(false);
@@ -318,6 +319,7 @@ const CreateTaskForm = ({
             title: "Success!",
             description: "Task created successfully",
           });
+
           handlePostSubmit(res);
         },
       });
@@ -354,6 +356,7 @@ const CreateTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
+          dispatch(setActivity(res.updateTask.activities as any));
           console.log("create task res->", res);
         },
       });

@@ -12,69 +12,74 @@ import {
 import { CrossIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AcceptTaskForm from '@/components/ui/modals/AcceptTaskfrom';
-import { selectTasks, updateTasks } from '@/store/taskSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from '@/components/ui/use-toast';
+import { selectTasks, setActivity, updateTasks } from "@/store/taskSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "@/components/ui/use-toast";
 
-import Activites from '@/components/activities/activites';
-import { setActivity } from '@/store/activities';
+import Activites from "@/components/activities/activites";
+import { useAppDispatch } from "@/hooks/toolKitTyped";
 
 const Taskdetails: React.FC = () => {
-	const params = useParams<{ taskId: string }>();
-	const dispatch = useDispatch();
+  const params = useParams<{ taskId: string }>();
+  const dispatch = useAppDispatch();
 
-	const [taskData, setTaskData] = useState<any>();
-	const [submitFormOpen, setSubmitFormOpen] =
-		useState<boolean>(false);
-	const [accpetFormOpen, setAcceptFormOpen] =
-		useState<boolean>(false);
-	const [isRejected, setIsRejected] = useState(false);
+  const [taskData, setTaskData] = useState<any>();
+  const [submitFormOpen, setSubmitFormOpen] = useState<boolean>(false);
+  const [accpetFormOpen, setAcceptFormOpen] = useState<boolean>(false);
+  const [isRejected, setIsRejected] = useState(false);
 
-	const { tasks } = useSelector(selectTasks);
-	useEffect(() => {
-		setTaskData(
-			tasks.find(task => task._id === params.taskId) as any
-		);
-	}, [tasks]);
+  const { tasks } = useSelector(selectTasks);
+  useEffect(() => {
+    setTaskData(tasks.find((task) => task._id === params.taskId) as any);
+    // @ts-ignore
+    dispatch(
+      setActivity(
+        tasks.find((task) => task._id === params.taskId)?.activities as any
+      )
+    );
+  }, [tasks]);
 
-	const [isSubmited, setIsSubmitted] = useState(false);
-	const [isAccepted, setIsAccepted] = useState(false);
+  const [isSubmited, setIsSubmitted] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
 
-	if (!taskData) {
-		return null;
-	}
+  if (!taskData) {
+    return null;
+  }
 
-	const handleSubmit = (res: any) => {
-		setIsSubmitted(true);
-		setSubmitFormOpen(false);
-		dispatch(updateTasks(res.updateTask));
-		toast({
-			variant: 'default',
-			title: 'Success!',
-			description: 'Task updated successfully'
-		});
-	};
-	const handleAccept = (res: any) => {
-		dispatch(updateTasks(res.updateTask));
-		setIsAccepted(true);
-		setAcceptFormOpen(false);
-		toast({
-			variant: 'default',
-			title: 'Accepted!',
-			description: 'Task Accepted successfully'
-		});
-	};
+  if (taskData) {
+  }
 
-	const handleRejectTask = () => {
-		setIsRejected(true);
-		toast({
-			variant: 'destructive',
-			title: 'Rejected!',
-			description: 'Task Rejected successfully'
-		});
-	};
+  const handleSubmit = (res: any) => {
+    setIsSubmitted(true);
+    setSubmitFormOpen(false);
+    dispatch(updateTasks(res.updateTask));
+    toast({
+      variant: "default",
+      title: "Success!",
+      description: "Task updated successfully",
+    });
+  };
+  const handleAccept = (res: any) => {
+    dispatch(updateTasks(res.updateTask));
+    setIsAccepted(true);
+    setAcceptFormOpen(false);
+    toast({
+      variant: "default",
+      title: "Accepted!",
+      description: "Task Accepted successfully",
+    });
+  };
 
-	return (
+  const handleRejectTask = () => {
+    setIsRejected(true);
+    toast({
+      variant: "destructive",
+      title: "Rejected!",
+      description: "Task Rejected successfully",
+    });
+  };
+
+  return (
     <>
       {accpetFormOpen && (
         <Dialog open={true}>

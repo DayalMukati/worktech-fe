@@ -11,13 +11,18 @@ import {
 } from "@radix-ui/react-dialog";
 import CompleteTaskForm from "@/components/ui/modals/ComplettaskForm";
 import { CrossIcon } from "lucide-react";
-import { selectTasks, updatePrivateTasks } from "@/store/taskSlice";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  selectTasks,
+  setActivity,
+  updatePrivateTasks,
+} from "@/store/taskSlice";
+
 import { toast } from "@/components/ui/use-toast";
 import Activites from "@/components/activities/activites";
+import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
 
 const Taskdetails: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams<{ taskId: string }>();
 
   const [taskData, setTaskData] = useState<any>();
@@ -25,7 +30,7 @@ const Taskdetails: React.FC = () => {
   const [showAllActivity, setShowAllActivity] = useState<boolean>(false);
   const [openFromReview, setopenFromReview] = useState<boolean>(false);
 
-  const { pirvateTasks } = useSelector(selectTasks);
+  const { pirvateTasks } = useAppSelector(selectTasks);
   console.log("pirvateTasks->", pirvateTasks);
 
   useEffect(() => {
@@ -216,7 +221,7 @@ const Taskdetails: React.FC = () => {
             </ul>
           </div>
         </div>
-        <Activites activityData={taskData.activities} taskId={params.taskId} />
+        <Activites taskId={params.taskId} />
       </div>
     </>
   );
