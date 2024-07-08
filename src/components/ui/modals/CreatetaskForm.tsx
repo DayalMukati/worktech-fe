@@ -422,7 +422,7 @@ const CreateTaskForm = ({
           <div className="mt-4">
             <div className="flex justify-between items-center w-full">
               <Label className="mt-4 text-md text-slate-800">
-                Accepted Criteria
+                Acceptance Criteria
               </Label>
               {!isAcceptanceCriteriaGenerating ? (
                 <Button
@@ -430,7 +430,7 @@ const CreateTaskForm = ({
                   type="button"
                   onClick={fetchAcceptanceCriteria}
                 >
-                  Generate Accepted Criteria
+                  Generate Acceptance Criteria
                 </Button>
               ) : (
                 <LoaderCircle className="w-4 h-4 animate-spin" />
