@@ -76,7 +76,7 @@ const CompleteTaskForm = ({
               // @ts-ignore
               userId: reviewer,
               activity: `Task Completed: ${
-                "https://hashscan.io/testnet/transaction/" + txn.blockHash
+                "https://hashscan.io/testnet/transaction/" + txn.transactionHash
               }`,
             },
           },
