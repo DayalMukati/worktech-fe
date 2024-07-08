@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 				{
 					role: 'system',
 					content:
-						'You are an intelligent evaluator. Evaluate the given proposal based on the description and criteria provided. take the following data below.'
+						'You are an intelligent evaluator. Evaluate the given proposal based on the description and criteria provided. take the following instruction below.'
 				},
 				{
 					role: 'user',
@@ -33,10 +33,11 @@ export async function POST(req: NextRequest) {
 					role: 'user',
 					content: `Evaluate the proposal in the following structure and in markdown (do not add any extra information): 
 					
-					### **Task Submitted By Assignee** 
-					${proposal}
+					# **Task Submitted By Assignee** 
+					${proposal} 
 
-					### AI Reviewer's Evaluation and Score 
+					---
+					# AI Reviewer's Evaluation and Score 
 
 					here use the criteria to evaluate the proposal and assign a score from 1 to 10
 					and give 5 reasoning short points for the score you have given
