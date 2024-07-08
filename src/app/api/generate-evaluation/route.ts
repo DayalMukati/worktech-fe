@@ -15,11 +15,11 @@ export async function POST(req: NextRequest) {
 				{
 					role: 'system',
 					content:
-						'Provide a concise evaluation of the proposal, including a score and key points for justification, formatted in markdown.'
+						'Provide a concise evaluation of the proposal, including a score and key points for justification. Start with outputting the original proposal formatted in markdown.'
 				},
 				{
 					role: 'user',
-					content: `**Original Proposal**\n\nDescription: ${description}\n\nProposal: ${proposal}\n\nCriteria: ${criteria}`
+					content: `**Original Proposal**\n\n**Description:** ${description}\n\n**Proposal:** ${proposal}\n\n**Criteria:** ${criteria}`
 				},
 				{
 					role: 'user',
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 				{
 					role: 'system',
 					content:
-						'# Evaluation\n\n**Score:** [Your Score Here]\n\n## Justification\n1. [Reason 1]\n2. [Reason 2]\n3. [Reason 3]\n4. [Reason 4]\n5. [Reason 5]'
+						'First, repeat the original proposal provided. Then, proceed with the evaluation.\n\n# Original Proposal\n\n  [Proposal Here]\n\n # Evaluation\n\n**Score:** [Your Score Here]\n\n## Justification\n1. [Reason 1]\n2. [Reason 2]\n3. [Reason 3]\n4. [Reason 4]\n5. [Reason 5]'
 				}
 			]
 		});
