@@ -31,7 +31,17 @@ export async function POST(req: NextRequest) {
 				},
 				{
 					role: 'user',
-					content: 'Evaluate the proposal.'
+					content: `Evaluate the proposal in the following structure and in markdown 
+					
+					### Proposal
+					${proposal}
+
+					### AI Reviewer's Evaluation and Score 
+
+					here use the criteria to evaluate the proposal and assign a score from 1 to 10
+					and give 5 reasoning short points for the score you have given
+					
+					`
 				}
 			]
 		});
