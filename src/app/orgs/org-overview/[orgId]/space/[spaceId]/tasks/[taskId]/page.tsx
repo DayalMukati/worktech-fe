@@ -31,7 +31,6 @@ const Taskdetails: React.FC = () => {
   const [openFromReview, setopenFromReview] = useState<boolean>(false);
 
   const { pirvateTasks } = useAppSelector(selectTasks);
-  console.log("pirvateTasks->", pirvateTasks);
 
   useEffect(() => {
     setTaskData(pirvateTasks.find((task) => task._id === params.taskId) as any);
@@ -43,6 +42,10 @@ const Taskdetails: React.FC = () => {
 
   if (!taskData) {
     return null;
+  }
+
+  if (taskData) {
+    dispatch(setActivity(taskData.activities));
   }
 
   const handleReject = () => {
