@@ -46,8 +46,9 @@ const Taskdetails: React.FC = () => {
     return null;
   }
 
-  if (taskData) {
-  }
+  // if (taskData) {
+  //   console.log(taskData);
+  // }
 
   const handleSubmit = (res: any) => {
     setIsSubmitted(true);
@@ -182,9 +183,7 @@ const Taskdetails: React.FC = () => {
               </div>
               <div className="flex items-center space-x-8 text-muted-foreground">
                 <div className="text-sm">Assignee</div>
-                <div className="text-sm">
-                  {taskData.assignee || "Vk@gmail.com"}
-                </div>
+                <div className="text-sm">{taskData.assinees[0].email}</div>
               </div>
               <div className="flex items-center space-x-14 text-muted-foreground">
                 <div className="text-sm">Skills</div>
@@ -207,7 +206,7 @@ const Taskdetails: React.FC = () => {
                     src={"/av-7.png"}
                     alt="reviewer profile picture"
                   />
-                  <span className="text-sm">{"No task reviewer"}</span>
+                  <span className="text-sm">{taskData.reviewer.email}</span>
                 </div>
               </div>
             </div>
