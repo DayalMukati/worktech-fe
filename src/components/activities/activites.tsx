@@ -5,9 +5,16 @@ import Image from "next/image";
 import { CornerDownLeft, CornerDownRight, MessageCircle } from "lucide-react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
+import { useAppDispatch, useAppSelector } from "@/hooks/toolKitTyped";
+import { addActivity, selectTasks, setActivity } from "@/store/taskSlice";
 
-const Activites = ({ activityData, taskId }: any) => {
-  const [activity, setActivity] = useState<any>(activityData);
+const Activites = ({ taskId }: any) => {
+  const dispatch = useAppDispatch();
+  // dispatch(setActivity(activityData));
+  // const [activity, setActivity] = useState<any>(activityData);
+
+  const { activity } = useAppSelector(selectTasks);
+
   const [showAllActivity, setShowAllActivity] = useState<boolean>(true);
   //   const [typing, setTyping] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
@@ -43,7 +50,7 @@ const Activites = ({ activityData, taskId }: any) => {
         },
         onCompleted: async (res: any) => {
           setComment("");
-          setActivity(res.updateTask.activities);
+          dispatch(setActivity(res.updateTask.activities));
         },
       });
     } catch (error) {

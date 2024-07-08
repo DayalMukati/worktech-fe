@@ -18,6 +18,7 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
 import useWeb3 from '@/hooks/useWeb3';
 import { toast } from '../use-toast';
 import { ToastAction } from '@radix-ui/react-toast';
+import { setActivity } from "@/store/taskSlice";
 
 // Define the schema using Zod
 
@@ -36,6 +37,7 @@ const CompleteTaskForm = ({
 }) => {
   const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
   //   console.log("reviewer>>>>>>>>>>>>", reviewer);
+  const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState<boolean>(false);
   // const { web3, walletAddress } = useAppSelector(selectUserAuth);
@@ -84,6 +86,7 @@ const CompleteTaskForm = ({
         },
         onCompleted: async (res: any) => {
           console.log("task makred as completed", res);
+          dispatch(setActivity(res.updateTask.activities as any));
           handlePostSubmit(res);
         },
       });

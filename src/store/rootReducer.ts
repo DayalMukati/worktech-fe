@@ -4,7 +4,7 @@ import orgSlice from "./orgSlice";
 import spacesSlice from "./spacesSlice";
 import leaderboardSlice from "./leaderboardSlice";
 import taskSlice from "./taskSlice";
-import activitiesSlice from "./activities";
+
 const rootReducer = {
   layoutSlice,
   authSlice,
@@ -12,6 +12,5 @@ const rootReducer = {
   spacesSlice,
   leaderboardSlice,
   taskSlice,
-  activitiesSlice,
 };
 export default rootReducer;
