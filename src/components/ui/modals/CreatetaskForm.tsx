@@ -311,7 +311,7 @@ const CreateTaskForm = ({
         onCompleted: async (res: any) => {
           await handleSendComment({
             taskId: res.createTask._id,
-            txnId: txn.blockHash,
+            txnId: txn.transactionHash,
             reviewer: data.reviewer[0],
           }); //updating comment
           toast({

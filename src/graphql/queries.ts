@@ -365,13 +365,13 @@ export const GET_ALL_TASKS_BY_ASSINEE_ID_QUERY = gql(`
     }
     reviewer{
         _id
-        firstName
-        lastName
+     
+        email
     }
     assinees{
         _id
-        firstName
-        lastName
+    
+        email
     }
     skills{
         _id
