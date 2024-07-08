@@ -41,12 +41,13 @@ const AcceptTaskForm = ({
         variables: {
           _id: taskId,
           input: {
+            status: 2, // task accepted
+
             activities: {
               //@ts-ignore
               userId: assignee,
-              activity: "Task Accepted",
+              activity: "Task Accepted ",
             },
-            status: 2, // task accepted
           },
         },
         onError(error: any): never {

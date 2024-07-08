@@ -21,142 +21,142 @@ import { toast } from '../use-toast';
 import { ToastAction } from '@radix-ui/react-toast';
 
 import { Textarea } from '@/components/ui/textarea';
+import activities from "@/store/activities";
 
 // Define the schema using Zod
 const updateTaskSchema = z.object({
-	proposal: z.string().min(10, 'please provide valid proposal')
+  proposal: z.string().min(10, "please provide valid proposal"),
 });
 
 type Schema = z.infer<typeof updateTaskSchema>;
 
 const SubmitTaskForm = ({
-	taskId,
-	handlePostSubmit,
-	taskOnchainID,
-	taskData
+  taskId,
+  handlePostSubmit,
+  taskOnchainID,
+  taskData,
 }: {
-	taskId: string;
-	handlePostSubmit: Function;
-	taskOnchainID: any;
-	taskData: any;
+  taskId: string;
+  handlePostSubmit: Function;
+  taskOnchainID: any;
+  taskData: any;
 }) => {
-	const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
-	const { connectToMetaMask, submitTask, active } = useWeb3();
-	console.log('taskOnchainID+++', taskOnchainID);
-	const {
-		register,
-		handleSubmit,
-		control,
-		clearErrors,
-		formState: { errors }
-	} = useForm<Schema>({
-		resolver: zodResolver(updateTaskSchema)
-	});
+  const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+  const { connectToMetaMask, submitTask, active } = useWeb3();
+  console.log("taskOnchainID+++", taskOnchainID);
+  const {
+    register,
+    handleSubmit,
+    control,
+    clearErrors,
+    formState: { errors },
+  } = useForm<Schema>({
+    resolver: zodResolver(updateTaskSchema),
+  });
 
-	const [loading, setLoading] = useState<boolean>(false);
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
-	// const { connectToMetaMask, active } = useWeb3();
+  const [loading, setLoading] = useState<boolean>(false);
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  // const { connectToMetaMask, active } = useWeb3();
 
-	const { web3 } = useAppSelector(selectUserAuth);
+  const { web3 } = useAppSelector(selectUserAuth);
 
-	const { callMethod, account } = useSmartContract();
+  const { callMethod, account } = useSmartContract();
 
-	const onSubmitFrom = async (data: Schema) => {
-		setLoading(true);
-		try {
-			console.log('taskOnchainID>>>>>>>>::', taskOnchainID);
+  const onSubmitFrom = async (data: Schema) => {
+    setLoading(true);
+    try {
+      console.log("taskOnchainID>>>>>>>>::", taskOnchainID);
 
-			if (!active) {
-				await connectToMetaMask();
-			}
+      if (!active) {
+        await connectToMetaMask();
+      }
 
-			console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
-			let txn = await submitTask([taskOnchainID]);
-			console.log('Txn>>>>>::', txn);
+      console.log("taskOnchainID>>>>>>++++++", taskOnchainID);
+      let txn = await submitTask([taskOnchainID]);
+      console.log("Txn>>>>>::", txn);
 
-			const evaluationResponse = await fetch(
-				'/api/generate-evaluation',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						description: taskData.description,
-						proposal: data.proposal,
-						criteria: taskData.acceptanceCriteria
-					})
-				}
-			);
-			const evaluationResponseData = await evaluationResponse.json();
-			console.log('evaluation>>>>>', evaluationResponseData);
-			// return;
-			await submitTaskMutaion({
-				variables: {
-					_id: taskId,
-					input: {
-						docUrl: evaluationResponseData.evaluation,
-						status: TASK_STATUS.REVIEW // in review
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted: async (res: any) => {
-					handlePostSubmit(res);
-					// blockchain code
-				}
-			});
-		} catch (error) {
-			toast({
-				variant: 'destructive',
-				title: 'Uh oh! Something went wrong.',
-				description: 'There was a problem with your request.',
-				action: (
-					<ToastAction altText='Try again'>Try again</ToastAction>
-				)
-			});
+      const evaluationResponse = await fetch("/api/generate-evaluation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description: taskData.description,
+          proposal: data.proposal,
+          criteria: taskData.acceptanceCriteria,
+        }),
+      });
+      const evaluationResponseData = await evaluationResponse.json();
+      console.log("evaluation>>>>>", evaluationResponseData);
+      // return;
+      await submitTaskMutaion({
+        variables: {
+          _id: taskId,
+          input: {
+            docUrl: evaluationResponseData.evaluation,
+            status: TASK_STATUS.REVIEW, // in review
+            activities: {
+              //@ts-ignore
+              userId: taskData.assinees[0]._id,
+              activity: `Task Submitted: ${
+                "https://hashscan.io/testnet/transaction/" + txn.blockHash
+              }`,
+            },
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          handlePostSubmit(res);
+          // blockchain code
+        },
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
 
-			console.log('error->', error);
-		} finally {
-			setLoading(false);
-		}
-	};
+      console.log("error->", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	const onerror = (err: any) => {
-		console.log('err->', err);
-	};
+  const onerror = (err: any) => {
+    console.log("err->", err);
+  };
 
-	return (
-		<form
-			autoComplete='off'
-			onSubmit={handleSubmit(onSubmitFrom, onerror)}>
-			<div className='flex flex-col gap-6 p-4'>
-				<div className='flex flex-col'>
-					<Label className='font-medium text-lg text-slate-800'>
-						Proposal
-					</Label>
-					<Textarea
-						{...register('proposal')}
-						placeholder='write your proposal here....'
-						className='w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600'
-					/>
-					{errors.proposal && (
-						<span className='text-red-500 text-xs'>
-							{errors.proposal.message}
-						</span>
-					)}
+  return (
+    <form autoComplete="off" onSubmit={handleSubmit(onSubmitFrom, onerror)}>
+      <div className="flex flex-col gap-6 p-4">
+        <div className="flex flex-col">
+          <Label className="font-medium text-lg text-slate-800">Proposal</Label>
+          <Textarea
+            {...register("proposal")}
+            placeholder="write your proposal here...."
+            className="w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600"
+          />
+          {errors.proposal && (
+            <span className="text-red-500 text-xs">
+              {errors.proposal.message}
+            </span>
+          )}
 
-					<Button
-						type='submit'
-						className='block bg-[#7D6CE2FF] mt-4 w-full text-center'
-						loading={loading}>
-						Submit
-					</Button>
-				</div>
-			</div>
-		</form>
-	);
+          <Button
+            type="submit"
+            className="block bg-[#7D6CE2FF] mt-4 w-full text-center"
+            loading={loading}
+          >
+            Submit
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
 };
 
 export default SubmitTaskForm;
