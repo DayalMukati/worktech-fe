@@ -28,6 +28,8 @@ import useWeb3 from '@/hooks/useWeb3';
 import { Textarea } from '../textarea';
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
+import { UPDATE_TASK_MUTATION } from "@/graphql/mutation";
+import { setActivity } from "@/store/activities";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -159,12 +161,14 @@ const CreateTaskForm = ({
   const [description, setDescription] = useState("");
   const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
   const [isDescriptionGenerating, setIsDescriptionGenerating] = useState(false);
+  const [submitTaskMutation] = useMutation(UPDATE_TASK_MUTATION);
   const [isAcceptanceCriteriaGenerating, setIsAcceptanceCriteriaGenerating] =
     useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const { connectToMetaMask, createTask, active, convertHbarToTinybars } =
     useWeb3();
+
   const Assignee = users?.map((user: any) => ({
     value: [user._id, user.walletAddress],
     label: user.email,
@@ -304,6 +308,11 @@ const CreateTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
+          await handleSendComment({
+            taskId: res.createTask._id,
+            txnId: txn.blockHash,
+            reviewer: data.reviewer[0],
+          }); //updating comment
           toast({
             variant: "default",
             title: "Success!",
@@ -320,6 +329,35 @@ const CreateTaskForm = ({
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
       setIsLoading(false);
+      console.log("error->", error);
+    }
+  };
+
+  const handleSendComment = async ({ taskId, txnId, reviewer }: any) => {
+    console.log("taskId->", taskId);
+    console.log("txnId->", txnId);
+    try {
+      await submitTaskMutation({
+        variables: {
+          _id: taskId,
+          input: {
+            activities: {
+              //@ts-ignorea
+              userId: reviewer,
+              activity: `Task Created: ${
+                "https://hashscan.io/testnet/transaction/" + txnId
+              }`,
+            },
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          console.log("create task res->", res);
+        },
+      });
+    } catch (error) {
       console.log("error->", error);
     }
   };

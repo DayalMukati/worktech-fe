@@ -77,6 +77,7 @@ const Taskdetails: React.FC = () => {
             </DialogClose>
 
             <CompleteTaskForm
+              reviewer={taskData.reviewer._id}
               taskId={params.taskId as string}
               docUrl={taskData.docUrl}
               taskOnchainID={taskData.taskId}
@@ -168,7 +169,7 @@ const Taskdetails: React.FC = () => {
                     src={"/av-7.png"}
                     alt="reviewer profile picture"
                   />
-                  <span className="text-sm">{"No task reviewer"}</span>
+                  <span className="text-sm">{taskData.reviewer[0]}</span>
                 </div>
               </div>
             </div>

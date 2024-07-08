@@ -22,108 +22,113 @@ import { ToastAction } from '@radix-ui/react-toast';
 // Define the schema using Zod
 
 const CompleteTaskForm = ({
-	taskId,
-	docUrl,
-	handlePostSubmit,
-	taskOnchainID
+  reviewer,
+  taskId,
+  docUrl,
+  handlePostSubmit,
+  taskOnchainID,
 }: {
-	taskId: string;
-	docUrl: string;
-	handlePostSubmit: Function;
-	taskOnchainID: any;
+  reviewer: string;
+  taskId: string;
+  docUrl: string;
+  handlePostSubmit: Function;
+  taskOnchainID: any;
 }) => {
-	const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+  const [updateTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
+  //   console.log("reviewer>>>>>>>>>>>>", reviewer);
 
-	const [loading, setLoading] = useState<boolean>(false);
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const [loading, setLoading] = useState<boolean>(false);
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
 
-	const { web3 } = useAppSelector(selectUserAuth);
+  const { web3 } = useAppSelector(selectUserAuth);
 
-	const { callMethod, account } = useSmartContract();
-	const {
-		connectToMetaMask,
-		completeTask,
-		active,
-		convertHbarToTinybars
-	} = useWeb3();
+  const { callMethod, account } = useSmartContract();
+  const { connectToMetaMask, completeTask, active, convertHbarToTinybars } =
+    useWeb3();
 
-	const onSubmitFrom = async (e: any) => {
-		e.preventDefault();
-		setLoading(true);
-		try {
-			console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
+  const onSubmitFrom = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      console.log("taskOnchainID>>>>>>++++++", taskOnchainID);
 
-			if (!active) {
-				await connectToMetaMask();
-			}
+      if (!active) {
+        await connectToMetaMask();
+      }
 
-			// let taskData = await getTaskData([taskOnchainID]);
-			// const rewardAmount = Web3.utils.toWei(taskData.reward.toString(), 'ether')
-			// const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
+      // let taskData = await getTaskData([taskOnchainID]);
+      // const rewardAmount = Web3.utils.toWei(taskData.reward.toString(), 'ether')
+      // const rewardAmount = await Web3.utils.fromWei(taskData.reward, 'ether');
 
-			// console.log('taskData++++', {rewardAmount}, taskData.reward);
-			let txn = await completeTask([taskOnchainID]);
-			console.log('txn++++++', txn);
-			setLoading(false);
+      // console.log('taskData++++', {rewardAmount}, taskData.reward);
+      let txn = await completeTask([taskOnchainID]);
+      console.log("txn++++++", txn);
+      setLoading(false);
 
-			await updateTaskMutaion({
-				variables: {
-					_id: taskId,
-					input: {
-						status: 4 // completed
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted: async (res: any) => {
-					console.log('task makred as completed', res);
-					handlePostSubmit(res);
-				}
-			});
-		} catch (error) {
-			toast({
-				variant: 'destructive',
-				title: 'Uh oh! Something went wrong.',
-				description: 'There was a problem with your request.',
-				action: (
-					<ToastAction altText='Try again'>Try again</ToastAction>
-				)
-			});
-			console.log('error->', error);
-		} finally {
-			setLoading(false);
-		}
-	};
+      await updateTaskMutaion({
+        variables: {
+          _id: taskId,
+          input: {
+            status: 4, // completed
+            activities: {
+              // @ts-ignore
+              userId: reviewer,
+              activity: `Task Completed: ${
+                "https://hashscan.io/testnet/transaction/" + txn.blockHash
+              }`,
+            },
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          console.log("task makred as completed", res);
+          handlePostSubmit(res);
+        },
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      console.log("error->", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	const onerror = (err: any) => {
-		console.log('err->', err);
-	};
+  const onerror = (err: any) => {
+    console.log("err->", err);
+  };
 
-	return (
-		<form autoComplete='off' onSubmit={e => onSubmitFrom(e)}>
-			<div className='flex flex-col gap-6 p-4'>
-				<div className='flex flex-col'>
-					{/* <Input
+  return (
+    <form autoComplete="off" onSubmit={(e) => onSubmitFrom(e)}>
+      <div className="flex flex-col gap-6 p-4">
+        <div className="flex flex-col">
+          {/* <Input
 						type='text'
 						placeholder='submited task link ....'
 						className='w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600'
 						value={docUrl}
 					/> */}
 
-					<pre className='w-full h-[80vh] text-muted-foreground whitespace-pre-wrap overflow-y-auto'>
-						{docUrl}
-					</pre>
-					<Button
-						type='submit'
-						className='block bg-[#7D6CE2FF] mt-4 w-full text-center'
-						loading={loading}>
-						Mark as Completed
-					</Button>
-				</div>
-			</div>
-		</form>
-	);
+          <pre className="w-full h-[80vh] text-muted-foreground whitespace-pre-wrap overflow-y-auto">
+            {docUrl}
+          </pre>
+          <Button
+            type="submit"
+            className="block bg-[#7D6CE2FF] mt-4 w-full text-center"
+            loading={loading}
+          >
+            Mark as Completed
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
 };
 
 export default CompleteTaskForm;
