@@ -34,7 +34,7 @@ const Taskdetails: React.FC = () => {
     // @ts-ignore
     dispatch(
       setActivity(
-        tasks.find((task) => task._id === params.taskId).activities as an
+        tasks.find((task) => task._id === params.taskId)?.activities as any
       )
     );
   }, [tasks]);
