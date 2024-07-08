@@ -71,6 +71,7 @@ export const UPDATE_TASK_MUTATION = gql(`
       _id
       name
       description
+      taskId
       priority
       amount
       activities {
@@ -86,6 +87,7 @@ export const UPDATE_TASK_MUTATION = gql(`
       }
       skills {
         _id
+       
       }
       acceptanceCriteria
       status

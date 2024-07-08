@@ -35,7 +35,7 @@ function Updateuser() {
   const [updateUserMutation] = useMutation(UPDATE_USER_MUTATION);
   const { data, loading, error } = useQuery(GET_USER_BY_TOKEN, {
     onCompleted: (data) => {
-      dispatch(setUser(data.getUserByToken));
+      dispatch(setUser(data.getUserByToken as any));
        reset({
         _id: data.getUserByToken._id,
         bio: data.getUserByToken.bio,

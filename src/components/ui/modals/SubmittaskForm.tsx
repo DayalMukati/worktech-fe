@@ -4,7 +4,7 @@ import { Button } from '../button';
 import { Input } from '../input';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { set, z } from 'zod';
 
 import { Label } from '@radix-ui/react-label';
 import { components } from 'react-select';
@@ -17,10 +17,14 @@ import Web3, { AbiItem } from 'web3';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
 import useWeb3 from '@/hooks/useWeb3';
 import { TASK_STATUS } from '@/conf/data';
+import { toast } from '../use-toast';
+import { ToastAction } from '@radix-ui/react-toast';
+
+import { Textarea } from '@/components/ui/textarea';
 
 // Define the schema using Zod
 const updateTaskSchema = z.object({
-	docUrl: z.string().min(2, 'Link is required')
+	proposal: z.string().min(10, 'please provide valid proposal')
 });
 
 type Schema = z.infer<typeof updateTaskSchema>;
@@ -28,11 +32,13 @@ type Schema = z.infer<typeof updateTaskSchema>;
 const SubmitTaskForm = ({
 	taskId,
 	handlePostSubmit,
-	taskOnchainID
+	taskOnchainID,
+	taskData
 }: {
 	taskId: string;
 	handlePostSubmit: Function;
 	taskOnchainID: any;
+	taskData: any;
 }) => {
 	const [submitTaskMutaion] = useMutation(UPDATE_TASK_MUTATION);
 	const { connectToMetaMask, submitTask, active } = useWeb3();
@@ -64,14 +70,32 @@ const SubmitTaskForm = ({
 				await connectToMetaMask();
 			}
 
+			console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
 			let txn = await submitTask([taskOnchainID]);
 			console.log('Txn>>>>>::', txn);
-			
+
+			const evaluationResponse = await fetch(
+				'/api/generate-evaluation',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						description: taskData.description,
+						proposal: data.proposal,
+						criteria: taskData.acceptanceCriteria
+					})
+				}
+			);
+			const evaluationResponseData = await evaluationResponse.json();
+			console.log('evaluation>>>>>', evaluationResponseData);
+			// return;
 			await submitTaskMutaion({
 				variables: {
 					_id: taskId,
 					input: {
-						docUrl: data.docUrl,
+						docUrl: evaluationResponseData.evaluation,
 						status: TASK_STATUS.REVIEW // in review
 					}
 				},
@@ -80,11 +104,19 @@ const SubmitTaskForm = ({
 				},
 				onCompleted: async (res: any) => {
 					handlePostSubmit(res);
-
 					// blockchain code
 				}
 			});
 		} catch (error) {
+			toast({
+				variant: 'destructive',
+				title: 'Uh oh! Something went wrong.',
+				description: 'There was a problem with your request.',
+				action: (
+					<ToastAction altText='Try again'>Try again</ToastAction>
+				)
+			});
+
 			console.log('error->', error);
 		} finally {
 			setLoading(false);
@@ -101,16 +133,17 @@ const SubmitTaskForm = ({
 			onSubmit={handleSubmit(onSubmitFrom, onerror)}>
 			<div className='flex flex-col gap-6 p-4'>
 				<div className='flex flex-col'>
-					<Label className='text-md text-slate-800'>Paste link</Label>
-					<Input
-						type='url'
-						{...register('docUrl')}
-						placeholder='paste link here....'
+					<Label className='font-medium text-lg text-slate-800'>
+						Proposal
+					</Label>
+					<Textarea
+						{...register('proposal')}
+						placeholder='write your proposal here....'
 						className='w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600'
 					/>
-					{errors.docUrl && (
+					{errors.proposal && (
 						<span className='text-red-500 text-xs'>
-							{errors.docUrl.message}
+							{errors.proposal.message}
 						</span>
 					)}
 

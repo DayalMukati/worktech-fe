@@ -34,13 +34,14 @@ const UserProfile = () => {
   const { loading: isLoadingOrgs } = useQuery(LIST_ALL_ORGS_BY_USER_QUERY, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      dispatch(loadOrgs(data.listAllOrgsByUser));
-    },
+      console.log({ listOrgs: data.listAllOrgsByUser });
+      dispatch(loadOrgs(data.listAllOrgsByUser as any));
+     },
   });
 
   const { data, loading, error } = useQuery(GET_USER_BY_TOKEN, {
     onCompleted: (data) => {
-      dispatch(setUser(data.getUserByToken));
+      dispatch(setUser(data.getUserByToken as any));
     },
   });
 
@@ -91,6 +92,7 @@ const UserProfile = () => {
               </h1>
               {orgs.map(({ name, _id }) => (
                 <Link
+                  key={_id}
                   className="flex space-x-4 my-2 w-full"
                   href={`/orgs/org-overview/${_id}`}
                 >

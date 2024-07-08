@@ -31,6 +31,7 @@ const page = async () => {
 		// console.log('session in root', { session });
 		redirect('/dashboard');
 	}
+
 	return (
 		<>
 			<Header />

@@ -1,12 +1,10 @@
-'use client';
-import TaskBoard from '@/components/task-board';
-
-import React from 'react';
+import React from "react";
+import TaskBoard from "@/components/task-board";
 
 const ProjectPage = () => {
-	return (
+  return (
     <div className="pt-2">
-      <TaskBoard isContributer={false} assigneeId="" />
+      <TaskBoard isContributer={false} />
     </div>
   );
 };

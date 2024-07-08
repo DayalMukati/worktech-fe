@@ -26,6 +26,8 @@ import Web3, { AbiItem } from 'web3';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/sc-constants';
 import useWeb3 from '@/hooks/useWeb3';
 import { Textarea } from '../textarea';
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
 // Define the schema using Zod
 const createTaskSchema = z.object({
@@ -43,12 +45,12 @@ const createTaskSchema = z.object({
 type Schema = z.infer<typeof createTaskSchema>;
 
 const status = [
-	// { value: 0, label: 'open', icon: <CircleCheck /> },
-	{ value: 1, label: 'to-do', icon: <CircleCheck /> },
-	// { value: 2, label: 'in-progress', icon: <CircleCheck /> },
-	// { value: 3, label: 'in-review', icon: <CircleCheck /> },
-	// { value: 4, label: 'done', icon: <CircleCheck /> },
-	{ value: 5, label: 'backlog', icon: <CircleCheck /> }
+  // { value: 0, label: 'open', icon: <CircleCheck /> },
+  { value: 1, label: "to-do", icon: <CircleCheck /> },
+  // { value: 2, label: 'in-progress', icon: <CircleCheck /> },
+  // { value: 3, label: 'in-review', icon: <CircleCheck /> },
+  // { value: 4, label: 'done', icon: <CircleCheck /> },
+  { value: 5, label: "backlog", icon: <CircleCheck /> },
 ];
 
 const customOption = (props: any) => {
@@ -152,112 +154,108 @@ const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema),
   });
 
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
-	const [description, setDescription] = useState('');
-	const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
-	const [isDescriptionGenerating, setIsDescriptionGenerating] =
-		useState(false);
-	const [
-		isAcceptanceCriteriaGenerating,
-		setIsAcceptanceCriteriaGenerating
-	] = useState(false);
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
+  const { toast } = useToast();
+  const [description, setDescription] = useState("");
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
+  const [isDescriptionGenerating, setIsDescriptionGenerating] = useState(false);
+  const [isAcceptanceCriteriaGenerating, setIsAcceptanceCriteriaGenerating] =
+    useState(false);
 
-	const [isLoading, setIsLoading] = useState(false);
-	const { connectToMetaMask, createTask, active, convertHbarToTinybars } = useWeb3();
-	const Assignee = users?.map((user: any) => ({
-		value: [user._id, user.walletAddress],
-		label: user.email,
-		icon: <Users className='w-4 h-4' />
-	}));
+  const [isLoading, setIsLoading] = useState(false);
+  const { connectToMetaMask, createTask, active, convertHbarToTinybars } =
+    useWeb3();
+  const Assignee = users?.map((user: any) => ({
+    value: [user._id, user.walletAddress],
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
   const Reviewers = users?.map((user: any) => ({
-		value: [user._id, user.walletAddress],
-		label: user.email,
-		icon: <Users className='w-4 h-4' />
-	}));
-	// const { web3, walletAddress } = useAppSelector(selectUserAuth);
+    value: [user._id, user.walletAddress],
+    label: user.email,
+    icon: <Users className="w-4 h-4" />,
+  }));
+  // const { web3, walletAddress } = useAppSelector(selectUserAuth);
 
-	// const { connectToMetaMask, createTask, active } = useWeb3();
-	// const Assignee = users?.map((user: any) => ({
-	// 	value: user._id,
-	// 	label: user.email,
-	// 	icon: <Users className='w-4 h-4' />
-	// }));
+  // const { connectToMetaMask, createTask, active } = useWeb3();
+  // const Assignee = users?.map((user: any) => ({
+  // 	value: user._id,
+  // 	label: user.email,
+  // 	icon: <Users className='w-4 h-4' />
+  // }));
 
-	const Skills = skillsData?.map((skill: any) => ({
-		value: skill._id,
-		label: skill.title,
-		icon: <DraftingCompass className='w-4 h-4' />
-	}));
+  const Skills = skillsData?.map((skill: any) => ({
+    value: skill._id,
+    label: skill.title,
+    icon: <DraftingCompass className="w-4 h-4" />,
+  }));
 
-	const { web3 } = useAppSelector(selectUserAuth);
+  const { web3 } = useAppSelector(selectUserAuth);
 
-	const { callMethod, account } = useSmartContract();
+  const { callMethod, account } = useSmartContract();
 
-	const title = watch('taskName');
-	const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
+  const title = watch("taskName");
+  const [createTaskMutaion] = useMutation(CREATE_TASK_MUTATION);
 
-	const fetchDescription = async () => {
-		if (!title && title.length < 1) {
-			setError('taskName', {
-				type: 'manual',
-				message: 'Task Name must be more than one character'
-			});
-			return;
-		}
-		try {
-			clearErrors('taskName');
-			setIsDescriptionGenerating(true);
-			const response = await fetch('/api/generate-description', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ title })
-			});
+  const fetchDescription = async () => {
+    if (!title && title.length < 1) {
+      setError("taskName", {
+        type: "manual",
+        message: "Task Name must be more than one character",
+      });
+      return;
+    }
+    try {
+      clearErrors("taskName");
+      setIsDescriptionGenerating(true);
+      const response = await fetch("/api/generate-description", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
 
-			const data = await response.json();
-			setDescription(data.description);
-			setValue('description', data.description);
-			setIsDescriptionGenerating(false);
-		} catch (error) {
-			console.error('Error fetching description:', error);
-			setIsDescriptionGenerating(false);
-		}
-	};
+      const data = await response.json();
+      setDescription(data.description);
+      setValue("description", data.description);
+      setIsDescriptionGenerating(false);
+    } catch (error) {
+      console.error("Error fetching description:", error);
+      setIsDescriptionGenerating(false);
+    }
+  };
 
-	const fetchAcceptanceCriteria = async () => {
-		if (!title && title.length < 1) {
-			setError('taskName', {
-				type: 'manual',
-				message: 'Task Name must be more than one character'
-			});
-			return;
-		}
-		clearErrors('taskName');
-		setIsAcceptanceCriteriaGenerating(true);
-		try {
-			const response = await fetch(
-				'/api/generate-acceptance-criteria',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ feature: title })
-				}
-			);
+  const fetchAcceptanceCriteria = async () => {
+    if (!title && title.length < 1) {
+      setError("taskName", {
+        type: "manual",
+        message: "Task Name must be more than one character",
+      });
+      return;
+    }
+    clearErrors("taskName");
+    setIsAcceptanceCriteriaGenerating(true);
+    try {
+      const response = await fetch("/api/generate-acceptance-criteria", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ feature: title }),
+      });
 
-			const data = await response.json();
-			setAcceptanceCriteria(data.acceptanceCriteria);
-			setValue('acceptanceCriteria', data.acceptanceCriteria);
-			setIsAcceptanceCriteriaGenerating(false);
-		} catch (error) {
-			console.error('Error fetching acceptance criteria:', error);
-			setIsAcceptanceCriteriaGenerating(false);
-		}
-	};
+      const data = await response.json();
+      setAcceptanceCriteria(data.acceptanceCriteria);
+      setValue("acceptanceCriteria", data.acceptanceCriteria);
+      setIsAcceptanceCriteriaGenerating(false);
+    } catch (error) {
+      console.error("Error fetching acceptance criteria:", error);
+      setIsAcceptanceCriteriaGenerating(false);
+    }
+  };
 
-	const onSubmitFrom = async (data: Schema) => {
+  const onSubmitFrom = async (data: Schema) => {
     setIsLoading(true);
     try {
       if (!active) {
@@ -265,16 +263,25 @@ const CreateTaskForm = ({
       }
       const priceInTinyHbar = await convertHbarToTinybars(data.price);
       // const priceInWei = Web3.utils.toWei(data.price, "ether");
-		  // const weiAmount = Math.floor(Number(data.price) * hbarToWeiFactor);
+      // const weiAmount = Math.floor(Number(data.price) * hbarToWeiFactor);
 
-
-	  console.log('priceInWei++++', priceInTinyHbar)
+      console.log("priceInWei++++", priceInTinyHbar);
       let txn = await createTask([
         data.taskName,
         priceInTinyHbar,
         data.assignee[1],
-		    data.reviewer[1],
+        data.reviewer[1],
       ]);
+      console.log("txn-> from createtask", txn);
+      if (!txn) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
+        return;
+      }
       let taskId = Number(txn.events.TaskCreated.returnValues[0]);
       await createTaskMutaion({
         variables: {
@@ -297,10 +304,22 @@ const CreateTaskForm = ({
           throw new Error(error);
         },
         onCompleted: async (res: any) => {
+          toast({
+            variant: "default",
+            title: "Success!",
+            description: "Task created successfully",
+          });
           handlePostSubmit(res);
         },
       });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+      setIsLoading(false);
       console.log("error->", error);
     }
   };
@@ -403,7 +422,7 @@ const CreateTaskForm = ({
           <div className="mt-4">
             <div className="flex justify-between items-center w-full">
               <Label className="mt-4 text-md text-slate-800">
-                Accepted Criteria
+                Acceptance Criteria
               </Label>
               {!isAcceptanceCriteriaGenerating ? (
                 <Button
@@ -411,7 +430,7 @@ const CreateTaskForm = ({
                   type="button"
                   onClick={fetchAcceptanceCriteria}
                 >
-                  Generate Accepted Criteria
+                  Generate Acceptance Criteria
                 </Button>
               ) : (
                 <LoaderCircle className="w-4 h-4 animate-spin" />
@@ -588,9 +607,14 @@ const CreateTaskForm = ({
                     }),
                   }}
                   options={Reviewers}
-                  onChange={(selectedOption) => {
+                  onChange={(
+                    selectedOption: SingleValue<{
+                      value: string;
+                      label: string;
+                    }>
+                  ) => {
                     field.onChange(
-                      selectedOption ? (selectedOption.value) : null
+                      selectedOption ? selectedOption.value : null
                     );
                     clearErrors("reviewer"); // Clear error on change
                   }}
