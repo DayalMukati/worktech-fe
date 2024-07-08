@@ -7,15 +7,14 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Select from "react-select";
-import { CirclePlus, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { useMutation } from "@apollo/client";
+import useSession from "@/hooks/use-session";
+import { UPDATE_FEATURE_MUTATION, DELETE_FEATURE_MUTATION } from "@/graphql/mutation";
 
 const EditFeatureSchema = z.object({
-  type: z.string().min(1, "Type is required"),
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  expedite: z.boolean().optional(),
-  deposit: z.number().min(1, "Deposit is required"),
   company: z.string().min(1, "Company is required"),
+  description: z.string().min(1, "Description is required"),
   position: z.string().min(1, "Position is required"),
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
@@ -37,8 +36,15 @@ const skillsOptions = [
   { value: "Blockchain", label: "Blockchain" },
 ];
 
-const EditFeature = () => {
+interface EditFeatureProps {
+  Data: any;
+  index: any;
+}
+
+const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
+  const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+
   const {
     register,
     control,
@@ -50,7 +56,66 @@ const EditFeature = () => {
     mode: "all",
   });
 
-  const toggleModal = () => {
+  const [updateFeatureMutation] = useMutation(UPDATE_FEATURE_MUTATION);
+  const [deleteFeatureMutation] = useMutation(DELETE_FEATURE_MUTATION);
+  const user = Data[index];
+
+  const onSubmit = async (data: FormValues) => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+    try {
+      const { data: mutationData } = await updateFeatureMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            checkInput: {
+              company: user.company,
+              position: user.position,
+            },
+            featureWork: {
+              company: data.company,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              skills: data.skills,
+              position: data.position,
+              responsibilities: data.responsibilities,
+              description: data.description,
+            },
+          },
+        },
+      });
+      console.log("Mutation response:", mutationData);
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const onDelete = async () => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+    try {
+      const { data: mutationData } = await deleteFeatureMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            company: user.company,
+            position: user.position,
+          },
+        },
+      });
+      console.log("Delete response:", mutationData);
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleModalToggle = () => {
     setIsOpen(!isOpen);
   };
 
@@ -58,14 +123,19 @@ const EditFeature = () => {
     setIsOpen(false);
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const formatDate = (date: string | number | Date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
   };
+
+  const startDate = formatDate(user.startDate);
+  const endDate = formatDate(user.endDate);
 
   return (
     <div>
       <button
-        onClick={toggleModal}
+        onClick={handleModalToggle}
         aria-label="Edit Experience"
         title="Edit Experience"
       >
@@ -78,14 +148,12 @@ const EditFeature = () => {
               <h1 className="text-xl font-bold">Edit Experience</h1>
               <button
                 className="text-slate-400 hover:text-slate-800 text-2xl"
-                onClick={toggleModal}
+                onClick={handleModalToggle}
               >
                 &times;
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-             
-
               <div className="mb-4">
                 <label
                   htmlFor="company"
@@ -97,6 +165,7 @@ const EditFeature = () => {
                   type="text"
                   id="company"
                   placeholder="Enter Company"
+                  defaultValue={user.company}
                   {...register("company")}
                   className={`mt-1 ${
                     errors.company ? "border-red-500" : "border-slate-300"
@@ -119,6 +188,7 @@ const EditFeature = () => {
                 <Input
                   type="text"
                   id="position"
+                  defaultValue={user.position}
                   placeholder="Enter Position"
                   {...register("position")}
                   className={`mt-1 ${
@@ -142,6 +212,7 @@ const EditFeature = () => {
                 <Controller
                   name="skills"
                   control={control}
+                  defaultValue={user.skills}
                   render={({ field: { onChange, value = [] } }) => (
                     <Select
                       id="skills"
@@ -171,7 +242,6 @@ const EditFeature = () => {
                   </span>
                 )}
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="startDate"
@@ -182,6 +252,7 @@ const EditFeature = () => {
                 <Input
                   type="date"
                   id="startDate"
+                  defaultValue={startDate}
                   {...register("startDate")}
                   className={`mt-1 ${
                     errors.startDate ? "border-red-500" : "border-slate-300"
@@ -204,6 +275,7 @@ const EditFeature = () => {
                 <Input
                   type="date"
                   id="endDate"
+                  defaultValue={endDate}
                   {...register("endDate")}
                   className={`mt-1 ${
                     errors.endDate ? "border-red-500" : "border-slate-300"
@@ -226,6 +298,7 @@ const EditFeature = () => {
                 <Textarea
                   id="responsibilities"
                   placeholder="Enter Responsibilities"
+                  defaultValue={user.responsibilities}
                   {...register("responsibilities")}
                   className={`mt-1 ${
                     errors.responsibilities
@@ -250,6 +323,7 @@ const EditFeature = () => {
                 <Textarea
                   id="description"
                   placeholder="Enter Feature Description"
+                  defaultValue={user.description}
                   {...register("description")}
                   className={`mt-1 ${
                     errors.description ? "border-red-500" : "border-slate-300"
@@ -263,18 +337,19 @@ const EditFeature = () => {
                 )}
               </div>
               <div className="flex justify-between space-x-2">
-              <Button
-                type="submit"
-                className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
-              >
-                Delete
-              </Button>
-              <Button
-                type="submit"
-                className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
-              >
-                Submit
-              </Button>
+                <Button
+                  type="button"
+                  onClick={onDelete}
+                  className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
+                >
+                  Delete
+                </Button>
+                <Button
+                  type="submit"
+                  className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </div>

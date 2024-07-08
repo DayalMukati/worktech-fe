@@ -15,26 +15,48 @@ export const GET_USER_BY_TOKEN = gql(`
   query GetUserByToken {
     getUserByToken {
       _id
-      firstName
-      lastName
-      email
-      gender
-      mobile
-      bio
-      signupMode
-      userRoles {
+    firstName
+    lastName
+    email
+    gender
+    mobile
+    signupMode
+    userRoles {
+      _id
+      title
+    }
+    featureWork{
+        company
+        position
+        skills
+        responsibilities
+        startDate
+        endDate
+    }
+    education {
+        institute
+        degree
+        startDate
+        endDate
+    }
+    status
+    profilePic
+    walletAddress
+    skills{
         _id
         title
-      }
-      status
-      profilePic
-      walletAddress
-      skills {
-        _id
-        title
-      }
-      createdAt
-      updatedAt
+    }
+    linkedIn
+    location
+    twitter
+    discord
+    github
+    bio
+    reputationScore
+    revenueShare
+    earnings
+    createdAt
+    updatedAt
     }
   }
 `);

@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { GET_USER_BY_TOKEN } from "@/graphql/queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { CircleHelp, CirclePlus, Coffee, Pencil } from "lucide-react";
+import { CircleHelp, CirclePlus, Coffee, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icon";
 import useSession from "@/hooks/use-session";
@@ -22,56 +22,7 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { UPDATE_USER_MUTATION } from '@/graphql/mutation';
-import { DocumentNode } from 'graphql';
-const educationData = [
-  {
-    degree: "Bachelor of Science in Computer Science",
-    startDate: "September 2015",
-    endDate: "June 2019",
-    institute: "IIT Indore",
-  },
-  {
-    degree: "Master of Science in Software Engineering",
-    startDate: "September 2019",
-    endDate: "June 2021",
-    institute: "Manipal university",
-  },
-  {
-    degree: "PhD in Artificial Intelligence",
-    startDate: "September 2021",
-    endDate: "Present",
-    institute: "Indian Institute Of Technology Delhi",
-  },
-];
-const cardData = [
-  {
-    companyName: "Company One NAME tech",
-    description: "A brief description of Company One and its core mission.",
-    skills: ["javascript", "blockchain", "Skill C"],
-    startDate: "Jan 2018",
-    endDate: "Dec 2020",
-    responsibilities: ["Managed team projects."],
-  },
-  {
-    companyName: "Company Two",
-    description: "A brief description of Company Two and its core mission.",
-    skills: ["Skill D", "Skill E", "Skill F"],
-    startDate: "Feb 2021",
-    endDate: "Nov 2022",
-    responsibilities: ["Led product development."],
-  },
-  // {
-  //   companyName: "Company Three",
-  //   description: "A brief description of Company Three and its core mission.",
-  //   skills: ["Skill G", "Skill H", "Skill I"],
-  //   startDate: "Mar 2023",
-  //   endDate: "Present",
-  //   responsibilities: ["Directed strategic projects."],
-  // },
-];
-
-// Define the Zod schema for validation
+import { UPDATE_USER_MUTATION } from "@/graphql/mutation";
 const profileSchema = z.object({
   id: z.string(),
   bio: z.string().optional(),
@@ -79,7 +30,7 @@ const profileSchema = z.object({
   linkedin: z.string().optional(),
   twitter: z.string().optional(),
   discord: z.string().optional(),
-   status: z.number().optional(),
+  status: z.number().optional(),
 });
 
 type Schema = z.infer<typeof profileSchema>;
@@ -107,7 +58,6 @@ const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const profileInfoRef = useRef<HTMLDivElement>(null);
   const editFormRef = useRef<HTMLDivElement>(null);
-
   const [updateUserMutation] = useMutation(UPDATE_USER_MUTATION);
   const {
     handleSubmit,
@@ -136,7 +86,7 @@ const UserProfile = () => {
             bio: data.bio,
             discord: data.discord,
             linkedIn: data.linkedin,
-             twitter: data.twitter,
+            twitter: data.twitter,
           },
         },
       });
@@ -170,8 +120,17 @@ const UserProfile = () => {
   const handleSaveClick = () => {
     handleSubmit(onSubmit)();
   };
+  const featureData = user?.featureWork?.map((obj: any, index: number) => ({
+    ...obj,
+    id: index + 1,
+  }));
+  const educationData = user?.education?.map((obj: any, index: number) => ({
+    ...obj,
+    id: index + 1,
+  }));
   if (loading) return <PageGrid />;
   if (error) return <ErrorDisplay errorMessage={error.message} />;
+
   return (
     <div className="flex mt-12 mb-6 space-x-4 px-36">
       <div className="flex flex-col gap-4 w-1/3 ">
@@ -333,7 +292,7 @@ const UserProfile = () => {
                     </span>
                   )}
                 </div>
-                 <div className="flex justify-center items-center mt-4">
+                <div className="flex justify-center items-center mt-4">
                   <Button
                     id="cancel-button"
                     className="bg-slate-300 hover:bg-slate-400 shadow mx-2 px-4 py-1 rounded-md text-slate-900"
@@ -415,7 +374,7 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mx-2 w-2/3">
-       {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
+        {/* <div className="flex flex-col justify-center border-slate-300 shadow-lg p-2 border rounded-md h-[18rem]">
           <h1 className="font-semibold text-lg text-slate-600">
             Featured work
           </h1>
@@ -432,52 +391,84 @@ const UserProfile = () => {
             Expierience And Skills
           </h1>
           <div className="flex space-x-2 overflow-hidden mt-1">
-            {cardData.map((item, index) => (
-              <div
-                key={index}
-                className="bg-card flex-col w-1/3 text-card-foreground rounded-lg border "
-              >
-                {" "}
-                <div className="max-w-sm rounded overflow-hidden shadow-lg bg-card text-card-foreground p-4">
-                  <div className="px-1 py-1 flex justify-between">
-                    <span className=" mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
-                      {item.companyName?.length > 12
-                        ? item.companyName.substring(0, 12) + "..."
-                        : item.companyName}
-                    </span>
-                    <EditFeature />
+            {user?.featureWork &&
+              user.featureWork.length > 0 &&
+              user?.featureWork.map(
+                (
+                  item: {
+                    company: string;
+                    skills: string[];
+                    responsibilities: string;
+                    startDate: string;
+                    endDate: string;
+                    position: string;
+                  },
+                  index: React.Key | null | undefined
+                ) => (
+                  <div
+                    key={index}
+                    className="bg-card flex-col w-1/3 text-card-foreground rounded-lg border "
+                  >
+                    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-card text-card-foreground p-4">
+                      <div className="px-1 py-1 flex justify-between">
+                        <span className="mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
+                          {typeof item.company === "string" && (
+                            <span className="mb-1 justify-between flex space-x-4 font-semibold text-md text-slate-700">
+                              {item.company.length > 12
+                                ? item.company.substring(0, 12) + "..."
+                                : item.company}
+                            </span>
+                          )}
+                        </span>
+                        <EditFeature Data={featureData} index={index} />
+                      </div>
+                      <div className="pt-2 pb-1">
+                        {item.skills.length > 0 ? (
+                          item.skills.slice(0, 1).map((skill, index) => (
+                            <span
+                              key={index}
+                              className="inline-block border border-primary/60 rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="inline-block border border-primary/60 rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2">
+                            <p> + Skills</p>
+                          </span>
+                        )}
+                      </div>
+                      <div className="pt-2">
+                        <h3 className="font-medium text-sm text-slate-400">
+                          Position
+                        </h3>
+                        <span className="text-sm">{item.position || ""}</span>
+                      </div>
+                      <div className="pt-2 text-slate-500">
+                        <h3 className="font-medium text-sm text-slate-400">
+                          Duration
+                        </h3>
+                        <p className="text-sm">
+                          Start Date:{" "}
+                          <span className="">
+                            {new Date(item.startDate).toLocaleDateString(
+                              "en-GB"
+                            )}
+                          </span>
+                        </p>
+                        <p className="text-sm">
+                          End Date:{" "}
+                          <span className="">
+                            {new Date(item.endDate).toLocaleDateString("en-GB")}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className=" pt-2 pb-1">
-                    {item.skills.slice(0, 1).map((skill, index) => (
-                      <span
-                        key={index}
-                        className="inline-block border border-primary/60  rounded-full px-3 py-1 text-sm font-semibold text-primary/80 mr-2 mb-2"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                  <div className=" pt-2 ">
-                    <h3 className="font-medium text-sm text-slate-400 ">
-                      Responsibilities
-                    </h3>
-                    <span className="text-sm">{item.responsibilities}</span>
-                  </div>
-                  <div className=" pt-2 text-slate-500">
-                    <h3 className="font-medium text-sm text-slate-400 ">
-                      Duration
-                    </h3>
-                    <p className="text-sm">
-                      Start Date: <span className="">{item.startDate}</span>
-                    </p>
-                    <p className="text-sm">
-                      End Date: <span className="">{item.endDate}</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {cardData.length < 3 ? (
+                )
+              )}
+
+            {user?.featureWork && user.featureWork.length < 3 ? (
               <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3 h-full text-center">
                 <Addfeature />
                 <span className="mt-4 font-semibold text-slate-500 text-sm">
@@ -493,40 +484,69 @@ const UserProfile = () => {
           </span>
 
           <div className="space-y-2 max-h-[250px] min-h-[100px] overflow-x-auto scrollbar-hide">
-            <div className="flex space-x-2 min-w-max">
-              {educationData.map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-card flex-col text-card-foreground p-2 rounded-lg border min-w-[200px]"
-                >
-                  <div className="flex justify-between space-x-4 items-center mb-4">
-                    <div>
-                      <p className="text-md font-semibold text-slate-700">
-                        {item.institute?.length > 25
-                          ? item.institute.substring(0, 25) + "..."
-                          : item.institute}
-                      </p>
-                    </div>
-                    <EditEducation />
-                  </div>
-                  <div className="text-slate-500 text-sm my-1">
-                    {" "}
-                    {item.degree?.length > 25
-                      ? item.degree.substring(0, 25) + "..."
-                      : item.degree}
-                  </div>
-                  <div className="space-y-2 text-slate-500">
-                    <div>
-                      <h3 className="text-sm">Start Date:</h3>
-                      <p className="text-sm">{item.startDate}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm">End Date:</h3>
-                      <p className="text-sm">{item.endDate}</p>
-                    </div>
-                  </div>
+            <div className="flex space-x-2 min-w-max ">
+              {user?.education && user.education.length > 0 ? (
+                <div className="flex space-x-4">
+                  {user.education.map(
+                    (
+                      item: {
+                        institute: string;
+                        degree: string;
+                        startDate: string;
+                        endDate: string;
+                      },
+                      index: React.Key | null | undefined
+                    ) => (
+                      <div
+                        key={index}
+                        className="bg-card flex-col text-card-foreground p-2 rounded-lg border min-w-[200px]"
+                      >
+                        <div className="flex justify-between space-x-4 items-center mb-4">
+                          <div>
+                            <p className="text-md font-semibold text-slate-700">
+                              {item.institute?.length > 25
+                                ? item.institute.substring(0, 25) + "..."
+                                : item.institute}
+                            </p>
+                          </div>
+                          <EditEducation Data={educationData} index={index} />
+                        </div>
+                        {typeof item.degree === "string" && (
+                          <div className="text-slate-600 text-sm my-1">
+                            {item.degree?.length > 25
+                              ? item.degree.substring(0, 25) + "..."
+                              : item.degree}
+                          </div>
+                        )}
+                        <div className="space-y-2 text-slate-500">
+                          <p className="text-sm">
+                            Start Date:{" "}
+                            <span className="">
+                              {new Date(item.startDate).toLocaleDateString(
+                                "en-GB"
+                              )}
+                            </span>
+                          </p>
+                          <p className="text-sm">
+                            End Date:{" "}
+                            <span className="">
+                              {new Date(item.endDate).toLocaleDateString(
+                                "en-GB"
+                              )}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div className="bg-card text-card-foreground p-2 rounded-lg  min-w-[200px]">
+                  <p className="text-md font-semibold text-slate-700">
+                    Add your education to get more oppourtunity
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

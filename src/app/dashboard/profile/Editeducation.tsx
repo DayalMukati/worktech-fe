@@ -6,6 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Pencil, Plus } from "lucide-react";
+import { useMutation } from "@apollo/client";
+import useSession from "@/hooks/use-session";
+import { UPDATE_EDUCATION_MUTATION, DELETE_EDUCATION_MUTATION } from "@/graphql/mutation";
 
 const EditFeatureSchema = z.object({
   degree: z.string().min(1, "Degree is required"),
@@ -22,8 +25,16 @@ const EditFeatureSchema = z.object({
 
 type FormValues = z.infer<typeof EditFeatureSchema>;
 
-const EditEducation = () => {
+interface EditEducationProps {
+  Data: any;
+  index: any;
+}
+
+const EditEducation: React.FC<EditEducationProps> = ({ Data, index }) => {
+  const { session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const user = Data[index];
+
   const {
     register,
     handleSubmit,
@@ -34,6 +45,55 @@ const EditEducation = () => {
     mode: "all",
   });
 
+  const [updateEducationMutation] = useMutation(UPDATE_EDUCATION_MUTATION);
+  const [deleteEducationMutation] = useMutation(DELETE_EDUCATION_MUTATION);
+
+  const onSubmit = async (data: FormValues) => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+    try {
+      const { data: mutationData } = await updateEducationMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            institute: data.institute,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            degree: data.degree,
+          },
+        },
+      });
+      console.log("Mutation response:", mutationData);
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const onDelete = async () => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+    try {
+      const { data: mutationData } = await deleteEducationMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            institute: user.institute,
+            degree: user.degree,
+          },
+        },
+      });
+      console.log("Delete response:", mutationData);
+      closeModal();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
@@ -42,9 +102,14 @@ const EditEducation = () => {
     setIsOpen(false);
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const formatDate = (date: string | number | Date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    return d.toISOString().split("T")[0];
   };
+
+  const startDate = formatDate(user.startDate);
+  const endDate = formatDate(user.endDate);
 
   return (
     <div>
@@ -68,7 +133,7 @@ const EditEducation = () => {
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
+              <div className="mb-4">
                 <label
                   htmlFor="institute"
                   className="justify-start flex text-sm font-medium text-slate-700"
@@ -79,9 +144,10 @@ const EditEducation = () => {
                   type="text"
                   id="institute"
                   placeholder="Enter Institute"
+                  defaultValue={user.institute}
                   {...register("institute")}
                   className={`mt-1 ${
-                    errors.degree ? "border-red-500" : "border-slate-300"
+                    errors.institute ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
                   onClick={() => clearErrors("institute")}
                 />
@@ -102,6 +168,7 @@ const EditEducation = () => {
                   type="text"
                   id="degree"
                   placeholder="Enter Degree"
+                  defaultValue={user.degree}
                   {...register("degree")}
                   className={`mt-1 ${
                     errors.degree ? "border-red-500" : "border-slate-300"
@@ -124,6 +191,7 @@ const EditEducation = () => {
                 <Input
                   type="date"
                   id="startDate"
+                  defaultValue={startDate}
                   {...register("startDate")}
                   className={`mt-1 ${
                     errors.startDate ? "border-red-500" : "border-slate-300"
@@ -146,6 +214,7 @@ const EditEducation = () => {
                 <Input
                   type="date"
                   id="endDate"
+                  defaultValue={endDate}
                   {...register("endDate")}
                   className={`mt-1 ${
                     errors.endDate ? "border-red-500" : "border-slate-300"
@@ -159,18 +228,19 @@ const EditEducation = () => {
                 )}
               </div>
               <div className="flex justify-between space-x-2">
-              <Button
-                type="submit"
-                className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
-              >
-                Delete
-              </Button>
-              <Button
-                type="submit"
-                className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
-              >
-                Submit
-              </Button>
+                <Button
+                  type="button"
+                  onClick={onDelete}
+                  className="w-full bg-red-600 text-white py-2 rounded-lg flex justify-center items-center"
+                >
+                  Delete
+                </Button>
+                <Button
+                  type="submit"
+                  className="w-full bg-slate-800 text-white py-2 rounded-lg flex justify-center items-center"
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </div>

@@ -6,13 +6,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useSession from "@/hooks/use-session";
 import Select from "react-select";
 import { CirclePlus } from "lucide-react";
+import { ADD_FEATURE_MUTATION } from "@/graphql/mutation";
+import { useMutation } from "@apollo/client";
 
 const addFeatureSchema = z.object({
-  description: z.string().min(1, "Description is required"),
   company: z.string().min(1, "Company is required"),
   position: z.string().min(1, "Position is required"),
+  description: z.string().min(1, "Description is required"),
   startDate: z.string().refine((date) => {
     const startDate = new Date(date);
     return startDate <= new Date();
@@ -35,6 +38,7 @@ const skillsOptions = [
 
 const AddFeature = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { session } = useSession();
   const {
     register,
     control,
@@ -45,6 +49,7 @@ const AddFeature = () => {
     resolver: zodResolver(addFeatureSchema),
     mode: "all",
   });
+  const [addFeatureMutation] = useMutation(ADD_FEATURE_MUTATION);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -54,8 +59,32 @@ const AddFeature = () => {
     setIsOpen(false);
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const onSubmit = async (data: FormValues) => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+     try {
+      const { data: mutationData } = await addFeatureMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            company: data.company,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            skills: data.skills,
+            position: data.position,
+            responsibilities: data.responsibilities,
+            description:data.description
+          },
+        },
+      });
+      console.log("Mutation response:", mutationData);  
+      closeModal();  
+    } catch (error) {
+      console.error("Error:", error);
+       
+    }
   };
 
   return (
@@ -80,8 +109,6 @@ const AddFeature = () => {
               </button>
             </div>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-             
-
               <div className="mb-4">
                 <label
                   htmlFor="company"
@@ -97,7 +124,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.company ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("company")}
                 />
                 {errors.company && (
                   <span className="text-red-500 text-xs">
@@ -120,7 +146,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.position ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("position")}
                 />
                 {errors.position && (
                   <span className="text-red-500 text-xs">
@@ -167,7 +192,6 @@ const AddFeature = () => {
                   </span>
                 )}
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="startDate"
@@ -182,7 +206,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.startDate ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("startDate")}
                 />
                 {errors.startDate && (
                   <span className="text-red-500 text-xs">
@@ -204,7 +227,6 @@ const AddFeature = () => {
                   className={`mt-1 ${
                     errors.endDate ? "border-red-500" : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("endDate")}
                 />
                 {errors.endDate && (
                   <span className="text-red-500 text-xs">
@@ -228,7 +250,6 @@ const AddFeature = () => {
                       ? "border-red-500"
                       : "border-slate-300"
                   } border-2 rounded-md`}
-                  onClick={() => clearErrors("responsibilities")}
                 />
                 {errors.responsibilities && (
                   <span className="text-red-500 text-xs">

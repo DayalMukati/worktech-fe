@@ -6,7 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus } from "lucide-react";
-
+import useSession from "@/hooks/use-session";
+import { useMutation } from "@apollo/client";
+import { ADD_EDUCATION_MUTATION } from "@/graphql/mutation";
 const addFeatureSchema = z.object({
   degree: z.string().min(1, "Degree is required"),
   institute: z.string().min(1, "Institution is required"),
@@ -25,6 +27,7 @@ type FormValues = z.infer<typeof addFeatureSchema>;
 
 const AddEducation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { session } = useSession();
   const {
     register,
     handleSubmit,
@@ -34,6 +37,7 @@ const AddEducation = () => {
     resolver: zodResolver(addFeatureSchema),
     mode: "all",
   });
+  const [addEducationMutation] = useMutation(ADD_EDUCATION_MUTATION);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -43,8 +47,30 @@ const AddEducation = () => {
     setIsOpen(false);
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const onSubmit = async (data: FormValues) => {
+    if (!session._id) {
+      console.error("Session ID is undefined");
+      return;
+    }
+     try {
+      const { data: mutationData } = await addEducationMutation({
+        variables: {
+          _id: session._id,
+          input: {
+            institute: data.institute,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            degree: data.degree,
+             
+          },
+        },
+      });
+      console.log("Mutation response:", mutationData);  
+      closeModal();  
+    } catch (error) {
+      console.error("Error:", error);
+       
+    }
   };
 
   return (
