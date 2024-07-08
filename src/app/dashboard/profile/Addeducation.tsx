@@ -9,28 +9,37 @@ import useSession from "@/hooks/use-session";
 import { useMutation } from "@apollo/client";
 import { ADD_EDUCATION_MUTATION } from "@/graphql/mutation";
 import { useAppDispatch } from "@/hooks/toolKitTyped";
-import { addEducation } from '@/store/UserSlice';  // Adjust the import path as necessary
+import { addEducation } from "@/store/UserSlice"; // Adjust the import path as necessary
 import { useForm } from "react-hook-form";
 
-const addEducationSchema = z.object({
-  degree: z.string().min(1, "Degree is required"),
-  institute: z.string().min(1, "Institution is required"),
-  startDate: z.string().refine((date) => {
-    const startDate = new Date(date);
-    return startDate <= new Date();
-  }, "Start Date must be in the past or present"),
-  endDate: z.string().refine((date) => {
-    const endDate = new Date(date);
-    return endDate >= new Date();
-  }, "End Date must be in the future"),
-});
+const addEducationSchema = z
+  .object({
+    degree: z.string().min(1, "Degree is required"),
+    institute: z.string().min(1, "Institution is required"),
+    startDate: z.string().refine((date) => {
+      const startDate = new Date(date);
+      return startDate <= new Date();
+    }, "Start Date must be in the past or present"),
+    endDate: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    const startDate = new Date(data.startDate);
+    const endDate = new Date(data.endDate);
+    if (endDate < startDate) {
+      ctx.addIssue({
+        code: "custom",
+        message: "End Date must be greater than Start Date",
+        path: ["endDate"],
+      });
+    }
+  });
 
 type FormValues = z.infer<typeof addEducationSchema>;
 
 const AddEducation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { session } = useSession();
-  const dispatch = useAppDispatch();  // Use the custom hook for dispatch
+  const dispatch = useAppDispatch(); // Use the custom hook for dispatch
   const {
     register,
     handleSubmit,
@@ -49,7 +58,7 @@ const AddEducation = () => {
 
   const closeModal = () => {
     setIsOpen(false);
-    reset()
+    reset();
   };
 
   const onSubmit = async (data: FormValues) => {
@@ -59,7 +68,7 @@ const AddEducation = () => {
     }
 
     try {
-       const { data: mutationData } = await addEducationMutation({
+      const { data: mutationData } = await addEducationMutation({
         variables: {
           _id: session._id,
           input: {
@@ -71,18 +80,20 @@ const AddEducation = () => {
         },
       });
 
-       if (mutationData) {
-        dispatch(addEducation({
-          institute: data.institute,
-          degree: data.degree,
-          startDate: data.startDate,
-          endDate: data.endDate,
-        }));
+      if (mutationData) {
+        dispatch(
+          addEducation({
+            institute: data.institute,
+            degree: data.degree,
+            startDate: data.startDate,
+            endDate: data.endDate,
+          })
+        );
       }
 
-      console.log("Mutation response:", mutationData);  
-     
-      closeModal();  
+      console.log("Mutation response:", mutationData);
+
+      closeModal();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -99,7 +110,7 @@ const AddEducation = () => {
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
-          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[460px]">
+          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto  h-[460px]">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-xl font-bold">Add Education</h1>
               <button

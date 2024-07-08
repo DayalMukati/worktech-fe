@@ -19,10 +19,18 @@ const EditFeatureSchema = z.object({
     const startDate = new Date(date);
     return startDate <= new Date();
   }, "Start Date must be in the past or present"),
-  endDate: z.string().refine((date) => {
-    const endDate = new Date(date);
-    return endDate >= new Date();
-  }, "End Date must be in the future"),
+  endDate: z.string(),
+})
+.superRefine((data, ctx) => {
+  const startDate = new Date(data.startDate);
+  const endDate = new Date(data.endDate);
+  if (endDate < startDate) {
+    ctx.addIssue({
+      code: "custom",
+      message: "End Date must be greater than Start Date",
+      path: ["endDate"],
+    });
+  }
 });
 
 type FormValues = z.infer<typeof EditFeatureSchema>;

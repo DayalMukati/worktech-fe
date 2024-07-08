@@ -18,16 +18,20 @@ const EditFeatureSchema = z.object({
   company: z.string().min(1, "Company is required"),
   position: z.string().min(1, "Position is required"),
   description: z.string().optional(),
-  startDate: z.string().refine((date) => {
-    const startDate = new Date(date);
-    return startDate <= new Date();
-  }, "Start Date must be in the past or present"),
-  endDate: z.string().refine((date) => {
-    const endDate = new Date(date);
-    return endDate >= new Date();
-  }, "End Date must be in the future"),
+  startDate: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid Start Date"),
+  endDate: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid End Date"),
   responsibilities: z.string().optional(),
   skills: z.array(z.string()).optional(),
+}).superRefine((data, ctx) => {
+  const startDate = new Date(data.startDate);
+  const endDate = new Date(data.endDate);
+  if (endDate < startDate) {
+    ctx.addIssue({
+      code: "custom",
+      message: "End Date must be greater than Start Date",
+      path: ["endDate"],
+    });
+  }
 });
 
 type FormValues = z.infer<typeof EditFeatureSchema>;
@@ -167,7 +171,7 @@ const EditFeature: React.FC<EditFeatureProps> = ({ Data, index }) => {
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
-          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto h-[600px]">
+          <div className="max-w-lg w-full bg-white mx-3 dark:bg-slate-800 rounded-lg p-6 overflow-auto scrollbar-hide h-[600px]">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-xl font-bold">Edit Experience</h1>
               <button
