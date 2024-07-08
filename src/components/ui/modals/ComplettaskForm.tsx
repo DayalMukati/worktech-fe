@@ -110,7 +110,10 @@ const CompleteTaskForm = ({
 						className='w-full text-sm focus-visible:ring-0 focus:ring-0 border-2 border-slate-400 rounded-md text-slate-600'
 						value={docUrl}
 					/> */}
-					<pre className='text-muted-foreground'>{docUrl}</pre>
+
+					<pre className='w-full h-[80vh] text-muted-foreground whitespace-pre-wrap overflow-y-auto'>
+						{docUrl}
+					</pre>
 					<Button
 						type='submit'
 						className='block bg-[#7D6CE2FF] mt-4 w-full text-center'

@@ -1,4 +1,4 @@
-import { gql } from "./__generated__";
+import { gql } from './__generated__';
 
 export const LIST_ALL_SKILLS = gql(`
 	query ListAllSkills {
@@ -89,10 +89,12 @@ export const GET_ALL_TASKS_BY_SPACE_ID_QUERY = gql(`
       }
       assinees {
         _id
+        email
       }
       skills {
         _id
         title
+     
       }
       acceptanceCriteria
       status

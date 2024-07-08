@@ -70,6 +70,7 @@ const SubmitTaskForm = ({
 				await connectToMetaMask();
 			}
 
+			console.log('taskOnchainID>>>>>>++++++', taskOnchainID);
 			let txn = await submitTask([taskOnchainID]);
 			console.log('Txn>>>>>::', txn);
 
@@ -87,14 +88,14 @@ const SubmitTaskForm = ({
 					})
 				}
 			);
-			const evaluation = await evaluationResponse.json();
-			console.log('evaluation>>>>>', evaluation);
+			const evaluationResponseData = await evaluationResponse.json();
+			console.log('evaluation>>>>>', evaluationResponseData);
 			// return;
 			await submitTaskMutaion({
 				variables: {
 					_id: taskId,
 					input: {
-						docUrl: evaluation,
+						docUrl: evaluationResponseData.evaluation,
 						status: TASK_STATUS.REVIEW // in review
 					}
 				},
