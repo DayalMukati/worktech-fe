@@ -27,6 +27,9 @@ export interface UserState {
     email?: string;
     featureWork:FeatureWork[];
     education: Education[];   
+    reputationScore:string;
+    revenueShare:string;
+    earnings:string;
   };
 }
 
@@ -41,7 +44,10 @@ const initialState: UserState = {
     status: 0,
     email: '',
     featureWork: [],
-    education: [],   
+    education: [], 
+    reputationScore:"",
+    revenueShare:'',
+    earnings:""  
   }
 };
 
