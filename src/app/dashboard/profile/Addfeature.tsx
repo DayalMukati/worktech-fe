@@ -127,7 +127,7 @@ const AddFeature = () => {
         aria-label="Add Experience"
         title="Add Experience"
       >
-        <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer" />
+        <CirclePlus className="w-12 h-12 text-slate-900 cursor-pointer mt-6" />
       </button>
       {isOpen && (
         <div className="backdrop bg-slate-900 bg-opacity-95 fixed inset-0 flex justify-center items-center ">
