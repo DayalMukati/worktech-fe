@@ -23,8 +23,6 @@ import EditEducation from "./Editeducation";
 import EditFeature from "./Editfeature";
 import Updateuser from "./updateuser";
 
-
-
 const UserProfile = () => {
   const { session } = useSession();
   const dispatch = useAppDispatch();
@@ -36,7 +34,7 @@ const UserProfile = () => {
     onCompleted: (data) => {
       console.log({ listOrgs: data.listAllOrgsByUser });
       dispatch(loadOrgs(data.listAllOrgsByUser as any));
-     },
+    },
   });
 
   const { data, loading, error } = useQuery(GET_USER_BY_TOKEN, {
@@ -45,7 +43,6 @@ const UserProfile = () => {
     },
   });
 
- 
   const featureData = user?.featureWork?.map((obj: any, index: number) => ({
     ...obj,
     id: index + 1,
@@ -62,8 +59,7 @@ const UserProfile = () => {
     <div className="flex mt-12 mb-6 space-x-4 px-36">
       <div className="flex flex-col gap-4 w-1/3 ">
         <div className="flex flex-col justify-between items-center gap-2">
-          
-          <Updateuser/>
+          <Updateuser />
           <div className="flex flex-col gap-4 border-slate-300 shadow-md p-4 border rounded-md w-full  text-slate-400">
             <div className="flex flex-col">
               <div className="flex items-center gap-2 text-md">
@@ -72,17 +68,17 @@ const UserProfile = () => {
                 </h1>
                 <CircleHelp className="w-4 h-4 text-slate-400" />
               </div>{" "}
-              <span>782</span>
+              <span> {user.reputationScore}</span>
             </div>
             <div className="flex flex-col text-md">
               <h1 className="font-semibold text-slate-400 text-sm">EARNINGS</h1>
-              <span>$0.00</span>
+              <span>$ {user.earnings}</span>
             </div>
             <div className="flex flex-col text-md">
               <h1 className="font-semibold text-slate-400 text-sm">
                 REVENUE SHARE
               </h1>
-              <span>1.00%</span>
+              <span>{user.revenueShare} %</span>
             </div>
           </div>
           <div className="flex flex-col gap-6 border-slate-300 shadow-lg p-4 border rounded-md w-full  text-slate-400">
@@ -111,8 +107,6 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="flex flex-col space-y-2 mx-2 w-2/3">
-      
-
         <div className="flex flex-col justify-center border-slate-300 shadow-md px-2 py-2  border rounded-md">
           <h1 className="font-semibold text-lg text-slate-600">
             Expierience And Skills
@@ -184,20 +178,25 @@ const UserProfile = () => {
               ))}
 
             {user?.featureWork && user.featureWork.length < 3 ? (
-              <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3 h-full text-center">
+              <div className="flex flex-col justify-center items-center border-slate-400 p-6 border border-dashed w-1/3  text-center">
                 <Addfeature />
                 <span className="mt-4 font-semibold text-slate-500 text-sm">
-                  Feature work to show your experience
+                  Feature your Work Expierience and Skills
                 </span>
               </div>
             ) : null}
           </div>
         </div>
         <div className="flex flex-col border-slate-300 shadow-md p-4 border rounded-md max-h-[280px] min-h-[100px]">
-          <span className="font-semibold justify-between flex text-lg text-slate-600">
-            Education <AddEducation />
+          <span className="flex justify-between">
+          <span className="font-semibold text-lg text-slate-600">
+            Education
           </span>
-
+          <span>
+            {" "}
+            <AddEducation />
+          </span>
+          </span>
           <div className="space-y-2 max-h-[250px] min-h-[100px] overflow-x-auto scrollbar-hide">
             <div className="flex space-x-2 min-w-max ">
               {user?.education && user.education.length > 0 ? (

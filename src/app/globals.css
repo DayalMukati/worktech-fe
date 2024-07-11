@@ -53,14 +53,21 @@
 }
 .app_height {
 	height: calc((1vh * 100) - 12.1rem);
-  }
-  
+}
+
 @layer base {
 	* {
 		@apply border-border;
 	}
 	body {
 		@apply bg-background text-foreground;
+
+		.markdown h1 {
+			@apply text-2xl font-bold;
+		}
+		.markdown h2 {
+			@apply text-xl font-bold;
+		}
 
 		/* font-family: 'Montserrat', sans-serif; */
 		font-family: 'Poppins', sans-serif;
