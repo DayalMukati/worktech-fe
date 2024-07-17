@@ -103,7 +103,7 @@ function SpacesAddModal({ orgId }: { orgId: string }) {
         <form onSubmit={handleSubmit(onSubmit, onError)}>
           <DialogHeader className="flex flex-col justify-center items-center   ">
             <DialogTitle className="text-md font-thin text-left w-full ">
-              SPACE NAME
+              POD NAME
             </DialogTitle>
           </DialogHeader>
           <Input
@@ -122,11 +122,11 @@ function SpacesAddModal({ orgId }: { orgId: string }) {
               <input type="radio" name="spaces" className="w-6 h-6 text-primary" />
               <div className="flex flex-col justify-center items-center">
                 <Building2 className="w-4 h-4 text-slate-600 " />
-                <span className="text-md text-slate-600">Spaces</span>
+                <span className="text-md text-slate-600">Pods</span>
 
                 <span className="text-md text-slate-600">
-                  Use Spaces as containers to organize and categorize work.
-                  Recommended for your Guilds, Teams, Pods.
+                  Use Pods as containers to organize and categorize work.
+                  Recommended for your Guilds and Teams.
                 </span>
               </div>
             </div>
@@ -146,7 +146,7 @@ function SpacesAddModal({ orgId }: { orgId: string }) {
           <div className="flex flex-col">
             <h1 className="text-md text-slate-700 ">VISIBILITY</h1>
             <span className="text-md text-slate-400">
-              Anyone can view this space and its tasks
+              Anyone can view this pod and its tasks
             </span>
             <div className="flex  items-center  mt-4 ">
               {/* <h1>{visibility ? "Private" : "Public"}</h1> */}

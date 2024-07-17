@@ -132,6 +132,7 @@ const CompleteTaskForm = ({
 						<Markdown
 							className={'markdown'}
 							remarkPlugins={[remarkGfm]}
+							/* eslint react/forbid-prop-types: 0 */
 							children={docUrl}
 						/>
 					</div>
