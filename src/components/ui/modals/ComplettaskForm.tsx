@@ -131,9 +131,9 @@ const CompleteTaskForm = ({
 					<div className='w-full h-[80vh] text-muted-foreground whitespace-pre-wrap overflow-y-auto'>
 						<Markdown
 							className={'markdown'}
-							remarkPlugins={[remarkGfm]}
-							children={docUrl}
-						/>
+							remarkPlugins={[remarkGfm]}>
+							{docUrl}
+						</Markdown>
 					</div>
 					<Button
 						type='submit'
