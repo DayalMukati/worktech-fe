@@ -5,7 +5,9 @@ import Web3 from 'web3';
 // don't support CORS request right now, and we didn't find any working testnet endpoints for
 // HTTPProvider or WebSocketProvider neither.
 const getWeb3NoAccount = () => {
-  const httpProvider = new Web3.providers.HttpProvider('https://testnet.hashio.io/api');
+  const httpProvider = new Web3.providers.HttpProvider(
+    "https://mainnet.hashio.io/api"
+  );
   const web3NoAccount = new Web3(httpProvider);
   return web3NoAccount;
 };

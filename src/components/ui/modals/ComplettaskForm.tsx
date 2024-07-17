@@ -75,29 +75,28 @@ const CompleteTaskForm = ({
 			setLoading(false);
 
 			await updateTaskMutaion({
-				variables: {
-					_id: taskId,
-					input: {
-						status: 4, // completed
-						activities: {
-							// @ts-ignore
-							userId: reviewer,
-							activity: `Task Completed: ${
-								'https://hashscan.io/testnet/transaction/' +
-								txn.transactionHash
-							}`
-						}
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted: async (res: any) => {
-					console.log('task makred as completed', res);
-					dispatch(setActivity(res.updateTask.activities as any));
-					handlePostSubmit(res);
-				}
-			});
+        variables: {
+          _id: taskId,
+          input: {
+            status: 4, // completed
+            activities: {
+              // @ts-ignore
+              userId: reviewer,
+              activity: `Task Completed: ${
+                "https://hashscan.io/mainnet/transaction/" + txn.transactionHash
+              }`,
+            },
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          console.log("task makred as completed", res);
+          dispatch(setActivity(res.updateTask.activities as any));
+          handlePostSubmit(res);
+        },
+      });
 		} catch (error) {
 			toast({
 				variant: 'destructive',
