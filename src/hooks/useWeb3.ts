@@ -19,7 +19,7 @@ interface UseWeb3 {
 }
 
 const injected = new InjectedConnector({
-  supportedChainIds: [296], // Specify the chain IDs MetaMask should be connected to
+  supportedChainIds: [295], // Specify the chain IDs MetaMask should be connected to
 });
 
 const useWeb3 = (): UseWeb3 => {

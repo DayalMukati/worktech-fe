@@ -83,7 +83,7 @@ const CompleteTaskForm = ({
 							// @ts-ignore
 							userId: reviewer,
 							activity: `Task Completed: ${
-								'https://hashscan.io/testnet/transaction/' +
+								'https://hashscan.io/mainnet/transaction/' +
 								txn.transactionHash
 							}`
 						}

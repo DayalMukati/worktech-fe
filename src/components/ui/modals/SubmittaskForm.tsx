@@ -99,7 +99,7 @@ const SubmitTaskForm = ({
               //@ts-ignore
               userId: taskData.assinees[0]._id,
               activity: `Task Submitted: ${
-                "https://hashscan.io/testnet/transaction/" + txn.transactionHash
+                "https://hashscan.io/mainnet/transaction/" + txn.transactionHash
               }`,
             },
           },

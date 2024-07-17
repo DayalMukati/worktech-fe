@@ -397,26 +397,26 @@ const CreateTaskForm = ({
 		console.log('txnId->', txnId);
 		try {
 			await submitTaskMutation({
-				variables: {
-					_id: taskId,
-					input: {
-						activities: {
-							//@ts-ignorea
-							userId: reviewer,
-							activity: `Task Created: ${
-								'https://hashscan.io/testnet/transaction/' + txnId
-							}`
-						}
-					}
-				},
-				onError(error: any): never {
-					throw new Error(error);
-				},
-				onCompleted: async (res: any) => {
-					dispatch(setActivity(res.updateTask.activities as any));
-					console.log('create task res->', res);
-				}
-			});
+        variables: {
+          _id: taskId,
+          input: {
+            activities: {
+              //@ts-ignorea
+              userId: reviewer,
+              activity: `Task Created: ${
+                "https://hashscan.io/mainnet/transaction/" + txnId
+              }`,
+            },
+          },
+        },
+        onError(error: any): never {
+          throw new Error(error);
+        },
+        onCompleted: async (res: any) => {
+          dispatch(setActivity(res.updateTask.activities as any));
+          console.log("create task res->", res);
+        },
+      });
 		} catch (error) {
 			console.log('error->', error);
 		}

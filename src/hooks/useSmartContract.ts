@@ -29,7 +29,9 @@ const useSmartContract = (): UseSmartContract => {
   const callMethod = async (methodName: string, args: any[]): Promise<any> => {
 
     // const web3 = new Web3('https://testnet.hashio.io/api');
-    const web3 = new Web3(new Web3.providers.HttpProvider('https://testnet.hashio.io/api'));
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("https://mainnet.hashio.io/api")
+    );
 
     const contract = new web3.eth.Contract(CONTRACT_ABI as AbiItem[], CONTRACT_ADDRESS);
     const accounts = await web3.eth.getAccounts();
